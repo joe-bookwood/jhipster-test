@@ -33,7 +33,7 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public Task update(Task task) {
-        log.debug("Request to save Task : {}", task);
+        log.debug("Request to update Task : {}", task);
         return taskRepository.save(task);
     }
 

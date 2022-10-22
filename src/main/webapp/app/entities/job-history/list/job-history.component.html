@@ -28,33 +28,61 @@
     <span jhiTranslate="jhipsterTestApp.jobHistory.home.notFound">No Job Histories found</span>
   </div>
 
-  <div class="table-responsive" id="entities" *ngIf="jobHistories && jobHistories.length > 0">
+  <div class="table-responsive table-entities" id="entities" *ngIf="jobHistories && jobHistories.length > 0">
     <table class="table table-striped" aria-describedby="page-heading">
       <thead>
         <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="navigateToWithComponentValues()">
-          <th scope="col" jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <fa-icon icon="sort"></fa-icon></th>
+          <th scope="col" jhiSortBy="id">
+            <div class="d-flex">
+              <span jhiTranslate="global.field.id">ID</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
           <th scope="col" jhiSortBy="startDate">
-            <span jhiTranslate="jhipsterTestApp.jobHistory.startDate">Start Date</span> <fa-icon icon="sort"></fa-icon>
+            <div class="d-flex">
+              <span jhiTranslate="jhipsterTestApp.jobHistory.startDate">Start Date</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
           </th>
           <th scope="col" jhiSortBy="endDate">
-            <span jhiTranslate="jhipsterTestApp.jobHistory.endDate">End Date</span> <fa-icon icon="sort"></fa-icon>
+            <div class="d-flex">
+              <span jhiTranslate="jhipsterTestApp.jobHistory.endDate">End Date</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
           </th>
           <th scope="col" jhiSortBy="language">
-            <span jhiTranslate="jhipsterTestApp.jobHistory.language">Language</span> <fa-icon icon="sort"></fa-icon>
+            <div class="d-flex">
+              <span jhiTranslate="jhipsterTestApp.jobHistory.language">Language</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
           </th>
           <th scope="col" jhiSortBy="job.id">
-            <span jhiTranslate="jhipsterTestApp.jobHistory.job">Job</span> <fa-icon icon="sort"></fa-icon>
+            <div class="d-flex">
+              <span jhiTranslate="jhipsterTestApp.jobHistory.job">Job</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
           </th>
           <th scope="col" jhiSortBy="department.id">
-            <span jhiTranslate="jhipsterTestApp.jobHistory.department">Department</span> <fa-icon icon="sort"></fa-icon>
+            <div class="d-flex">
+              <span jhiTranslate="jhipsterTestApp.jobHistory.department">Department</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
           </th>
           <th scope="col" jhiSortBy="employee.id">
-            <span jhiTranslate="jhipsterTestApp.jobHistory.employee">Employee</span> <fa-icon icon="sort"></fa-icon>
+            <div class="d-flex">
+              <span jhiTranslate="jhipsterTestApp.jobHistory.employee">Employee</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
           </th>
           <th scope="col"></th>
         </tr>
       </thead>
-      <tbody infinite-scroll (scrolled)="loadPage(page + 1)" [infiniteScrollDisabled]="page >= links['last']" [infiniteScrollDistance]="0">
+      <tbody
+        infinite-scroll
+        (scrolled)="loadPage(page + 1)"
+        [infiniteScrollDisabled]="page - 1 >= links['last']"
+        [infiniteScrollDistance]="0"
+      >
         <tr *ngFor="let jobHistory of jobHistories; trackBy: trackId" data-cy="entityTable">
           <td>
             <a [routerLink]="['/job-history', jobHistory.id, 'view']">{{ jobHistory.id }}</a>
@@ -64,17 +92,17 @@
           <td jhiTranslate="{{ 'jhipsterTestApp.Language.' + jobHistory.language }}">{{ jobHistory.language }}</td>
           <td>
             <div *ngIf="jobHistory.job">
-              <a [routerLink]="['/job', jobHistory.job.id, 'view']">{{ jobHistory.job?.id }}</a>
+              <a [routerLink]="['/job', jobHistory.job.id, 'view']">{{ jobHistory.job.id }}</a>
             </div>
           </td>
           <td>
             <div *ngIf="jobHistory.department">
-              <a [routerLink]="['/department', jobHistory.department.id, 'view']">{{ jobHistory.department?.id }}</a>
+              <a [routerLink]="['/department', jobHistory.department.id, 'view']">{{ jobHistory.department.id }}</a>
             </div>
           </td>
           <td>
             <div *ngIf="jobHistory.employee">
-              <a [routerLink]="['/employee', jobHistory.employee.id, 'view']">{{ jobHistory.employee?.id }}</a>
+              <a [routerLink]="['/employee', jobHistory.employee.id, 'view']">{{ jobHistory.employee.id }}</a>
             </div>
           </td>
           <td class="text-end">

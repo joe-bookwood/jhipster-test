@@ -175,7 +175,7 @@ class JobHistoryResourceIT {
 
     @Test
     @Transactional
-    void putNewJobHistory() throws Exception {
+    void putExistingJobHistory() throws Exception {
         // Initialize the database
         jobHistoryRepository.saveAndFlush(jobHistory);
 
