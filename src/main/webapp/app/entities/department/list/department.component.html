@@ -28,16 +28,27 @@
     <span jhiTranslate="jhipsterTestApp.department.home.notFound">No Departments found</span>
   </div>
 
-  <div class="table-responsive" id="entities" *ngIf="departments && departments.length > 0">
+  <div class="table-responsive table-entities" id="entities" *ngIf="departments && departments.length > 0">
     <table class="table table-striped" aria-describedby="page-heading">
       <thead>
         <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="navigateToWithComponentValues()">
-          <th scope="col" jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <fa-icon icon="sort"></fa-icon></th>
+          <th scope="col" jhiSortBy="id">
+            <div class="d-flex">
+              <span jhiTranslate="global.field.id">ID</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
           <th scope="col" jhiSortBy="departmentName">
-            <span jhiTranslate="jhipsterTestApp.department.departmentName">Department Name</span> <fa-icon icon="sort"></fa-icon>
+            <div class="d-flex">
+              <span jhiTranslate="jhipsterTestApp.department.departmentName">Department Name</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
           </th>
           <th scope="col" jhiSortBy="location.id">
-            <span jhiTranslate="jhipsterTestApp.department.location">Location</span> <fa-icon icon="sort"></fa-icon>
+            <div class="d-flex">
+              <span jhiTranslate="jhipsterTestApp.department.location">Location</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
           </th>
           <th scope="col"></th>
         </tr>
@@ -50,7 +61,7 @@
           <td>{{ department.departmentName }}</td>
           <td>
             <div *ngIf="department.location">
-              <a [routerLink]="['/location', department.location.id, 'view']">{{ department.location?.id }}</a>
+              <a [routerLink]="['/location', department.location.id, 'view']">{{ department.location.id }}</a>
             </div>
           </td>
           <td class="text-end">

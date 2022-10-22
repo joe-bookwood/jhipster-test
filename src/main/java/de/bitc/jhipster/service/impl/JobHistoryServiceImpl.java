@@ -34,7 +34,7 @@ public class JobHistoryServiceImpl implements JobHistoryService {
 
     @Override
     public JobHistory update(JobHistory jobHistory) {
-        log.debug("Request to save JobHistory : {}", jobHistory);
+        log.debug("Request to update JobHistory : {}", jobHistory);
         return jobHistoryRepository.save(jobHistory);
     }
 

@@ -33,7 +33,7 @@ public class CountryServiceImpl implements CountryService {
 
     @Override
     public Country update(Country country) {
-        log.debug("Request to save Country : {}", country);
+        log.debug("Request to update Country : {}", country);
         return countryRepository.save(country);
     }
 
