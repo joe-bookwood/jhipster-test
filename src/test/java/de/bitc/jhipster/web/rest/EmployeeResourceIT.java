@@ -212,7 +212,7 @@ class EmployeeResourceIT {
 
     @Test
     @Transactional
-    void putNewEmployee() throws Exception {
+    void putExistingEmployee() throws Exception {
         // Initialize the database
         employeeRepository.saveAndFlush(employee);
 

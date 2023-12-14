@@ -28,22 +28,39 @@
     <span jhiTranslate="jhipsterTestApp.job.home.notFound">No Jobs found</span>
   </div>
 
-  <div class="table-responsive" id="entities" *ngIf="jobs && jobs.length > 0">
+  <div class="table-responsive table-entities" id="entities" *ngIf="jobs && jobs.length > 0">
     <table class="table table-striped" aria-describedby="page-heading">
       <thead>
         <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="navigateToWithComponentValues()">
-          <th scope="col" jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <fa-icon icon="sort"></fa-icon></th>
+          <th scope="col" jhiSortBy="id">
+            <div class="d-flex">
+              <span jhiTranslate="global.field.id">ID</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
           <th scope="col" jhiSortBy="jobTitle">
-            <span jhiTranslate="jhipsterTestApp.job.jobTitle">Job Title</span> <fa-icon icon="sort"></fa-icon>
+            <div class="d-flex">
+              <span jhiTranslate="jhipsterTestApp.job.jobTitle">Job Title</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
           </th>
           <th scope="col" jhiSortBy="minSalary">
-            <span jhiTranslate="jhipsterTestApp.job.minSalary">Min Salary</span> <fa-icon icon="sort"></fa-icon>
+            <div class="d-flex">
+              <span jhiTranslate="jhipsterTestApp.job.minSalary">Min Salary</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
           </th>
           <th scope="col" jhiSortBy="maxSalary">
-            <span jhiTranslate="jhipsterTestApp.job.maxSalary">Max Salary</span> <fa-icon icon="sort"></fa-icon>
+            <div class="d-flex">
+              <span jhiTranslate="jhipsterTestApp.job.maxSalary">Max Salary</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
           </th>
           <th scope="col" jhiSortBy="employee.id">
-            <span jhiTranslate="jhipsterTestApp.job.employee">Employee</span> <fa-icon icon="sort"></fa-icon>
+            <div class="d-flex">
+              <span jhiTranslate="jhipsterTestApp.job.employee">Employee</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
           </th>
           <th scope="col"></th>
         </tr>
@@ -58,7 +75,7 @@
           <td>{{ job.maxSalary }}</td>
           <td>
             <div *ngIf="job.employee">
-              <a [routerLink]="['/employee', job.employee.id, 'view']">{{ job.employee?.id }}</a>
+              <a [routerLink]="['/employee', job.employee.id, 'view']">{{ job.employee.id }}</a>
             </div>
           </td>
           <td class="text-end">

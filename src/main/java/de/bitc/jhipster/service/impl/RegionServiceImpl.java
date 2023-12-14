@@ -33,7 +33,7 @@ public class RegionServiceImpl implements RegionService {
 
     @Override
     public Region update(Region region) {
-        log.debug("Request to save Region : {}", region);
+        log.debug("Request to update Region : {}", region);
         return regionRepository.save(region);
     }
 

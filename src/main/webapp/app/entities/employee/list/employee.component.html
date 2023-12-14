@@ -28,42 +28,79 @@
     <span jhiTranslate="jhipsterTestApp.employee.home.notFound">No Employees found</span>
   </div>
 
-  <div class="table-responsive" id="entities" *ngIf="employees && employees.length > 0">
+  <div class="table-responsive table-entities" id="entities" *ngIf="employees && employees.length > 0">
     <table class="table table-striped" aria-describedby="page-heading">
       <thead>
         <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="navigateToWithComponentValues()">
-          <th scope="col" jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <fa-icon icon="sort"></fa-icon></th>
+          <th scope="col" jhiSortBy="id">
+            <div class="d-flex">
+              <span jhiTranslate="global.field.id">ID</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
           <th scope="col" jhiSortBy="firstName">
-            <span jhiTranslate="jhipsterTestApp.employee.firstName">First Name</span> <fa-icon icon="sort"></fa-icon>
+            <div class="d-flex">
+              <span jhiTranslate="jhipsterTestApp.employee.firstName">First Name</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
           </th>
           <th scope="col" jhiSortBy="lastName">
-            <span jhiTranslate="jhipsterTestApp.employee.lastName">Last Name</span> <fa-icon icon="sort"></fa-icon>
+            <div class="d-flex">
+              <span jhiTranslate="jhipsterTestApp.employee.lastName">Last Name</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
           </th>
           <th scope="col" jhiSortBy="email">
-            <span jhiTranslate="jhipsterTestApp.employee.email">Email</span> <fa-icon icon="sort"></fa-icon>
+            <div class="d-flex">
+              <span jhiTranslate="jhipsterTestApp.employee.email">Email</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
           </th>
           <th scope="col" jhiSortBy="phoneNumber">
-            <span jhiTranslate="jhipsterTestApp.employee.phoneNumber">Phone Number</span> <fa-icon icon="sort"></fa-icon>
+            <div class="d-flex">
+              <span jhiTranslate="jhipsterTestApp.employee.phoneNumber">Phone Number</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
           </th>
           <th scope="col" jhiSortBy="hireDate">
-            <span jhiTranslate="jhipsterTestApp.employee.hireDate">Hire Date</span> <fa-icon icon="sort"></fa-icon>
+            <div class="d-flex">
+              <span jhiTranslate="jhipsterTestApp.employee.hireDate">Hire Date</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
           </th>
           <th scope="col" jhiSortBy="salary">
-            <span jhiTranslate="jhipsterTestApp.employee.salary">Salary</span> <fa-icon icon="sort"></fa-icon>
+            <div class="d-flex">
+              <span jhiTranslate="jhipsterTestApp.employee.salary">Salary</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
           </th>
           <th scope="col" jhiSortBy="commissionPct">
-            <span jhiTranslate="jhipsterTestApp.employee.commissionPct">Commission Pct</span> <fa-icon icon="sort"></fa-icon>
+            <div class="d-flex">
+              <span jhiTranslate="jhipsterTestApp.employee.commissionPct">Commission Pct</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
           </th>
           <th scope="col" jhiSortBy="manager.id">
-            <span jhiTranslate="jhipsterTestApp.employee.manager">Manager</span> <fa-icon icon="sort"></fa-icon>
+            <div class="d-flex">
+              <span jhiTranslate="jhipsterTestApp.employee.manager">Manager</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
           </th>
           <th scope="col" jhiSortBy="department.id">
-            <span jhiTranslate="jhipsterTestApp.employee.department">Department</span> <fa-icon icon="sort"></fa-icon>
+            <div class="d-flex">
+              <span jhiTranslate="jhipsterTestApp.employee.department">Department</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
           </th>
           <th scope="col"></th>
         </tr>
       </thead>
-      <tbody infinite-scroll (scrolled)="loadPage(page + 1)" [infiniteScrollDisabled]="page >= links['last']" [infiniteScrollDistance]="0">
+      <tbody
+        infinite-scroll
+        (scrolled)="loadPage(page + 1)"
+        [infiniteScrollDisabled]="page - 1 >= links['last']"
+        [infiniteScrollDistance]="0"
+      >
         <tr *ngFor="let employee of employees; trackBy: trackId" data-cy="entityTable">
           <td>
             <a [routerLink]="['/employee', employee.id, 'view']">{{ employee.id }}</a>
@@ -77,12 +114,12 @@
           <td>{{ employee.commissionPct }}</td>
           <td>
             <div *ngIf="employee.manager">
-              <a [routerLink]="['/employee', employee.manager.id, 'view']">{{ employee.manager?.id }}</a>
+              <a [routerLink]="['/employee', employee.manager.id, 'view']">{{ employee.manager.id }}</a>
             </div>
           </td>
           <td>
             <div *ngIf="employee.department">
-              <a [routerLink]="['/department', employee.department.id, 'view']">{{ employee.department?.id }}</a>
+              <a [routerLink]="['/department', employee.department.id, 'view']">{{ employee.department.id }}</a>
             </div>
           </td>
           <td class="text-end">
