@@ -33,7 +33,7 @@ public class LocationServiceImpl implements LocationService {
 
     @Override
     public Location update(Location location) {
-        log.debug("Request to save Location : {}", location);
+        log.debug("Request to update Location : {}", location);
         return locationRepository.save(location);
     }
 

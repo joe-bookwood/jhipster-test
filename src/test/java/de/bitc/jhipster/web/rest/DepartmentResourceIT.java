@@ -182,7 +182,7 @@ class DepartmentResourceIT {
 
     @Test
     @Transactional
-    void putNewDepartment() throws Exception {
+    void putExistingDepartment() throws Exception {
         // Initialize the database
         departmentRepository.saveAndFlush(department);
 

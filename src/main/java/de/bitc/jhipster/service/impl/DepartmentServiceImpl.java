@@ -33,7 +33,7 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public Department update(Department department) {
-        log.debug("Request to save Department : {}", department);
+        log.debug("Request to update Department : {}", department);
         return departmentRepository.save(department);
     }
 

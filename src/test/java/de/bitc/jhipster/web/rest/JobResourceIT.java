@@ -195,7 +195,7 @@ class JobResourceIT {
 
     @Test
     @Transactional
-    void putNewJob() throws Exception {
+    void putExistingJob() throws Exception {
         // Initialize the database
         jobRepository.saveAndFlush(job);
 

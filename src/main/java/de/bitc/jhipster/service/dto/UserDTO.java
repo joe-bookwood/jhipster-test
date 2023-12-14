@@ -1,11 +1,14 @@
 package de.bitc.jhipster.service.dto;
 
 import de.bitc.jhipster.domain.User;
+import java.io.Serializable;
 
 /**
  * A DTO representing a user, with only the public attributes.
  */
-public class UserDTO {
+public class UserDTO implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private String id;
 
