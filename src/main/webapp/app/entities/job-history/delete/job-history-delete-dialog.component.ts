@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
+import { ITEM_DELETED_EVENT } from 'app/config/navigation.constants';
 import { IJobHistory } from '../job-history.model';
 import { JobHistoryService } from '../service/job-history.service';
-import { ITEM_DELETED_EVENT } from 'app/config/navigation.constants';
 
 @Component({
   templateUrl: './job-history-delete-dialog.component.html',
@@ -11,7 +11,10 @@ import { ITEM_DELETED_EVENT } from 'app/config/navigation.constants';
 export class JobHistoryDeleteDialogComponent {
   jobHistory?: IJobHistory;
 
-  constructor(protected jobHistoryService: JobHistoryService, protected activeModal: NgbActiveModal) {}
+  constructor(
+    protected jobHistoryService: JobHistoryService,
+    protected activeModal: NgbActiveModal,
+  ) {}
 
   cancel(): void {
     this.activeModal.dismiss();

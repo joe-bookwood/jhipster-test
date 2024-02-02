@@ -9,7 +9,10 @@ import { DepartmentService } from '../service/department.service';
 
 @Injectable({ providedIn: 'root' })
 export class DepartmentRoutingResolveService implements Resolve<IDepartment | null> {
-  constructor(protected service: DepartmentService, protected router: Router) {}
+  constructor(
+    protected service: DepartmentService,
+    protected router: Router,
+  ) {}
 
   resolve(route: ActivatedRouteSnapshot): Observable<IDepartment | null | never> {
     const id = route.params['id'];
@@ -22,7 +25,7 @@ export class DepartmentRoutingResolveService implements Resolve<IDepartment | nu
             this.router.navigate(['404']);
             return EMPTY;
           }
-        })
+        }),
       );
     }
     return of(null);

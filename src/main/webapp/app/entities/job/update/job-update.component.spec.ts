@@ -6,13 +6,13 @@ import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { of, Subject, from } from 'rxjs';
 
-import { JobFormService } from './job-form.service';
-import { JobService } from '../service/job.service';
-import { IJob } from '../job.model';
 import { ITask } from 'app/entities/task/task.model';
 import { TaskService } from 'app/entities/task/service/task.service';
 import { IEmployee } from 'app/entities/employee/employee.model';
 import { EmployeeService } from 'app/entities/employee/service/employee.service';
+import { IJob } from '../job.model';
+import { JobService } from '../service/job.service';
+import { JobFormService } from './job-form.service';
 
 import { JobUpdateComponent } from './job-update.component';
 
@@ -70,7 +70,7 @@ describe('Job Management Update Component', () => {
       expect(taskService.query).toHaveBeenCalled();
       expect(taskService.addTaskToCollectionIfMissing).toHaveBeenCalledWith(
         taskCollection,
-        ...additionalTasks.map(expect.objectContaining)
+        ...additionalTasks.map(expect.objectContaining),
       );
       expect(comp.tasksSharedCollection).toEqual(expectedCollection);
     });
@@ -92,7 +92,7 @@ describe('Job Management Update Component', () => {
       expect(employeeService.query).toHaveBeenCalled();
       expect(employeeService.addEmployeeToCollectionIfMissing).toHaveBeenCalledWith(
         employeeCollection,
-        ...additionalEmployees.map(expect.objectContaining)
+        ...additionalEmployees.map(expect.objectContaining),
       );
       expect(comp.employeesSharedCollection).toEqual(expectedCollection);
     });

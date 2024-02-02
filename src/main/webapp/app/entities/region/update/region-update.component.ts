@@ -4,9 +4,9 @@ import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 
-import { RegionFormService, RegionFormGroup } from './region-form.service';
 import { IRegion } from '../region.model';
 import { RegionService } from '../service/region.service';
+import { RegionFormService, RegionFormGroup } from './region-form.service';
 
 @Component({
   selector: 'jhi-region-update',
@@ -21,7 +21,7 @@ export class RegionUpdateComponent implements OnInit {
   constructor(
     protected regionService: RegionService,
     protected regionFormService: RegionFormService,
-    protected activatedRoute: ActivatedRoute
+    protected activatedRoute: ActivatedRoute,
   ) {}
 
   ngOnInit(): void {

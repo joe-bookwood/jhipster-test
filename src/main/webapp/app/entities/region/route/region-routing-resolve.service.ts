@@ -9,7 +9,10 @@ import { RegionService } from '../service/region.service';
 
 @Injectable({ providedIn: 'root' })
 export class RegionRoutingResolveService implements Resolve<IRegion | null> {
-  constructor(protected service: RegionService, protected router: Router) {}
+  constructor(
+    protected service: RegionService,
+    protected router: Router,
+  ) {}
 
   resolve(route: ActivatedRouteSnapshot): Observable<IRegion | null | never> {
     const id = route.params['id'];
@@ -22,7 +25,7 @@ export class RegionRoutingResolveService implements Resolve<IRegion | null> {
             this.router.navigate(['404']);
             return EMPTY;
           }
-        })
+        }),
       );
     }
     return of(null);

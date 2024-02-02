@@ -29,7 +29,7 @@ describe('Employee Form Service', () => {
             commissionPct: expect.any(Object),
             manager: expect.any(Object),
             department: expect.any(Object),
-          })
+          }),
         );
       });
 
@@ -48,7 +48,7 @@ describe('Employee Form Service', () => {
             commissionPct: expect.any(Object),
             manager: expect.any(Object),
             department: expect.any(Object),
-          })
+          }),
         );
       });
     });

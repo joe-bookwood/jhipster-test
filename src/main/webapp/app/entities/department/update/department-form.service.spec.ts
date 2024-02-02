@@ -22,7 +22,7 @@ describe('Department Form Service', () => {
             id: expect.any(Object),
             departmentName: expect.any(Object),
             location: expect.any(Object),
-          })
+          }),
         );
       });
 
@@ -34,7 +34,7 @@ describe('Department Form Service', () => {
             id: expect.any(Object),
             departmentName: expect.any(Object),
             location: expect.any(Object),
-          })
+          }),
         );
       });
     });

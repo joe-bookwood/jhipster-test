@@ -4,11 +4,11 @@ import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { finalize, map } from 'rxjs/operators';
 
-import { DepartmentFormService, DepartmentFormGroup } from './department-form.service';
-import { IDepartment } from '../department.model';
-import { DepartmentService } from '../service/department.service';
 import { ILocation } from 'app/entities/location/location.model';
 import { LocationService } from 'app/entities/location/service/location.service';
+import { IDepartment } from '../department.model';
+import { DepartmentService } from '../service/department.service';
+import { DepartmentFormService, DepartmentFormGroup } from './department-form.service';
 
 @Component({
   selector: 'jhi-department-update',
@@ -26,7 +26,7 @@ export class DepartmentUpdateComponent implements OnInit {
     protected departmentService: DepartmentService,
     protected departmentFormService: DepartmentFormService,
     protected locationService: LocationService,
-    protected activatedRoute: ActivatedRoute
+    protected activatedRoute: ActivatedRoute,
   ) {}
 
   compareLocation = (o1: ILocation | null, o2: ILocation | null): boolean => this.locationService.compareLocation(o1, o2);
@@ -81,7 +81,7 @@ export class DepartmentUpdateComponent implements OnInit {
 
     this.locationsSharedCollection = this.locationService.addLocationToCollectionIfMissing<ILocation>(
       this.locationsSharedCollection,
-      department.location
+      department.location,
     );
   }
 
@@ -91,8 +91,8 @@ export class DepartmentUpdateComponent implements OnInit {
       .pipe(map((res: HttpResponse<ILocation[]>) => res.body ?? []))
       .pipe(
         map((locations: ILocation[]) =>
-          this.locationService.addLocationToCollectionIfMissing<ILocation>(locations, this.department?.location)
-        )
+          this.locationService.addLocationToCollectionIfMissing<ILocation>(locations, this.department?.location),
+        ),
       )
       .subscribe((locations: ILocation[]) => (this.locationsSharedCollection = locations));
   }

@@ -1,6 +1,5 @@
 package de.bitc.jhipster;
 
-import de.bitc.jhipster.JhipsterTestApp;
 import de.bitc.jhipster.config.AsyncSyncConfiguration;
 import de.bitc.jhipster.config.EmbeddedSQL;
 import de.bitc.jhipster.config.TestSecurityConfiguration;

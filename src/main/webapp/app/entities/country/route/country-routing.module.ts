@@ -2,11 +2,11 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import { UserRouteAccessService } from 'app/core/auth/user-route-access.service';
+import { ASC } from 'app/config/navigation.constants';
 import { CountryComponent } from '../list/country.component';
 import { CountryDetailComponent } from '../detail/country-detail.component';
 import { CountryUpdateComponent } from '../update/country-update.component';
 import { CountryRoutingResolveService } from './country-routing-resolve.service';
-import { ASC } from 'app/config/navigation.constants';
 
 const countryRoute: Routes = [
   {

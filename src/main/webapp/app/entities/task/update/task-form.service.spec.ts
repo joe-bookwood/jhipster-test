@@ -23,7 +23,7 @@ describe('Task Form Service', () => {
             title: expect.any(Object),
             description: expect.any(Object),
             jobs: expect.any(Object),
-          })
+          }),
         );
       });
 
@@ -36,7 +36,7 @@ describe('Task Form Service', () => {
             title: expect.any(Object),
             description: expect.any(Object),
             jobs: expect.any(Object),
-          })
+          }),
         );
       });
     });

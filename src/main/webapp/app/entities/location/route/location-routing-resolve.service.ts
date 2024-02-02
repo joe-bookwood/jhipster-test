@@ -9,7 +9,10 @@ import { LocationService } from '../service/location.service';
 
 @Injectable({ providedIn: 'root' })
 export class LocationRoutingResolveService implements Resolve<ILocation | null> {
-  constructor(protected service: LocationService, protected router: Router) {}
+  constructor(
+    protected service: LocationService,
+    protected router: Router,
+  ) {}
 
   resolve(route: ActivatedRouteSnapshot): Observable<ILocation | null | never> {
     const id = route.params['id'];
@@ -22,7 +25,7 @@ export class LocationRoutingResolveService implements Resolve<ILocation | null> 
             this.router.navigate(['404']);
             return EMPTY;
           }
-        })
+        }),
       );
     }
     return of(null);

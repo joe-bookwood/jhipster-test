@@ -9,7 +9,10 @@ import { EmployeeService } from '../service/employee.service';
 
 @Injectable({ providedIn: 'root' })
 export class EmployeeRoutingResolveService implements Resolve<IEmployee | null> {
-  constructor(protected service: EmployeeService, protected router: Router) {}
+  constructor(
+    protected service: EmployeeService,
+    protected router: Router,
+  ) {}
 
   resolve(route: ActivatedRouteSnapshot): Observable<IEmployee | null | never> {
     const id = route.params['id'];
@@ -22,7 +25,7 @@ export class EmployeeRoutingResolveService implements Resolve<IEmployee | null> 
             this.router.navigate(['404']);
             return EMPTY;
           }
-        })
+        }),
       );
     }
     return of(null);

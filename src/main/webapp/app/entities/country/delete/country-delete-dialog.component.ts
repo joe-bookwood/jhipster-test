@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
+import { ITEM_DELETED_EVENT } from 'app/config/navigation.constants';
 import { ICountry } from '../country.model';
 import { CountryService } from '../service/country.service';
-import { ITEM_DELETED_EVENT } from 'app/config/navigation.constants';
 
 @Component({
   templateUrl: './country-delete-dialog.component.html',
@@ -11,7 +11,10 @@ import { ITEM_DELETED_EVENT } from 'app/config/navigation.constants';
 export class CountryDeleteDialogComponent {
   country?: ICountry;
 
-  constructor(protected countryService: CountryService, protected activeModal: NgbActiveModal) {}
+  constructor(
+    protected countryService: CountryService,
+    protected activeModal: NgbActiveModal,
+  ) {}
 
   cancel(): void {
     this.activeModal.dismiss();

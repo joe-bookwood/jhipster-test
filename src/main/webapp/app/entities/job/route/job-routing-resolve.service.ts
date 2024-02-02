@@ -9,7 +9,10 @@ import { JobService } from '../service/job.service';
 
 @Injectable({ providedIn: 'root' })
 export class JobRoutingResolveService implements Resolve<IJob | null> {
-  constructor(protected service: JobService, protected router: Router) {}
+  constructor(
+    protected service: JobService,
+    protected router: Router,
+  ) {}
 
   resolve(route: ActivatedRouteSnapshot): Observable<IJob | null | never> {
     const id = route.params['id'];
@@ -22,7 +25,7 @@ export class JobRoutingResolveService implements Resolve<IJob | null> {
             this.router.navigate(['404']);
             return EMPTY;
           }
-        })
+        }),
       );
     }
     return of(null);

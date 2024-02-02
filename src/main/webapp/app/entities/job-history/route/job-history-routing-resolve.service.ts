@@ -9,7 +9,10 @@ import { JobHistoryService } from '../service/job-history.service';
 
 @Injectable({ providedIn: 'root' })
 export class JobHistoryRoutingResolveService implements Resolve<IJobHistory | null> {
-  constructor(protected service: JobHistoryService, protected router: Router) {}
+  constructor(
+    protected service: JobHistoryService,
+    protected router: Router,
+  ) {}
 
   resolve(route: ActivatedRouteSnapshot): Observable<IJobHistory | null | never> {
     const id = route.params['id'];
@@ -22,7 +25,7 @@ export class JobHistoryRoutingResolveService implements Resolve<IJobHistory | nu
             this.router.navigate(['404']);
             return EMPTY;
           }
-        })
+        }),
       );
     }
     return of(null);

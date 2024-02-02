@@ -22,7 +22,7 @@ describe('Country Form Service', () => {
             id: expect.any(Object),
             countryName: expect.any(Object),
             region: expect.any(Object),
-          })
+          }),
         );
       });
 
@@ -34,7 +34,7 @@ describe('Country Form Service', () => {
             id: expect.any(Object),
             countryName: expect.any(Object),
             region: expect.any(Object),
-          })
+          }),
         );
       });
     });

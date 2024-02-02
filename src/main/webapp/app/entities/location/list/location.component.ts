@@ -3,11 +3,11 @@ import { ActivatedRoute, Data, ParamMap, Router } from '@angular/router';
 import { combineLatest, filter, Observable, switchMap, tap } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { ILocation } from '../location.model';
 import { ASC, DESC, SORT, ITEM_DELETED_EVENT, DEFAULT_SORT_DATA } from 'app/config/navigation.constants';
+import { SortService } from 'app/shared/sort/sort.service';
+import { ILocation } from '../location.model';
 import { EntityArrayResponseType, LocationService } from '../service/location.service';
 import { LocationDeleteDialogComponent } from '../delete/location-delete-dialog.component';
-import { SortService } from 'app/shared/sort/sort.service';
 
 @Component({
   selector: 'jhi-location',
@@ -25,7 +25,7 @@ export class LocationComponent implements OnInit {
     protected activatedRoute: ActivatedRoute,
     public router: Router,
     protected sortService: SortService,
-    protected modalService: NgbModal
+    protected modalService: NgbModal,
   ) {}
 
   trackId = (_index: number, item: ILocation): number => this.locationService.getLocationIdentifier(item);
@@ -41,7 +41,7 @@ export class LocationComponent implements OnInit {
     modalRef.closed
       .pipe(
         filter(reason => reason === ITEM_DELETED_EVENT),
-        switchMap(() => this.loadFromBackendWithRouteInformations())
+        switchMap(() => this.loadFromBackendWithRouteInformations()),
       )
       .subscribe({
         next: (res: EntityArrayResponseType) => {
@@ -65,7 +65,7 @@ export class LocationComponent implements OnInit {
   protected loadFromBackendWithRouteInformations(): Observable<EntityArrayResponseType> {
     return combineLatest([this.activatedRoute.queryParamMap, this.activatedRoute.data]).pipe(
       tap(([params, data]) => this.fillComponentAttributeFromRoute(params, data)),
-      switchMap(() => this.queryBackend(this.predicate, this.ascending))
+      switchMap(() => this.queryBackend(this.predicate, this.ascending)),
     );
   }
 

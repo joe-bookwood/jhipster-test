@@ -6,15 +6,15 @@ import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { of, Subject, from } from 'rxjs';
 
-import { JobHistoryFormService } from './job-history-form.service';
-import { JobHistoryService } from '../service/job-history.service';
-import { IJobHistory } from '../job-history.model';
 import { IJob } from 'app/entities/job/job.model';
 import { JobService } from 'app/entities/job/service/job.service';
 import { IDepartment } from 'app/entities/department/department.model';
 import { DepartmentService } from 'app/entities/department/service/department.service';
 import { IEmployee } from 'app/entities/employee/employee.model';
 import { EmployeeService } from 'app/entities/employee/service/employee.service';
+import { IJobHistory } from '../job-history.model';
+import { JobHistoryService } from '../service/job-history.service';
+import { JobHistoryFormService } from './job-history-form.service';
 
 import { JobHistoryUpdateComponent } from './job-history-update.component';
 
@@ -93,7 +93,7 @@ describe('JobHistory Management Update Component', () => {
       expect(departmentService.query).toHaveBeenCalled();
       expect(departmentService.addDepartmentToCollectionIfMissing).toHaveBeenCalledWith(
         departmentCollection,
-        ...additionalDepartments.map(expect.objectContaining)
+        ...additionalDepartments.map(expect.objectContaining),
       );
       expect(comp.departmentsSharedCollection).toEqual(expectedCollection);
     });
@@ -115,7 +115,7 @@ describe('JobHistory Management Update Component', () => {
       expect(employeeService.query).toHaveBeenCalled();
       expect(employeeService.addEmployeeToCollectionIfMissing).toHaveBeenCalledWith(
         employeeCollection,
-        ...additionalEmployees.map(expect.objectContaining)
+        ...additionalEmployees.map(expect.objectContaining),
       );
       expect(comp.employeesSharedCollection).toEqual(expectedCollection);
     });

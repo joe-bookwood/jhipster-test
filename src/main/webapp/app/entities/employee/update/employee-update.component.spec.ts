@@ -6,11 +6,11 @@ import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { of, Subject, from } from 'rxjs';
 
-import { EmployeeFormService } from './employee-form.service';
-import { EmployeeService } from '../service/employee.service';
-import { IEmployee } from '../employee.model';
 import { IDepartment } from 'app/entities/department/department.model';
 import { DepartmentService } from 'app/entities/department/service/department.service';
+import { EmployeeService } from '../service/employee.service';
+import { IEmployee } from '../employee.model';
+import { EmployeeFormService } from './employee-form.service';
 
 import { EmployeeUpdateComponent } from './employee-update.component';
 
@@ -66,7 +66,7 @@ describe('Employee Management Update Component', () => {
       expect(employeeService.query).toHaveBeenCalled();
       expect(employeeService.addEmployeeToCollectionIfMissing).toHaveBeenCalledWith(
         employeeCollection,
-        ...additionalEmployees.map(expect.objectContaining)
+        ...additionalEmployees.map(expect.objectContaining),
       );
       expect(comp.employeesSharedCollection).toEqual(expectedCollection);
     });
@@ -88,7 +88,7 @@ describe('Employee Management Update Component', () => {
       expect(departmentService.query).toHaveBeenCalled();
       expect(departmentService.addDepartmentToCollectionIfMissing).toHaveBeenCalledWith(
         departmentCollection,
-        ...additionalDepartments.map(expect.objectContaining)
+        ...additionalDepartments.map(expect.objectContaining),
       );
       expect(comp.departmentsSharedCollection).toEqual(expectedCollection);
     });

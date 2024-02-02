@@ -25,7 +25,7 @@ describe('Job Form Service', () => {
             maxSalary: expect.any(Object),
             tasks: expect.any(Object),
             employee: expect.any(Object),
-          })
+          }),
         );
       });
 
@@ -40,7 +40,7 @@ describe('Job Form Service', () => {
             maxSalary: expect.any(Object),
             tasks: expect.any(Object),
             employee: expect.any(Object),
-          })
+          }),
         );
       });
     });

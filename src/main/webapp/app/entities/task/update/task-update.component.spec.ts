@@ -6,9 +6,9 @@ import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { of, Subject, from } from 'rxjs';
 
-import { TaskFormService } from './task-form.service';
 import { TaskService } from '../service/task.service';
 import { ITask } from '../task.model';
+import { TaskFormService } from './task-form.service';
 
 import { TaskUpdateComponent } from './task-update.component';
 

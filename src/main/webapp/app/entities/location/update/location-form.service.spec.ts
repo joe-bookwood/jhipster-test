@@ -25,7 +25,7 @@ describe('Location Form Service', () => {
             city: expect.any(Object),
             stateProvince: expect.any(Object),
             country: expect.any(Object),
-          })
+          }),
         );
       });
 
@@ -40,7 +40,7 @@ describe('Location Form Service', () => {
             city: expect.any(Object),
             stateProvince: expect.any(Object),
             country: expect.any(Object),
-          })
+          }),
         );
       });
     });
