@@ -16,8 +16,7 @@ describe('Region Management Component', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [RouterTestingModule.withRoutes([{ path: 'region', component: RegionComponent }]), HttpClientTestingModule],
-      declarations: [RegionComponent],
+      imports: [RouterTestingModule.withRoutes([{ path: 'region', component: RegionComponent }]), HttpClientTestingModule, RegionComponent],
       providers: [
         {
           provide: ActivatedRoute,
@@ -30,7 +29,7 @@ describe('Region Management Component', () => {
                 page: '1',
                 size: '1',
                 sort: 'id,desc',
-              })
+              }),
             ),
             snapshot: { queryParams: {} },
           },
@@ -50,8 +49,8 @@ describe('Region Management Component', () => {
         new HttpResponse({
           body: [{ id: 123 }],
           headers,
-        })
-      )
+        }),
+      ),
     );
   });
 

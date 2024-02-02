@@ -9,10 +9,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import de.bitc.jhipster.IntegrationTest;
 import de.bitc.jhipster.domain.Location;
 import de.bitc.jhipster.repository.LocationRepository;
+import jakarta.persistence.EntityManager;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
-import javax.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +46,7 @@ class LocationResourceIT {
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
 
     private static Random random = new Random();
-    private static AtomicLong count = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
+    private static AtomicLong longCount = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
 
     @Autowired
     private LocationRepository locationRepository;
@@ -193,7 +193,7 @@ class LocationResourceIT {
         int databaseSizeBeforeUpdate = locationRepository.findAll().size();
 
         // Update the location
-        Location updatedLocation = locationRepository.findById(location.getId()).get();
+        Location updatedLocation = locationRepository.findById(location.getId()).orElseThrow();
         // Disconnect from session so that the updates on updatedLocation are not directly saved in db
         em.detach(updatedLocation);
         updatedLocation
@@ -225,7 +225,7 @@ class LocationResourceIT {
     @Transactional
     void putNonExistingLocation() throws Exception {
         int databaseSizeBeforeUpdate = locationRepository.findAll().size();
-        location.setId(count.incrementAndGet());
+        location.setId(longCount.incrementAndGet());
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restLocationMockMvc
@@ -246,12 +246,12 @@ class LocationResourceIT {
     @Transactional
     void putWithIdMismatchLocation() throws Exception {
         int databaseSizeBeforeUpdate = locationRepository.findAll().size();
-        location.setId(count.incrementAndGet());
+        location.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restLocationMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, count.incrementAndGet())
+                put(ENTITY_API_URL_ID, longCount.incrementAndGet())
                     .with(csrf())
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(TestUtil.convertObjectToJsonBytes(location))
@@ -267,7 +267,7 @@ class LocationResourceIT {
     @Transactional
     void putWithMissingIdPathParamLocation() throws Exception {
         int databaseSizeBeforeUpdate = locationRepository.findAll().size();
-        location.setId(count.incrementAndGet());
+        location.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restLocationMockMvc
@@ -296,7 +296,7 @@ class LocationResourceIT {
         Location partialUpdatedLocation = new Location();
         partialUpdatedLocation.setId(location.getId());
 
-        partialUpdatedLocation.streetAddress(UPDATED_STREET_ADDRESS).city(UPDATED_CITY).stateProvince(UPDATED_STATE_PROVINCE);
+        partialUpdatedLocation.streetAddress(UPDATED_STREET_ADDRESS).postalCode(UPDATED_POSTAL_CODE).city(UPDATED_CITY);
 
         restLocationMockMvc
             .perform(
@@ -312,9 +312,9 @@ class LocationResourceIT {
         assertThat(locationList).hasSize(databaseSizeBeforeUpdate);
         Location testLocation = locationList.get(locationList.size() - 1);
         assertThat(testLocation.getStreetAddress()).isEqualTo(UPDATED_STREET_ADDRESS);
-        assertThat(testLocation.getPostalCode()).isEqualTo(DEFAULT_POSTAL_CODE);
+        assertThat(testLocation.getPostalCode()).isEqualTo(UPDATED_POSTAL_CODE);
         assertThat(testLocation.getCity()).isEqualTo(UPDATED_CITY);
-        assertThat(testLocation.getStateProvince()).isEqualTo(UPDATED_STATE_PROVINCE);
+        assertThat(testLocation.getStateProvince()).isEqualTo(DEFAULT_STATE_PROVINCE);
     }
 
     @Test
@@ -358,7 +358,7 @@ class LocationResourceIT {
     @Transactional
     void patchNonExistingLocation() throws Exception {
         int databaseSizeBeforeUpdate = locationRepository.findAll().size();
-        location.setId(count.incrementAndGet());
+        location.setId(longCount.incrementAndGet());
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restLocationMockMvc
@@ -379,12 +379,12 @@ class LocationResourceIT {
     @Transactional
     void patchWithIdMismatchLocation() throws Exception {
         int databaseSizeBeforeUpdate = locationRepository.findAll().size();
-        location.setId(count.incrementAndGet());
+        location.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restLocationMockMvc
             .perform(
-                patch(ENTITY_API_URL_ID, count.incrementAndGet())
+                patch(ENTITY_API_URL_ID, longCount.incrementAndGet())
                     .with(csrf())
                     .contentType("application/merge-patch+json")
                     .content(TestUtil.convertObjectToJsonBytes(location))
@@ -400,7 +400,7 @@ class LocationResourceIT {
     @Transactional
     void patchWithMissingIdPathParamLocation() throws Exception {
         int databaseSizeBeforeUpdate = locationRepository.findAll().size();
-        location.setId(count.incrementAndGet());
+        location.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restLocationMockMvc

@@ -16,8 +16,7 @@ describe('Task Management Component', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [RouterTestingModule.withRoutes([{ path: 'task', component: TaskComponent }]), HttpClientTestingModule],
-      declarations: [TaskComponent],
+      imports: [RouterTestingModule.withRoutes([{ path: 'task', component: TaskComponent }]), HttpClientTestingModule, TaskComponent],
       providers: [
         {
           provide: ActivatedRoute,
@@ -30,7 +29,7 @@ describe('Task Management Component', () => {
                 page: '1',
                 size: '1',
                 sort: 'id,desc',
-              })
+              }),
             ),
             snapshot: { queryParams: {} },
           },
@@ -50,8 +49,8 @@ describe('Task Management Component', () => {
         new HttpResponse({
           body: [{ id: 123 }],
           headers,
-        })
-      )
+        }),
+      ),
     );
   });
 

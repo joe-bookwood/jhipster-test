@@ -5,13 +5,14 @@ import de.bitc.jhipster.repository.RegionRepository;
 import de.bitc.jhipster.service.RegionService;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.StreamSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Service Implementation for managing {@link Region}.
+ * Service Implementation for managing {@link de.bitc.jhipster.domain.Region}.
  */
 @Service
 @Transactional
@@ -58,6 +59,16 @@ public class RegionServiceImpl implements RegionService {
     public List<Region> findAll() {
         log.debug("Request to get all Regions");
         return regionRepository.findAll();
+    }
+
+    /**
+     *  Get all the regions where Country is {@code null}.
+     *  @return the list of entities.
+     */
+    @Transactional(readOnly = true)
+    public List<Region> findAllWhereCountryIsNull() {
+        log.debug("Request to get all regions where Country is null");
+        return StreamSupport.stream(regionRepository.findAll().spliterator(), false).filter(region -> region.getCountry() == null).toList();
     }
 
     @Override

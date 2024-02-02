@@ -1,7 +1,8 @@
 package de.bitc.jhipster.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.persistence.*;
 import java.io.Serializable;
-import javax.persistence.*;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -24,6 +25,10 @@ public class Region implements Serializable {
 
     @Column(name = "region_name")
     private String regionName;
+
+    @JsonIgnoreProperties(value = { "region", "location" }, allowSetters = true)
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "region")
+    private Country country;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -53,6 +58,25 @@ public class Region implements Serializable {
         this.regionName = regionName;
     }
 
+    public Country getCountry() {
+        return this.country;
+    }
+
+    public void setCountry(Country country) {
+        if (this.country != null) {
+            this.country.setRegion(null);
+        }
+        if (country != null) {
+            country.setRegion(this);
+        }
+        this.country = country;
+    }
+
+    public Region country(Country country) {
+        this.setCountry(country);
+        return this;
+    }
+
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
@@ -63,7 +87,7 @@ public class Region implements Serializable {
         if (!(o instanceof Region)) {
             return false;
         }
-        return id != null && id.equals(((Region) o).id);
+        return getId() != null && getId().equals(((Region) o).getId());
     }
 
     @Override

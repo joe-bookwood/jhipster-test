@@ -21,7 +21,7 @@ import tech.jhipster.web.util.ResponseUtil;
  * REST controller for managing {@link de.bitc.jhipster.domain.Location}.
  */
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/locations")
 public class LocationResource {
 
     private final Logger log = LoggerFactory.getLogger(LocationResource.class);
@@ -47,7 +47,7 @@ public class LocationResource {
      * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new location, or with status {@code 400 (Bad Request)} if the location has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PostMapping("/locations")
+    @PostMapping("")
     public ResponseEntity<Location> createLocation(@RequestBody Location location) throws URISyntaxException {
         log.debug("REST request to save Location : {}", location);
         if (location.getId() != null) {
@@ -70,7 +70,7 @@ public class LocationResource {
      * or with status {@code 500 (Internal Server Error)} if the location couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PutMapping("/locations/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<Location> updateLocation(
         @PathVariable(value = "id", required = false) final Long id,
         @RequestBody Location location
@@ -105,7 +105,7 @@ public class LocationResource {
      * or with status {@code 500 (Internal Server Error)} if the location couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PatchMapping(value = "/locations/{id}", consumes = { "application/json", "application/merge-patch+json" })
+    @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<Location> partialUpdateLocation(
         @PathVariable(value = "id", required = false) final Long id,
         @RequestBody Location location
@@ -133,10 +133,15 @@ public class LocationResource {
     /**
      * {@code GET  /locations} : get all the locations.
      *
+     * @param filter the filter of the request.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of locations in body.
      */
-    @GetMapping("/locations")
-    public List<Location> getAllLocations() {
+    @GetMapping("")
+    public List<Location> getAllLocations(@RequestParam(required = false) String filter) {
+        if ("department-is-null".equals(filter)) {
+            log.debug("REST request to get all Locations where department is null");
+            return locationService.findAllWhereDepartmentIsNull();
+        }
         log.debug("REST request to get all Locations");
         return locationService.findAll();
     }
@@ -147,7 +152,7 @@ public class LocationResource {
      * @param id the id of the location to retrieve.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the location, or with status {@code 404 (Not Found)}.
      */
-    @GetMapping("/locations/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<Location> getLocation(@PathVariable Long id) {
         log.debug("REST request to get Location : {}", id);
         Optional<Location> location = locationService.findOne(id);
@@ -160,7 +165,7 @@ public class LocationResource {
      * @param id the id of the location to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
-    @DeleteMapping("/locations/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteLocation(@PathVariable Long id) {
         log.debug("REST request to delete Location : {}", id);
         locationService.delete(id);

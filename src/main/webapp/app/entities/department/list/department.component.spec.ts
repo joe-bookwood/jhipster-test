@@ -16,8 +16,11 @@ describe('Department Management Component', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [RouterTestingModule.withRoutes([{ path: 'department', component: DepartmentComponent }]), HttpClientTestingModule],
-      declarations: [DepartmentComponent],
+      imports: [
+        RouterTestingModule.withRoutes([{ path: 'department', component: DepartmentComponent }]),
+        HttpClientTestingModule,
+        DepartmentComponent,
+      ],
       providers: [
         {
           provide: ActivatedRoute,
@@ -30,7 +33,7 @@ describe('Department Management Component', () => {
                 page: '1',
                 size: '1',
                 sort: 'id,desc',
-              })
+              }),
             ),
             snapshot: { queryParams: {} },
           },
@@ -50,8 +53,8 @@ describe('Department Management Component', () => {
         new HttpResponse({
           body: [{ id: 123 }],
           headers,
-        })
-      )
+        }),
+      ),
     );
   });
 

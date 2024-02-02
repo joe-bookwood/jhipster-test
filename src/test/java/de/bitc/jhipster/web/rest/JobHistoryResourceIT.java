@@ -10,12 +10,12 @@ import de.bitc.jhipster.IntegrationTest;
 import de.bitc.jhipster.domain.JobHistory;
 import de.bitc.jhipster.domain.enumeration.Language;
 import de.bitc.jhipster.repository.JobHistoryRepository;
+import jakarta.persistence.EntityManager;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
-import javax.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +46,7 @@ class JobHistoryResourceIT {
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
 
     private static Random random = new Random();
-    private static AtomicLong count = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
+    private static AtomicLong longCount = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
 
     @Autowired
     private JobHistoryRepository jobHistoryRepository;
@@ -182,7 +182,7 @@ class JobHistoryResourceIT {
         int databaseSizeBeforeUpdate = jobHistoryRepository.findAll().size();
 
         // Update the jobHistory
-        JobHistory updatedJobHistory = jobHistoryRepository.findById(jobHistory.getId()).get();
+        JobHistory updatedJobHistory = jobHistoryRepository.findById(jobHistory.getId()).orElseThrow();
         // Disconnect from session so that the updates on updatedJobHistory are not directly saved in db
         em.detach(updatedJobHistory);
         updatedJobHistory.startDate(UPDATED_START_DATE).endDate(UPDATED_END_DATE).language(UPDATED_LANGUAGE);
@@ -209,7 +209,7 @@ class JobHistoryResourceIT {
     @Transactional
     void putNonExistingJobHistory() throws Exception {
         int databaseSizeBeforeUpdate = jobHistoryRepository.findAll().size();
-        jobHistory.setId(count.incrementAndGet());
+        jobHistory.setId(longCount.incrementAndGet());
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restJobHistoryMockMvc
@@ -230,12 +230,12 @@ class JobHistoryResourceIT {
     @Transactional
     void putWithIdMismatchJobHistory() throws Exception {
         int databaseSizeBeforeUpdate = jobHistoryRepository.findAll().size();
-        jobHistory.setId(count.incrementAndGet());
+        jobHistory.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restJobHistoryMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, count.incrementAndGet())
+                put(ENTITY_API_URL_ID, longCount.incrementAndGet())
                     .with(csrf())
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(TestUtil.convertObjectToJsonBytes(jobHistory))
@@ -251,7 +251,7 @@ class JobHistoryResourceIT {
     @Transactional
     void putWithMissingIdPathParamJobHistory() throws Exception {
         int databaseSizeBeforeUpdate = jobHistoryRepository.findAll().size();
-        jobHistory.setId(count.incrementAndGet());
+        jobHistory.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restJobHistoryMockMvc
@@ -280,6 +280,8 @@ class JobHistoryResourceIT {
         JobHistory partialUpdatedJobHistory = new JobHistory();
         partialUpdatedJobHistory.setId(jobHistory.getId());
 
+        partialUpdatedJobHistory.startDate(UPDATED_START_DATE).endDate(UPDATED_END_DATE);
+
         restJobHistoryMockMvc
             .perform(
                 patch(ENTITY_API_URL_ID, partialUpdatedJobHistory.getId())
@@ -293,8 +295,8 @@ class JobHistoryResourceIT {
         List<JobHistory> jobHistoryList = jobHistoryRepository.findAll();
         assertThat(jobHistoryList).hasSize(databaseSizeBeforeUpdate);
         JobHistory testJobHistory = jobHistoryList.get(jobHistoryList.size() - 1);
-        assertThat(testJobHistory.getStartDate()).isEqualTo(DEFAULT_START_DATE);
-        assertThat(testJobHistory.getEndDate()).isEqualTo(DEFAULT_END_DATE);
+        assertThat(testJobHistory.getStartDate()).isEqualTo(UPDATED_START_DATE);
+        assertThat(testJobHistory.getEndDate()).isEqualTo(UPDATED_END_DATE);
         assertThat(testJobHistory.getLanguage()).isEqualTo(DEFAULT_LANGUAGE);
     }
 
@@ -334,7 +336,7 @@ class JobHistoryResourceIT {
     @Transactional
     void patchNonExistingJobHistory() throws Exception {
         int databaseSizeBeforeUpdate = jobHistoryRepository.findAll().size();
-        jobHistory.setId(count.incrementAndGet());
+        jobHistory.setId(longCount.incrementAndGet());
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restJobHistoryMockMvc
@@ -355,12 +357,12 @@ class JobHistoryResourceIT {
     @Transactional
     void patchWithIdMismatchJobHistory() throws Exception {
         int databaseSizeBeforeUpdate = jobHistoryRepository.findAll().size();
-        jobHistory.setId(count.incrementAndGet());
+        jobHistory.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restJobHistoryMockMvc
             .perform(
-                patch(ENTITY_API_URL_ID, count.incrementAndGet())
+                patch(ENTITY_API_URL_ID, longCount.incrementAndGet())
                     .with(csrf())
                     .contentType("application/merge-patch+json")
                     .content(TestUtil.convertObjectToJsonBytes(jobHistory))
@@ -376,7 +378,7 @@ class JobHistoryResourceIT {
     @Transactional
     void patchWithMissingIdPathParamJobHistory() throws Exception {
         int databaseSizeBeforeUpdate = jobHistoryRepository.findAll().size();
-        jobHistory.setId(count.incrementAndGet());
+        jobHistory.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restJobHistoryMockMvc

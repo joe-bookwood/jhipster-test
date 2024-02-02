@@ -1,14 +1,15 @@
 {
   "applications": ["jhipsterTest"],
   "changelogDate": "20220806103949",
+  "documentation": "The Employee entity.",
   "dto": "no",
   "embedded": false,
   "entityTableName": "employee",
   "fields": [
     {
+      "documentation": "The firstname attribute.",
       "fieldName": "firstName",
-      "fieldType": "String",
-      "javadoc": "The firstname attribute."
+      "fieldType": "String"
     },
     {
       "fieldName": "lastName",
@@ -46,20 +47,24 @@
       "otherEntityName": "job",
       "otherEntityRelationshipName": "employee",
       "relationshipName": "job",
+      "relationshipSide": "left",
       "relationshipType": "one-to-many"
     },
     {
       "otherEntityName": "employee",
       "relationshipName": "manager",
+      "relationshipSide": "left",
       "relationshipType": "many-to-one"
     },
     {
-      "javadoc": "Another side of the same relationship",
+      "documentation": "Another side of the same relationship",
       "otherEntityName": "department",
       "otherEntityRelationshipName": "employee",
       "relationshipName": "department",
+      "relationshipSide": "right",
       "relationshipType": "many-to-one"
     }
   ],
+  "searchEngine": "no",
   "service": "no"
 }

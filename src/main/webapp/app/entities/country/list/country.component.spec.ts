@@ -16,8 +16,11 @@ describe('Country Management Component', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [RouterTestingModule.withRoutes([{ path: 'country', component: CountryComponent }]), HttpClientTestingModule],
-      declarations: [CountryComponent],
+      imports: [
+        RouterTestingModule.withRoutes([{ path: 'country', component: CountryComponent }]),
+        HttpClientTestingModule,
+        CountryComponent,
+      ],
       providers: [
         {
           provide: ActivatedRoute,
@@ -30,7 +33,7 @@ describe('Country Management Component', () => {
                 page: '1',
                 size: '1',
                 sort: 'id,desc',
-              })
+              }),
             ),
             snapshot: { queryParams: {} },
           },
@@ -50,8 +53,8 @@ describe('Country Management Component', () => {
         new HttpResponse({
           body: [{ id: 123 }],
           headers,
-        })
-      )
+        }),
+      ),
     );
   });
 

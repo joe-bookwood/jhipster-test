@@ -20,8 +20,10 @@
       "otherEntityName": "region",
       "ownerSide": true,
       "relationshipName": "region",
+      "relationshipSide": "left",
       "relationshipType": "one-to-one"
     }
   ],
+  "searchEngine": "no",
   "service": "serviceImpl"
 }

@@ -21,15 +21,18 @@
       "otherEntityName": "location",
       "ownerSide": true,
       "relationshipName": "location",
+      "relationshipSide": "left",
       "relationshipType": "one-to-one"
     },
     {
-      "javadoc": "A relationship",
+      "documentation": "A relationship",
       "otherEntityName": "employee",
       "otherEntityRelationshipName": "department",
       "relationshipName": "employee",
+      "relationshipSide": "left",
       "relationshipType": "one-to-many"
     }
   ],
+  "searchEngine": "no",
   "service": "serviceImpl"
 }

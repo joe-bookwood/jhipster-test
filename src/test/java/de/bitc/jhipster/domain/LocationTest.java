@@ -1,5 +1,8 @@
 package de.bitc.jhipster.domain;
 
+import static de.bitc.jhipster.domain.CountryTestSamples.*;
+import static de.bitc.jhipster.domain.DepartmentTestSamples.*;
+import static de.bitc.jhipster.domain.LocationTestSamples.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import de.bitc.jhipster.web.rest.TestUtil;
@@ -10,14 +13,40 @@ class LocationTest {
     @Test
     void equalsVerifier() throws Exception {
         TestUtil.equalsVerifier(Location.class);
-        Location location1 = new Location();
-        location1.setId(1L);
+        Location location1 = getLocationSample1();
         Location location2 = new Location();
+        assertThat(location1).isNotEqualTo(location2);
+
         location2.setId(location1.getId());
         assertThat(location1).isEqualTo(location2);
-        location2.setId(2L);
+
+        location2 = getLocationSample2();
         assertThat(location1).isNotEqualTo(location2);
-        location1.setId(null);
-        assertThat(location1).isNotEqualTo(location2);
+    }
+
+    @Test
+    void countryTest() throws Exception {
+        Location location = getLocationRandomSampleGenerator();
+        Country countryBack = getCountryRandomSampleGenerator();
+
+        location.setCountry(countryBack);
+        assertThat(location.getCountry()).isEqualTo(countryBack);
+
+        location.country(null);
+        assertThat(location.getCountry()).isNull();
+    }
+
+    @Test
+    void departmentTest() throws Exception {
+        Location location = getLocationRandomSampleGenerator();
+        Department departmentBack = getDepartmentRandomSampleGenerator();
+
+        location.setDepartment(departmentBack);
+        assertThat(location.getDepartment()).isEqualTo(departmentBack);
+        assertThat(departmentBack.getLocation()).isEqualTo(location);
+
+        location.department(null);
+        assertThat(location.getDepartment()).isNull();
+        assertThat(departmentBack.getLocation()).isNull();
     }
 }

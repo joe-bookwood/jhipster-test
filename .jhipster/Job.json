@@ -30,14 +30,17 @@
       "otherEntityRelationshipName": "job",
       "ownerSide": true,
       "relationshipName": "task",
+      "relationshipSide": "left",
       "relationshipType": "many-to-many"
     },
     {
       "otherEntityName": "employee",
       "otherEntityRelationshipName": "job",
       "relationshipName": "employee",
+      "relationshipSide": "right",
       "relationshipType": "many-to-one"
     }
   ],
+  "searchEngine": "no",
   "service": "no"
 }

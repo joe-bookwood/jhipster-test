@@ -1,5 +1,7 @@
 package de.bitc.jhipster.domain;
 
+import static de.bitc.jhipster.domain.CountryTestSamples.*;
+import static de.bitc.jhipster.domain.RegionTestSamples.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import de.bitc.jhipster.web.rest.TestUtil;
@@ -10,14 +12,28 @@ class RegionTest {
     @Test
     void equalsVerifier() throws Exception {
         TestUtil.equalsVerifier(Region.class);
-        Region region1 = new Region();
-        region1.setId(1L);
+        Region region1 = getRegionSample1();
         Region region2 = new Region();
+        assertThat(region1).isNotEqualTo(region2);
+
         region2.setId(region1.getId());
         assertThat(region1).isEqualTo(region2);
-        region2.setId(2L);
+
+        region2 = getRegionSample2();
         assertThat(region1).isNotEqualTo(region2);
-        region1.setId(null);
-        assertThat(region1).isNotEqualTo(region2);
+    }
+
+    @Test
+    void countryTest() throws Exception {
+        Region region = getRegionRandomSampleGenerator();
+        Country countryBack = getCountryRandomSampleGenerator();
+
+        region.setCountry(countryBack);
+        assertThat(region.getCountry()).isEqualTo(countryBack);
+        assertThat(countryBack.getRegion()).isEqualTo(region);
+
+        region.country(null);
+        assertThat(region.getCountry()).isNull();
+        assertThat(countryBack.getRegion()).isNull();
     }
 }

@@ -1,20 +1,37 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpHeaders } from '@angular/common/http';
-import { ActivatedRoute, Data, ParamMap, Router } from '@angular/router';
+import { ActivatedRoute, Data, ParamMap, Router, RouterModule } from '@angular/router';
 import { combineLatest, filter, Observable, switchMap, tap } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { IJobHistory } from '../job-history.model';
+import SharedModule from 'app/shared/shared.module';
+import { SortDirective, SortByDirective } from 'app/shared/sort';
+import { DurationPipe, FormatMediumDatetimePipe, FormatMediumDatePipe } from 'app/shared/date';
+import { FormsModule } from '@angular/forms';
 
 import { ITEMS_PER_PAGE } from 'app/config/pagination.constants';
 import { ASC, DESC, SORT, ITEM_DELETED_EVENT, DEFAULT_SORT_DATA } from 'app/config/navigation.constants';
+import { ParseLinks } from 'app/core/util/parse-links.service';
+import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { EntityArrayResponseType, JobHistoryService } from '../service/job-history.service';
 import { JobHistoryDeleteDialogComponent } from '../delete/job-history-delete-dialog.component';
-import { ParseLinks } from 'app/core/util/parse-links.service';
+import { IJobHistory } from '../job-history.model';
 
 @Component({
+  standalone: true,
   selector: 'jhi-job-history',
   templateUrl: './job-history.component.html',
+  imports: [
+    RouterModule,
+    FormsModule,
+    SharedModule,
+    SortDirective,
+    SortByDirective,
+    DurationPipe,
+    FormatMediumDatetimePipe,
+    FormatMediumDatePipe,
+    InfiniteScrollModule,
+  ],
 })
 export class JobHistoryComponent implements OnInit {
   jobHistories?: IJobHistory[];
@@ -34,7 +51,7 @@ export class JobHistoryComponent implements OnInit {
     protected activatedRoute: ActivatedRoute,
     public router: Router,
     protected parseLinks: ParseLinks,
-    protected modalService: NgbModal
+    protected modalService: NgbModal,
   ) {}
 
   reset(): void {
@@ -61,7 +78,7 @@ export class JobHistoryComponent implements OnInit {
     modalRef.closed
       .pipe(
         filter(reason => reason === ITEM_DELETED_EVENT),
-        switchMap(() => this.loadFromBackendWithRouteInformations())
+        switchMap(() => this.loadFromBackendWithRouteInformations()),
       )
       .subscribe({
         next: (res: EntityArrayResponseType) => {
@@ -89,7 +106,7 @@ export class JobHistoryComponent implements OnInit {
   protected loadFromBackendWithRouteInformations(): Observable<EntityArrayResponseType> {
     return combineLatest([this.activatedRoute.queryParamMap, this.activatedRoute.data]).pipe(
       tap(([params, data]) => this.fillComponentAttributeFromRoute(params, data)),
-      switchMap(() => this.queryBackend(this.page, this.predicate, this.ascending))
+      switchMap(() => this.queryBackend(this.page, this.predicate, this.ascending)),
     );
   }
 
@@ -106,15 +123,19 @@ export class JobHistoryComponent implements OnInit {
   }
 
   protected fillComponentAttributesFromResponseBody(data: IJobHistory[] | null): IJobHistory[] {
-    const jobHistoriesNew = this.jobHistories ?? [];
-    if (data) {
-      for (const d of data) {
-        if (jobHistoriesNew.map(op => op.id).indexOf(d.id) === -1) {
-          jobHistoriesNew.push(d);
+    // If there is previus link, data is a infinite scroll pagination content.
+    if ('prev' in this.links) {
+      const jobHistoriesNew = this.jobHistories ?? [];
+      if (data) {
+        for (const d of data) {
+          if (jobHistoriesNew.map(op => op.id).indexOf(d.id) === -1) {
+            jobHistoriesNew.push(d);
+          }
         }
       }
+      return jobHistoriesNew;
     }
-    return jobHistoriesNew;
+    return data ?? [];
   }
 
   protected fillComponentAttributesFromResponseHeader(headers: HttpHeaders): void {
@@ -131,7 +152,7 @@ export class JobHistoryComponent implements OnInit {
   protected queryBackend(page?: number, predicate?: string, ascending?: boolean): Observable<EntityArrayResponseType> {
     this.isLoading = true;
     const pageToLoad: number = page ?? 1;
-    const queryObject = {
+    const queryObject: any = {
       page: pageToLoad - 1,
       size: this.itemsPerPage,
       sort: this.getSortQueryParam(predicate, ascending),

@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Service Interface for managing {@link Task}.
+ * Service Interface for managing {@link de.bitc.jhipster.domain.Task}.
  */
 public interface TaskService {
     /**

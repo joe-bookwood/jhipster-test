@@ -16,8 +16,11 @@ describe('Location Management Component', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [RouterTestingModule.withRoutes([{ path: 'location', component: LocationComponent }]), HttpClientTestingModule],
-      declarations: [LocationComponent],
+      imports: [
+        RouterTestingModule.withRoutes([{ path: 'location', component: LocationComponent }]),
+        HttpClientTestingModule,
+        LocationComponent,
+      ],
       providers: [
         {
           provide: ActivatedRoute,
@@ -30,7 +33,7 @@ describe('Location Management Component', () => {
                 page: '1',
                 size: '1',
                 sort: 'id,desc',
-              })
+              }),
             ),
             snapshot: { queryParams: {} },
           },
@@ -50,8 +53,8 @@ describe('Location Management Component', () => {
         new HttpResponse({
           body: [{ id: 123 }],
           headers,
-        })
-      )
+        }),
+      ),
     );
   });
 
