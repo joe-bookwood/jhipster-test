@@ -41,7 +41,6 @@ describe('Department Form Service', () => {
 
     describe('getDepartment', () => {
       it('should return NewDepartment for default Department initial value', () => {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const formGroup = service.createDepartmentFormGroup(sampleWithNewData);
 
         const department = service.getDepartment(formGroup) as any;

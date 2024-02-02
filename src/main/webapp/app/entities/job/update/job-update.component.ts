@@ -4,6 +4,9 @@ import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { finalize, map } from 'rxjs/operators';
 
+import SharedModule from 'app/shared/shared.module';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+
 import { ITask } from 'app/entities/task/task.model';
 import { TaskService } from 'app/entities/task/service/task.service';
 import { IEmployee } from 'app/entities/employee/employee.model';
@@ -13,8 +16,10 @@ import { IJob } from '../job.model';
 import { JobFormService, JobFormGroup } from './job-form.service';
 
 @Component({
+  standalone: true,
   selector: 'jhi-job-update',
   templateUrl: './job-update.component.html',
+  imports: [SharedModule, FormsModule, ReactiveFormsModule],
 })
 export class JobUpdateComponent implements OnInit {
   isSaving = false;

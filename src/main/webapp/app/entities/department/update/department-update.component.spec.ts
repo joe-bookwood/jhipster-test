@@ -24,8 +24,7 @@ describe('Department Management Update Component', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, RouterTestingModule.withRoutes([])],
-      declarations: [DepartmentUpdateComponent],
+      imports: [HttpClientTestingModule, RouterTestingModule.withRoutes([]), DepartmentUpdateComponent],
       providers: [
         FormBuilder,
         {
@@ -49,37 +48,33 @@ describe('Department Management Update Component', () => {
   });
 
   describe('ngOnInit', () => {
-    it('Should call Location query and add missing value', () => {
+    it('Should call location query and add missing value', () => {
       const department: IDepartment = { id: 456 };
-      const location: ILocation = { id: 16862 };
+      const location: ILocation = { id: 4686 };
       department.location = location;
 
-      const locationCollection: ILocation[] = [{ id: 88431 }];
+      const locationCollection: ILocation[] = [{ id: 11418 }];
       jest.spyOn(locationService, 'query').mockReturnValue(of(new HttpResponse({ body: locationCollection })));
-      const additionalLocations = [location];
-      const expectedCollection: ILocation[] = [...additionalLocations, ...locationCollection];
+      const expectedCollection: ILocation[] = [location, ...locationCollection];
       jest.spyOn(locationService, 'addLocationToCollectionIfMissing').mockReturnValue(expectedCollection);
 
       activatedRoute.data = of({ department });
       comp.ngOnInit();
 
       expect(locationService.query).toHaveBeenCalled();
-      expect(locationService.addLocationToCollectionIfMissing).toHaveBeenCalledWith(
-        locationCollection,
-        ...additionalLocations.map(expect.objectContaining),
-      );
-      expect(comp.locationsSharedCollection).toEqual(expectedCollection);
+      expect(locationService.addLocationToCollectionIfMissing).toHaveBeenCalledWith(locationCollection, location);
+      expect(comp.locationsCollection).toEqual(expectedCollection);
     });
 
     it('Should update editForm', () => {
       const department: IDepartment = { id: 456 };
-      const location: ILocation = { id: 56466 };
+      const location: ILocation = { id: 21786 };
       department.location = location;
 
       activatedRoute.data = of({ department });
       comp.ngOnInit();
 
-      expect(comp.locationsSharedCollection).toContain(location);
+      expect(comp.locationsCollection).toContain(location);
       expect(comp.department).toEqual(department);
     });
   });

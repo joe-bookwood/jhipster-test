@@ -1,6 +1,7 @@
 {
   "applications": ["jhipsterTest"],
   "changelogDate": "20220806103849",
+  "documentation": "Task entity.\\n@author The JHipster team.",
   "dto": "no",
   "embedded": false,
   "entityTableName": "task",
@@ -26,8 +27,10 @@
       "otherEntityRelationshipName": "task",
       "ownerSide": false,
       "relationshipName": "job",
+      "relationshipSide": "right",
       "relationshipType": "many-to-many"
     }
   ],
+  "searchEngine": "no",
   "service": "serviceImpl"
 }

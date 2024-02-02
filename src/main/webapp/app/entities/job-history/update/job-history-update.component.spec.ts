@@ -30,8 +30,7 @@ describe('JobHistory Management Update Component', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, RouterTestingModule.withRoutes([])],
-      declarations: [JobHistoryUpdateComponent],
+      imports: [HttpClientTestingModule, RouterTestingModule.withRoutes([]), JobHistoryUpdateComponent],
       providers: [
         FormBuilder,
         {
@@ -57,84 +56,75 @@ describe('JobHistory Management Update Component', () => {
   });
 
   describe('ngOnInit', () => {
-    it('Should call Job query and add missing value', () => {
+    it('Should call job query and add missing value', () => {
       const jobHistory: IJobHistory = { id: 456 };
-      const job: IJob = { id: 42770 };
+      const job: IJob = { id: 16162 };
       jobHistory.job = job;
 
-      const jobCollection: IJob[] = [{ id: 75633 }];
+      const jobCollection: IJob[] = [{ id: 15055 }];
       jest.spyOn(jobService, 'query').mockReturnValue(of(new HttpResponse({ body: jobCollection })));
-      const additionalJobs = [job];
-      const expectedCollection: IJob[] = [...additionalJobs, ...jobCollection];
+      const expectedCollection: IJob[] = [job, ...jobCollection];
       jest.spyOn(jobService, 'addJobToCollectionIfMissing').mockReturnValue(expectedCollection);
 
       activatedRoute.data = of({ jobHistory });
       comp.ngOnInit();
 
       expect(jobService.query).toHaveBeenCalled();
-      expect(jobService.addJobToCollectionIfMissing).toHaveBeenCalledWith(jobCollection, ...additionalJobs.map(expect.objectContaining));
-      expect(comp.jobsSharedCollection).toEqual(expectedCollection);
+      expect(jobService.addJobToCollectionIfMissing).toHaveBeenCalledWith(jobCollection, job);
+      expect(comp.jobsCollection).toEqual(expectedCollection);
     });
 
-    it('Should call Department query and add missing value', () => {
+    it('Should call department query and add missing value', () => {
       const jobHistory: IJobHistory = { id: 456 };
-      const department: IDepartment = { id: 6911 };
+      const department: IDepartment = { id: 7647 };
       jobHistory.department = department;
 
-      const departmentCollection: IDepartment[] = [{ id: 12924 }];
+      const departmentCollection: IDepartment[] = [{ id: 28480 }];
       jest.spyOn(departmentService, 'query').mockReturnValue(of(new HttpResponse({ body: departmentCollection })));
-      const additionalDepartments = [department];
-      const expectedCollection: IDepartment[] = [...additionalDepartments, ...departmentCollection];
+      const expectedCollection: IDepartment[] = [department, ...departmentCollection];
       jest.spyOn(departmentService, 'addDepartmentToCollectionIfMissing').mockReturnValue(expectedCollection);
 
       activatedRoute.data = of({ jobHistory });
       comp.ngOnInit();
 
       expect(departmentService.query).toHaveBeenCalled();
-      expect(departmentService.addDepartmentToCollectionIfMissing).toHaveBeenCalledWith(
-        departmentCollection,
-        ...additionalDepartments.map(expect.objectContaining),
-      );
-      expect(comp.departmentsSharedCollection).toEqual(expectedCollection);
+      expect(departmentService.addDepartmentToCollectionIfMissing).toHaveBeenCalledWith(departmentCollection, department);
+      expect(comp.departmentsCollection).toEqual(expectedCollection);
     });
 
-    it('Should call Employee query and add missing value', () => {
+    it('Should call employee query and add missing value', () => {
       const jobHistory: IJobHistory = { id: 456 };
-      const employee: IEmployee = { id: 94649 };
+      const employee: IEmployee = { id: 31306 };
       jobHistory.employee = employee;
 
-      const employeeCollection: IEmployee[] = [{ id: 89297 }];
+      const employeeCollection: IEmployee[] = [{ id: 17122 }];
       jest.spyOn(employeeService, 'query').mockReturnValue(of(new HttpResponse({ body: employeeCollection })));
-      const additionalEmployees = [employee];
-      const expectedCollection: IEmployee[] = [...additionalEmployees, ...employeeCollection];
+      const expectedCollection: IEmployee[] = [employee, ...employeeCollection];
       jest.spyOn(employeeService, 'addEmployeeToCollectionIfMissing').mockReturnValue(expectedCollection);
 
       activatedRoute.data = of({ jobHistory });
       comp.ngOnInit();
 
       expect(employeeService.query).toHaveBeenCalled();
-      expect(employeeService.addEmployeeToCollectionIfMissing).toHaveBeenCalledWith(
-        employeeCollection,
-        ...additionalEmployees.map(expect.objectContaining),
-      );
-      expect(comp.employeesSharedCollection).toEqual(expectedCollection);
+      expect(employeeService.addEmployeeToCollectionIfMissing).toHaveBeenCalledWith(employeeCollection, employee);
+      expect(comp.employeesCollection).toEqual(expectedCollection);
     });
 
     it('Should update editForm', () => {
       const jobHistory: IJobHistory = { id: 456 };
-      const job: IJob = { id: 96728 };
+      const job: IJob = { id: 26176 };
       jobHistory.job = job;
-      const department: IDepartment = { id: 42374 };
+      const department: IDepartment = { id: 32240 };
       jobHistory.department = department;
-      const employee: IEmployee = { id: 88001 };
+      const employee: IEmployee = { id: 17618 };
       jobHistory.employee = employee;
 
       activatedRoute.data = of({ jobHistory });
       comp.ngOnInit();
 
-      expect(comp.jobsSharedCollection).toContain(job);
-      expect(comp.departmentsSharedCollection).toContain(department);
-      expect(comp.employeesSharedCollection).toContain(employee);
+      expect(comp.jobsCollection).toContain(job);
+      expect(comp.departmentsCollection).toContain(department);
+      expect(comp.employeesCollection).toContain(employee);
       expect(comp.jobHistory).toEqual(jobHistory);
     });
   });

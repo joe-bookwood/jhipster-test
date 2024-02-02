@@ -39,7 +39,6 @@ describe('Region Form Service', () => {
 
     describe('getRegion', () => {
       it('should return NewRegion for default Region initial value', () => {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const formGroup = service.createRegionFormGroup(sampleWithNewData);
 
         const region = service.getRegion(formGroup) as any;

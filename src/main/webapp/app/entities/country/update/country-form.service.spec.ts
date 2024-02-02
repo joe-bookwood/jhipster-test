@@ -41,7 +41,6 @@ describe('Country Form Service', () => {
 
     describe('getCountry', () => {
       it('should return NewCountry for default Country initial value', () => {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const formGroup = service.createCountryFormGroup(sampleWithNewData);
 
         const country = service.getCountry(formGroup) as any;

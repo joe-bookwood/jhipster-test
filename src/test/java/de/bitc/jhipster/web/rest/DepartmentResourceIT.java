@@ -9,10 +9,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import de.bitc.jhipster.IntegrationTest;
 import de.bitc.jhipster.domain.Department;
 import de.bitc.jhipster.repository.DepartmentRepository;
+import jakarta.persistence.EntityManager;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
-import javax.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +37,7 @@ class DepartmentResourceIT {
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
 
     private static Random random = new Random();
-    private static AtomicLong count = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
+    private static AtomicLong longCount = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
 
     @Autowired
     private DepartmentRepository departmentRepository;
@@ -189,7 +189,7 @@ class DepartmentResourceIT {
         int databaseSizeBeforeUpdate = departmentRepository.findAll().size();
 
         // Update the department
-        Department updatedDepartment = departmentRepository.findById(department.getId()).get();
+        Department updatedDepartment = departmentRepository.findById(department.getId()).orElseThrow();
         // Disconnect from session so that the updates on updatedDepartment are not directly saved in db
         em.detach(updatedDepartment);
         updatedDepartment.departmentName(UPDATED_DEPARTMENT_NAME);
@@ -214,7 +214,7 @@ class DepartmentResourceIT {
     @Transactional
     void putNonExistingDepartment() throws Exception {
         int databaseSizeBeforeUpdate = departmentRepository.findAll().size();
-        department.setId(count.incrementAndGet());
+        department.setId(longCount.incrementAndGet());
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restDepartmentMockMvc
@@ -235,12 +235,12 @@ class DepartmentResourceIT {
     @Transactional
     void putWithIdMismatchDepartment() throws Exception {
         int databaseSizeBeforeUpdate = departmentRepository.findAll().size();
-        department.setId(count.incrementAndGet());
+        department.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restDepartmentMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, count.incrementAndGet())
+                put(ENTITY_API_URL_ID, longCount.incrementAndGet())
                     .with(csrf())
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(TestUtil.convertObjectToJsonBytes(department))
@@ -256,7 +256,7 @@ class DepartmentResourceIT {
     @Transactional
     void putWithMissingIdPathParamDepartment() throws Exception {
         int databaseSizeBeforeUpdate = departmentRepository.findAll().size();
-        department.setId(count.incrementAndGet());
+        department.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restDepartmentMockMvc
@@ -335,7 +335,7 @@ class DepartmentResourceIT {
     @Transactional
     void patchNonExistingDepartment() throws Exception {
         int databaseSizeBeforeUpdate = departmentRepository.findAll().size();
-        department.setId(count.incrementAndGet());
+        department.setId(longCount.incrementAndGet());
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restDepartmentMockMvc
@@ -356,12 +356,12 @@ class DepartmentResourceIT {
     @Transactional
     void patchWithIdMismatchDepartment() throws Exception {
         int databaseSizeBeforeUpdate = departmentRepository.findAll().size();
-        department.setId(count.incrementAndGet());
+        department.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restDepartmentMockMvc
             .perform(
-                patch(ENTITY_API_URL_ID, count.incrementAndGet())
+                patch(ENTITY_API_URL_ID, longCount.incrementAndGet())
                     .with(csrf())
                     .contentType("application/merge-patch+json")
                     .content(TestUtil.convertObjectToJsonBytes(department))
@@ -377,7 +377,7 @@ class DepartmentResourceIT {
     @Transactional
     void patchWithMissingIdPathParamDepartment() throws Exception {
         int databaseSizeBeforeUpdate = departmentRepository.findAll().size();
-        department.setId(count.incrementAndGet());
+        department.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restDepartmentMockMvc

@@ -47,7 +47,6 @@ describe('Location Form Service', () => {
 
     describe('getLocation', () => {
       it('should return NewLocation for default Location initial value', () => {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const formGroup = service.createLocationFormGroup(sampleWithNewData);
 
         const location = service.getLocation(formGroup) as any;
