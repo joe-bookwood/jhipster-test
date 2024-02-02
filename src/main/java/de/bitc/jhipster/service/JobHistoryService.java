@@ -6,7 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 /**
- * Service Interface for managing {@link JobHistory}.
+ * Service Interface for managing {@link de.bitc.jhipster.domain.JobHistory}.
  */
 public interface JobHistoryService {
     /**

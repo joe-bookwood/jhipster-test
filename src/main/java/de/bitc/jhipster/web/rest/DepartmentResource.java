@@ -4,13 +4,13 @@ import de.bitc.jhipster.domain.Department;
 import de.bitc.jhipster.repository.DepartmentRepository;
 import de.bitc.jhipster.service.DepartmentService;
 import de.bitc.jhipster.web.rest.errors.BadRequestAlertException;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,7 +23,7 @@ import tech.jhipster.web.util.ResponseUtil;
  * REST controller for managing {@link de.bitc.jhipster.domain.Department}.
  */
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/departments")
 public class DepartmentResource {
 
     private final Logger log = LoggerFactory.getLogger(DepartmentResource.class);
@@ -49,7 +49,7 @@ public class DepartmentResource {
      * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new department, or with status {@code 400 (Bad Request)} if the department has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PostMapping("/departments")
+    @PostMapping("")
     public ResponseEntity<Department> createDepartment(@Valid @RequestBody Department department) throws URISyntaxException {
         log.debug("REST request to save Department : {}", department);
         if (department.getId() != null) {
@@ -72,7 +72,7 @@ public class DepartmentResource {
      * or with status {@code 500 (Internal Server Error)} if the department couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PutMapping("/departments/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<Department> updateDepartment(
         @PathVariable(value = "id", required = false) final Long id,
         @Valid @RequestBody Department department
@@ -107,7 +107,7 @@ public class DepartmentResource {
      * or with status {@code 500 (Internal Server Error)} if the department couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PatchMapping(value = "/departments/{id}", consumes = { "application/json", "application/merge-patch+json" })
+    @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<Department> partialUpdateDepartment(
         @PathVariable(value = "id", required = false) final Long id,
         @NotNull @RequestBody Department department
@@ -135,10 +135,15 @@ public class DepartmentResource {
     /**
      * {@code GET  /departments} : get all the departments.
      *
+     * @param filter the filter of the request.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of departments in body.
      */
-    @GetMapping("/departments")
-    public List<Department> getAllDepartments() {
+    @GetMapping("")
+    public List<Department> getAllDepartments(@RequestParam(required = false) String filter) {
+        if ("jobhistory-is-null".equals(filter)) {
+            log.debug("REST request to get all Departments where jobHistory is null");
+            return departmentService.findAllWhereJobHistoryIsNull();
+        }
         log.debug("REST request to get all Departments");
         return departmentService.findAll();
     }
@@ -149,7 +154,7 @@ public class DepartmentResource {
      * @param id the id of the department to retrieve.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the department, or with status {@code 404 (Not Found)}.
      */
-    @GetMapping("/departments/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<Department> getDepartment(@PathVariable Long id) {
         log.debug("REST request to get Department : {}", id);
         Optional<Department> department = departmentService.findOne(id);
@@ -162,7 +167,7 @@ public class DepartmentResource {
      * @param id the id of the department to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
-    @DeleteMapping("/departments/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteDepartment(@PathVariable Long id) {
         log.debug("REST request to delete Department : {}", id);
         departmentService.delete(id);

@@ -9,12 +9,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import de.bitc.jhipster.IntegrationTest;
 import de.bitc.jhipster.domain.Employee;
 import de.bitc.jhipster.repository.EmployeeRepository;
+import jakarta.persistence.EntityManager;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
-import javax.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,7 +57,7 @@ class EmployeeResourceIT {
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
 
     private static Random random = new Random();
-    private static AtomicLong count = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
+    private static AtomicLong longCount = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
 
     @Autowired
     private EmployeeRepository employeeRepository;
@@ -219,7 +219,7 @@ class EmployeeResourceIT {
         int databaseSizeBeforeUpdate = employeeRepository.findAll().size();
 
         // Update the employee
-        Employee updatedEmployee = employeeRepository.findById(employee.getId()).get();
+        Employee updatedEmployee = employeeRepository.findById(employee.getId()).orElseThrow();
         // Disconnect from session so that the updates on updatedEmployee are not directly saved in db
         em.detach(updatedEmployee);
         updatedEmployee
@@ -257,7 +257,7 @@ class EmployeeResourceIT {
     @Transactional
     void putNonExistingEmployee() throws Exception {
         int databaseSizeBeforeUpdate = employeeRepository.findAll().size();
-        employee.setId(count.incrementAndGet());
+        employee.setId(longCount.incrementAndGet());
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restEmployeeMockMvc
@@ -278,12 +278,12 @@ class EmployeeResourceIT {
     @Transactional
     void putWithIdMismatchEmployee() throws Exception {
         int databaseSizeBeforeUpdate = employeeRepository.findAll().size();
-        employee.setId(count.incrementAndGet());
+        employee.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restEmployeeMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, count.incrementAndGet())
+                put(ENTITY_API_URL_ID, longCount.incrementAndGet())
                     .with(csrf())
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(TestUtil.convertObjectToJsonBytes(employee))
@@ -299,7 +299,7 @@ class EmployeeResourceIT {
     @Transactional
     void putWithMissingIdPathParamEmployee() throws Exception {
         int databaseSizeBeforeUpdate = employeeRepository.findAll().size();
-        employee.setId(count.incrementAndGet());
+        employee.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restEmployeeMockMvc
@@ -328,7 +328,7 @@ class EmployeeResourceIT {
         Employee partialUpdatedEmployee = new Employee();
         partialUpdatedEmployee.setId(employee.getId());
 
-        partialUpdatedEmployee.lastName(UPDATED_LAST_NAME).email(UPDATED_EMAIL).commissionPct(UPDATED_COMMISSION_PCT);
+        partialUpdatedEmployee.firstName(UPDATED_FIRST_NAME).email(UPDATED_EMAIL).phoneNumber(UPDATED_PHONE_NUMBER).salary(UPDATED_SALARY);
 
         restEmployeeMockMvc
             .perform(
@@ -343,13 +343,13 @@ class EmployeeResourceIT {
         List<Employee> employeeList = employeeRepository.findAll();
         assertThat(employeeList).hasSize(databaseSizeBeforeUpdate);
         Employee testEmployee = employeeList.get(employeeList.size() - 1);
-        assertThat(testEmployee.getFirstName()).isEqualTo(DEFAULT_FIRST_NAME);
-        assertThat(testEmployee.getLastName()).isEqualTo(UPDATED_LAST_NAME);
+        assertThat(testEmployee.getFirstName()).isEqualTo(UPDATED_FIRST_NAME);
+        assertThat(testEmployee.getLastName()).isEqualTo(DEFAULT_LAST_NAME);
         assertThat(testEmployee.getEmail()).isEqualTo(UPDATED_EMAIL);
-        assertThat(testEmployee.getPhoneNumber()).isEqualTo(DEFAULT_PHONE_NUMBER);
+        assertThat(testEmployee.getPhoneNumber()).isEqualTo(UPDATED_PHONE_NUMBER);
         assertThat(testEmployee.getHireDate()).isEqualTo(DEFAULT_HIRE_DATE);
-        assertThat(testEmployee.getSalary()).isEqualTo(DEFAULT_SALARY);
-        assertThat(testEmployee.getCommissionPct()).isEqualTo(UPDATED_COMMISSION_PCT);
+        assertThat(testEmployee.getSalary()).isEqualTo(UPDATED_SALARY);
+        assertThat(testEmployee.getCommissionPct()).isEqualTo(DEFAULT_COMMISSION_PCT);
     }
 
     @Test
@@ -399,7 +399,7 @@ class EmployeeResourceIT {
     @Transactional
     void patchNonExistingEmployee() throws Exception {
         int databaseSizeBeforeUpdate = employeeRepository.findAll().size();
-        employee.setId(count.incrementAndGet());
+        employee.setId(longCount.incrementAndGet());
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restEmployeeMockMvc
@@ -420,12 +420,12 @@ class EmployeeResourceIT {
     @Transactional
     void patchWithIdMismatchEmployee() throws Exception {
         int databaseSizeBeforeUpdate = employeeRepository.findAll().size();
-        employee.setId(count.incrementAndGet());
+        employee.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restEmployeeMockMvc
             .perform(
-                patch(ENTITY_API_URL_ID, count.incrementAndGet())
+                patch(ENTITY_API_URL_ID, longCount.incrementAndGet())
                     .with(csrf())
                     .contentType("application/merge-patch+json")
                     .content(TestUtil.convertObjectToJsonBytes(employee))
@@ -441,7 +441,7 @@ class EmployeeResourceIT {
     @Transactional
     void patchWithMissingIdPathParamEmployee() throws Exception {
         int databaseSizeBeforeUpdate = employeeRepository.findAll().size();
-        employee.setId(count.incrementAndGet());
+        employee.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restEmployeeMockMvc

@@ -9,10 +9,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import de.bitc.jhipster.IntegrationTest;
 import de.bitc.jhipster.domain.Task;
 import de.bitc.jhipster.repository.TaskRepository;
+import jakarta.persistence.EntityManager;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
-import javax.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +40,7 @@ class TaskResourceIT {
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
 
     private static Random random = new Random();
-    private static AtomicLong count = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
+    private static AtomicLong longCount = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
 
     @Autowired
     private TaskRepository taskRepository;
@@ -167,7 +167,7 @@ class TaskResourceIT {
         int databaseSizeBeforeUpdate = taskRepository.findAll().size();
 
         // Update the task
-        Task updatedTask = taskRepository.findById(task.getId()).get();
+        Task updatedTask = taskRepository.findById(task.getId()).orElseThrow();
         // Disconnect from session so that the updates on updatedTask are not directly saved in db
         em.detach(updatedTask);
         updatedTask.title(UPDATED_TITLE).description(UPDATED_DESCRIPTION);
@@ -193,7 +193,7 @@ class TaskResourceIT {
     @Transactional
     void putNonExistingTask() throws Exception {
         int databaseSizeBeforeUpdate = taskRepository.findAll().size();
-        task.setId(count.incrementAndGet());
+        task.setId(longCount.incrementAndGet());
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restTaskMockMvc
@@ -214,12 +214,12 @@ class TaskResourceIT {
     @Transactional
     void putWithIdMismatchTask() throws Exception {
         int databaseSizeBeforeUpdate = taskRepository.findAll().size();
-        task.setId(count.incrementAndGet());
+        task.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restTaskMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, count.incrementAndGet())
+                put(ENTITY_API_URL_ID, longCount.incrementAndGet())
                     .with(csrf())
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(TestUtil.convertObjectToJsonBytes(task))
@@ -235,7 +235,7 @@ class TaskResourceIT {
     @Transactional
     void putWithMissingIdPathParamTask() throws Exception {
         int databaseSizeBeforeUpdate = taskRepository.findAll().size();
-        task.setId(count.incrementAndGet());
+        task.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restTaskMockMvc
@@ -261,8 +261,6 @@ class TaskResourceIT {
         Task partialUpdatedTask = new Task();
         partialUpdatedTask.setId(task.getId());
 
-        partialUpdatedTask.description(UPDATED_DESCRIPTION);
-
         restTaskMockMvc
             .perform(
                 patch(ENTITY_API_URL_ID, partialUpdatedTask.getId())
@@ -277,7 +275,7 @@ class TaskResourceIT {
         assertThat(taskList).hasSize(databaseSizeBeforeUpdate);
         Task testTask = taskList.get(taskList.size() - 1);
         assertThat(testTask.getTitle()).isEqualTo(DEFAULT_TITLE);
-        assertThat(testTask.getDescription()).isEqualTo(UPDATED_DESCRIPTION);
+        assertThat(testTask.getDescription()).isEqualTo(DEFAULT_DESCRIPTION);
     }
 
     @Test
@@ -315,7 +313,7 @@ class TaskResourceIT {
     @Transactional
     void patchNonExistingTask() throws Exception {
         int databaseSizeBeforeUpdate = taskRepository.findAll().size();
-        task.setId(count.incrementAndGet());
+        task.setId(longCount.incrementAndGet());
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restTaskMockMvc
@@ -336,12 +334,12 @@ class TaskResourceIT {
     @Transactional
     void patchWithIdMismatchTask() throws Exception {
         int databaseSizeBeforeUpdate = taskRepository.findAll().size();
-        task.setId(count.incrementAndGet());
+        task.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restTaskMockMvc
             .perform(
-                patch(ENTITY_API_URL_ID, count.incrementAndGet())
+                patch(ENTITY_API_URL_ID, longCount.incrementAndGet())
                     .with(csrf())
                     .contentType("application/merge-patch+json")
                     .content(TestUtil.convertObjectToJsonBytes(task))
@@ -357,7 +355,7 @@ class TaskResourceIT {
     @Transactional
     void patchWithMissingIdPathParamTask() throws Exception {
         int databaseSizeBeforeUpdate = taskRepository.findAll().size();
-        task.setId(count.incrementAndGet());
+        task.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restTaskMockMvc

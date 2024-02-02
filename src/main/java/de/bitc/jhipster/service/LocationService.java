@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Service Interface for managing {@link Location}.
+ * Service Interface for managing {@link de.bitc.jhipster.domain.Location}.
  */
 public interface LocationService {
     /**
@@ -38,6 +38,13 @@ public interface LocationService {
      * @return the list of entities.
      */
     List<Location> findAll();
+
+    /**
+     * Get all the Location where Department is {@code null}.
+     *
+     * @return the {@link List} of entities.
+     */
+    List<Location> findAllWhereDepartmentIsNull();
 
     /**
      * Get the "id" location.

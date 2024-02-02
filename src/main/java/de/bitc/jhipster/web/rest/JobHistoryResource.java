@@ -26,7 +26,7 @@ import tech.jhipster.web.util.ResponseUtil;
  * REST controller for managing {@link de.bitc.jhipster.domain.JobHistory}.
  */
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/job-histories")
 public class JobHistoryResource {
 
     private final Logger log = LoggerFactory.getLogger(JobHistoryResource.class);
@@ -52,7 +52,7 @@ public class JobHistoryResource {
      * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new jobHistory, or with status {@code 400 (Bad Request)} if the jobHistory has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PostMapping("/job-histories")
+    @PostMapping("")
     public ResponseEntity<JobHistory> createJobHistory(@RequestBody JobHistory jobHistory) throws URISyntaxException {
         log.debug("REST request to save JobHistory : {}", jobHistory);
         if (jobHistory.getId() != null) {
@@ -75,7 +75,7 @@ public class JobHistoryResource {
      * or with status {@code 500 (Internal Server Error)} if the jobHistory couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PutMapping("/job-histories/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<JobHistory> updateJobHistory(
         @PathVariable(value = "id", required = false) final Long id,
         @RequestBody JobHistory jobHistory
@@ -110,7 +110,7 @@ public class JobHistoryResource {
      * or with status {@code 500 (Internal Server Error)} if the jobHistory couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PatchMapping(value = "/job-histories/{id}", consumes = { "application/json", "application/merge-patch+json" })
+    @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<JobHistory> partialUpdateJobHistory(
         @PathVariable(value = "id", required = false) final Long id,
         @RequestBody JobHistory jobHistory
@@ -141,8 +141,8 @@ public class JobHistoryResource {
      * @param pageable the pagination information.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of jobHistories in body.
      */
-    @GetMapping("/job-histories")
-    public ResponseEntity<List<JobHistory>> getAllJobHistories(@org.springdoc.api.annotations.ParameterObject Pageable pageable) {
+    @GetMapping("")
+    public ResponseEntity<List<JobHistory>> getAllJobHistories(@org.springdoc.core.annotations.ParameterObject Pageable pageable) {
         log.debug("REST request to get a page of JobHistories");
         Page<JobHistory> page = jobHistoryService.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
@@ -155,7 +155,7 @@ public class JobHistoryResource {
      * @param id the id of the jobHistory to retrieve.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the jobHistory, or with status {@code 404 (Not Found)}.
      */
-    @GetMapping("/job-histories/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<JobHistory> getJobHistory(@PathVariable Long id) {
         log.debug("REST request to get JobHistory : {}", id);
         Optional<JobHistory> jobHistory = jobHistoryService.findOne(id);
@@ -168,7 +168,7 @@ public class JobHistoryResource {
      * @param id the id of the jobHistory to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
-    @DeleteMapping("/job-histories/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteJobHistory(@PathVariable Long id) {
         log.debug("REST request to delete JobHistory : {}", id);
         jobHistoryService.delete(id);

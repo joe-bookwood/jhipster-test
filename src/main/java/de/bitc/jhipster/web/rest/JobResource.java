@@ -8,12 +8,14 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.StreamSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +28,7 @@ import tech.jhipster.web.util.ResponseUtil;
  * REST controller for managing {@link de.bitc.jhipster.domain.Job}.
  */
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/jobs")
 @Transactional
 public class JobResource {
 
@@ -50,7 +52,7 @@ public class JobResource {
      * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new job, or with status {@code 400 (Bad Request)} if the job has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PostMapping("/jobs")
+    @PostMapping("")
     public ResponseEntity<Job> createJob(@RequestBody Job job) throws URISyntaxException {
         log.debug("REST request to save Job : {}", job);
         if (job.getId() != null) {
@@ -73,7 +75,7 @@ public class JobResource {
      * or with status {@code 500 (Internal Server Error)} if the job couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PutMapping("/jobs/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<Job> updateJob(@PathVariable(value = "id", required = false) final Long id, @RequestBody Job job)
         throws URISyntaxException {
         log.debug("REST request to update Job : {}, {}", id, job);
@@ -106,7 +108,7 @@ public class JobResource {
      * or with status {@code 500 (Internal Server Error)} if the job couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PatchMapping(value = "/jobs/{id}", consumes = { "application/json", "application/merge-patch+json" })
+    @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<Job> partialUpdateJob(@PathVariable(value = "id", required = false) final Long id, @RequestBody Job job)
         throws URISyntaxException {
         log.debug("REST request to partial update Job partially : {}, {}", id, job);
@@ -149,13 +151,22 @@ public class JobResource {
      *
      * @param pageable the pagination information.
      * @param eagerload flag to eager load entities from relationships (This is applicable for many-to-many).
+     * @param filter the filter of the request.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of jobs in body.
      */
-    @GetMapping("/jobs")
+    @GetMapping("")
     public ResponseEntity<List<Job>> getAllJobs(
-        @org.springdoc.api.annotations.ParameterObject Pageable pageable,
-        @RequestParam(required = false, defaultValue = "false") boolean eagerload
+        @org.springdoc.core.annotations.ParameterObject Pageable pageable,
+        @RequestParam(required = false) String filter,
+        @RequestParam(required = false, defaultValue = "true") boolean eagerload
     ) {
+        if ("jobhistory-is-null".equals(filter)) {
+            log.debug("REST request to get all Jobs where jobHistory is null");
+            return new ResponseEntity<>(
+                StreamSupport.stream(jobRepository.findAll().spliterator(), false).filter(job -> job.getJobHistory() == null).toList(),
+                HttpStatus.OK
+            );
+        }
         log.debug("REST request to get a page of Jobs");
         Page<Job> page;
         if (eagerload) {
@@ -173,7 +184,7 @@ public class JobResource {
      * @param id the id of the job to retrieve.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the job, or with status {@code 404 (Not Found)}.
      */
-    @GetMapping("/jobs/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<Job> getJob(@PathVariable Long id) {
         log.debug("REST request to get Job : {}", id);
         Optional<Job> job = jobRepository.findOneWithEagerRelationships(id);
@@ -186,7 +197,7 @@ public class JobResource {
      * @param id the id of the job to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
-    @DeleteMapping("/jobs/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteJob(@PathVariable Long id) {
         log.debug("REST request to delete Job : {}", id);
         jobRepository.deleteById(id);

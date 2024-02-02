@@ -9,7 +9,7 @@ import de.bitc.jhipster.IntegrationTest;
 import de.bitc.jhipster.domain.User;
 import de.bitc.jhipster.repository.UserRepository;
 import de.bitc.jhipster.security.AuthoritiesConstants;
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +21,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Integration tests for the {@link UserResource} REST controller.
+ * Integration tests for the {@link PublicUserResource} REST controller.
  */
 @AutoConfigureMockMvc
 @WithMockUser(authorities = AuthoritiesConstants.ADMIN)

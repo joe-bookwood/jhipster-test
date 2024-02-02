@@ -5,13 +5,14 @@ import de.bitc.jhipster.repository.LocationRepository;
 import de.bitc.jhipster.service.LocationService;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.StreamSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Service Implementation for managing {@link Location}.
+ * Service Implementation for managing {@link de.bitc.jhipster.domain.Location}.
  */
 @Service
 @Transactional
@@ -67,6 +68,19 @@ public class LocationServiceImpl implements LocationService {
     public List<Location> findAll() {
         log.debug("Request to get all Locations");
         return locationRepository.findAll();
+    }
+
+    /**
+     *  Get all the locations where Department is {@code null}.
+     *  @return the list of entities.
+     */
+    @Transactional(readOnly = true)
+    public List<Location> findAllWhereDepartmentIsNull() {
+        log.debug("Request to get all locations where Department is null");
+        return StreamSupport
+            .stream(locationRepository.findAll().spliterator(), false)
+            .filter(location -> location.getDepartment() == null)
+            .toList();
     }
 
     @Override

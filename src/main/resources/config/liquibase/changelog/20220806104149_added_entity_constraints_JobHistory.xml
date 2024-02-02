@@ -12,18 +12,21 @@
                                  baseTableName="job_history"
                                  constraintName="fk_job_history__job_id"
                                  referencedColumnNames="id"
-                                 referencedTableName="job"/>
+                                 referencedTableName="job"
+                                 />
 
         <addForeignKeyConstraint baseColumnNames="department_id"
                                  baseTableName="job_history"
                                  constraintName="fk_job_history__department_id"
                                  referencedColumnNames="id"
-                                 referencedTableName="department"/>
+                                 referencedTableName="department"
+                                 />
 
         <addForeignKeyConstraint baseColumnNames="employee_id"
                                  baseTableName="job_history"
                                  constraintName="fk_job_history__employee_id"
                                  referencedColumnNames="id"
-                                 referencedTableName="employee"/>
+                                 referencedTableName="employee"
+                                 />
     </changeSet>
 </databaseChangeLog>

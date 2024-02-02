@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Service Interface for managing {@link Department}.
+ * Service Interface for managing {@link de.bitc.jhipster.domain.Department}.
  */
 public interface DepartmentService {
     /**
@@ -38,6 +38,13 @@ public interface DepartmentService {
      * @return the list of entities.
      */
     List<Department> findAll();
+
+    /**
+     * Get all the Department where JobHistory is {@code null}.
+     *
+     * @return the {@link List} of entities.
+     */
+    List<Department> findAllWhereJobHistoryIsNull();
 
     /**
      * Get the "id" department.

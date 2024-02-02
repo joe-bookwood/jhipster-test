@@ -1,19 +1,20 @@
 import { IJob, NewJob } from './job.model';
 
 export const sampleWithRequiredData: IJob = {
-  id: 43395,
+  id: 10279,
 };
 
 export const sampleWithPartialData: IJob = {
-  id: 63110,
-  jobTitle: 'Investor Usability Executive',
+  id: 10373,
+  minSalary: 5779,
+  maxSalary: 26407,
 };
 
 export const sampleWithFullData: IJob = {
-  id: 18405,
-  jobTitle: 'Product Solutions Associate',
-  minSalary: 4480,
-  maxSalary: 26191,
+  id: 25335,
+  jobTitle: 'National Research Architect',
+  minSalary: 10761,
+  maxSalary: 23705,
 };
 
 export const sampleWithNewData: NewJob = {

@@ -49,7 +49,6 @@ describe('JobHistory Form Service', () => {
 
     describe('getJobHistory', () => {
       it('should return NewJobHistory for default JobHistory initial value', () => {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const formGroup = service.createJobHistoryFormGroup(sampleWithNewData);
 
         const jobHistory = service.getJobHistory(formGroup) as any;

@@ -1,8 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Data, ParamMap, Router } from '@angular/router';
+import { ActivatedRoute, Data, ParamMap, Router, RouterModule } from '@angular/router';
 import { combineLatest, filter, Observable, switchMap, tap } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
+import SharedModule from 'app/shared/shared.module';
+import { SortDirective, SortByDirective } from 'app/shared/sort';
+import { DurationPipe, FormatMediumDatetimePipe, FormatMediumDatePipe } from 'app/shared/date';
+import { FormsModule } from '@angular/forms';
 import { ASC, DESC, SORT, ITEM_DELETED_EVENT, DEFAULT_SORT_DATA } from 'app/config/navigation.constants';
 import { SortService } from 'app/shared/sort/sort.service';
 import { ITask } from '../task.model';
@@ -10,8 +14,19 @@ import { EntityArrayResponseType, TaskService } from '../service/task.service';
 import { TaskDeleteDialogComponent } from '../delete/task-delete-dialog.component';
 
 @Component({
+  standalone: true,
   selector: 'jhi-task',
   templateUrl: './task.component.html',
+  imports: [
+    RouterModule,
+    FormsModule,
+    SharedModule,
+    SortDirective,
+    SortByDirective,
+    DurationPipe,
+    FormatMediumDatetimePipe,
+    FormatMediumDatePipe,
+  ],
 })
 export class TaskComponent implements OnInit {
   tasks?: ITask[];
@@ -90,7 +105,7 @@ export class TaskComponent implements OnInit {
 
   protected queryBackend(predicate?: string, ascending?: boolean): Observable<EntityArrayResponseType> {
     this.isLoading = true;
-    const queryObject = {
+    const queryObject: any = {
       sort: this.getSortQueryParam(predicate, ascending),
     };
     return this.taskService.query(queryObject).pipe(tap(() => (this.isLoading = false)));

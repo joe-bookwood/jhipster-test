@@ -4,10 +4,15 @@
     "applicationType": "monolith",
     "authenticationType": "oauth2",
     "baseName": "jhipsterTest",
-    "blueprints": [],
+    "blueprints": [
+      {
+        "name": "generator-jhipster-migrate",
+        "version": "0.0.4"
+      }
+    ],
     "buildTool": "maven",
     "cacheProvider": "ehcache",
-    "clientFramework": "angularX",
+    "clientFramework": "angular",
     "clientPackageManager": "npm",
     "clientTheme": "none",
     "clientThemeVariant": "",
@@ -24,7 +29,7 @@
     "entitySuffix": "",
     "gradleEnterpriseHost": "",
     "jhiPrefix": "jhi",
-    "jhipsterVersion": "7.9.4",
+    "jhipsterVersion": "8.0.0",
     "languages": ["en"],
     "lastLiquibaseTimestamp": 1659782509000,
     "messageBroker": false,

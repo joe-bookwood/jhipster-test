@@ -55,7 +55,6 @@ describe('Employee Form Service', () => {
 
     describe('getEmployee', () => {
       it('should return NewEmployee for default Employee initial value', () => {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const formGroup = service.createEmployeeFormGroup(sampleWithNewData);
 
         const employee = service.getEmployee(formGroup) as any;

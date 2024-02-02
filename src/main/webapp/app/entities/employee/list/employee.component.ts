@@ -1,20 +1,37 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpHeaders } from '@angular/common/http';
-import { ActivatedRoute, Data, ParamMap, Router } from '@angular/router';
+import { ActivatedRoute, Data, ParamMap, Router, RouterModule } from '@angular/router';
 import { combineLatest, filter, Observable, switchMap, tap } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+
+import SharedModule from 'app/shared/shared.module';
+import { SortDirective, SortByDirective } from 'app/shared/sort';
+import { DurationPipe, FormatMediumDatetimePipe, FormatMediumDatePipe } from 'app/shared/date';
+import { FormsModule } from '@angular/forms';
 
 import { ITEMS_PER_PAGE } from 'app/config/pagination.constants';
 import { ASC, DESC, SORT, ITEM_DELETED_EVENT, DEFAULT_SORT_DATA } from 'app/config/navigation.constants';
 import { ParseLinks } from 'app/core/util/parse-links.service';
-import { IEmployee } from '../employee.model';
-
+import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { EntityArrayResponseType, EmployeeService } from '../service/employee.service';
 import { EmployeeDeleteDialogComponent } from '../delete/employee-delete-dialog.component';
+import { IEmployee } from '../employee.model';
 
 @Component({
+  standalone: true,
   selector: 'jhi-employee',
   templateUrl: './employee.component.html',
+  imports: [
+    RouterModule,
+    FormsModule,
+    SharedModule,
+    SortDirective,
+    SortByDirective,
+    DurationPipe,
+    FormatMediumDatetimePipe,
+    FormatMediumDatePipe,
+    InfiniteScrollModule,
+  ],
 })
 export class EmployeeComponent implements OnInit {
   employees?: IEmployee[];
@@ -106,15 +123,19 @@ export class EmployeeComponent implements OnInit {
   }
 
   protected fillComponentAttributesFromResponseBody(data: IEmployee[] | null): IEmployee[] {
-    const employeesNew = this.employees ?? [];
-    if (data) {
-      for (const d of data) {
-        if (employeesNew.map(op => op.id).indexOf(d.id) === -1) {
-          employeesNew.push(d);
+    // If there is previus link, data is a infinite scroll pagination content.
+    if ('prev' in this.links) {
+      const employeesNew = this.employees ?? [];
+      if (data) {
+        for (const d of data) {
+          if (employeesNew.map(op => op.id).indexOf(d.id) === -1) {
+            employeesNew.push(d);
+          }
         }
       }
+      return employeesNew;
     }
-    return employeesNew;
+    return data ?? [];
   }
 
   protected fillComponentAttributesFromResponseHeader(headers: HttpHeaders): void {
@@ -131,7 +152,7 @@ export class EmployeeComponent implements OnInit {
   protected queryBackend(page?: number, predicate?: string, ascending?: boolean): Observable<EntityArrayResponseType> {
     this.isLoading = true;
     const pageToLoad: number = page ?? 1;
-    const queryObject = {
+    const queryObject: any = {
       page: pageToLoad - 1,
       size: this.itemsPerPage,
       sort: this.getSortQueryParam(predicate, ascending),

@@ -12,6 +12,7 @@
                                  baseTableName="department"
                                  constraintName="fk_department__location_id"
                                  referencedColumnNames="id"
-                                 referencedTableName="location"/>
+                                 referencedTableName="location"
+                                 />
     </changeSet>
 </databaseChangeLog>

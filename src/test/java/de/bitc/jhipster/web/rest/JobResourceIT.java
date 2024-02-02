@@ -10,11 +10,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import de.bitc.jhipster.IntegrationTest;
 import de.bitc.jhipster.domain.Job;
 import de.bitc.jhipster.repository.JobRepository;
+import jakarta.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
-import javax.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -51,7 +51,7 @@ class JobResourceIT {
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
 
     private static Random random = new Random();
-    private static AtomicLong count = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
+    private static AtomicLong longCount = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
 
     @Autowired
     private JobRepository jobRepository;
@@ -201,7 +201,7 @@ class JobResourceIT {
         int databaseSizeBeforeUpdate = jobRepository.findAll().size();
 
         // Update the job
-        Job updatedJob = jobRepository.findById(job.getId()).get();
+        Job updatedJob = jobRepository.findById(job.getId()).orElseThrow();
         // Disconnect from session so that the updates on updatedJob are not directly saved in db
         em.detach(updatedJob);
         updatedJob.jobTitle(UPDATED_JOB_TITLE).minSalary(UPDATED_MIN_SALARY).maxSalary(UPDATED_MAX_SALARY);
@@ -228,7 +228,7 @@ class JobResourceIT {
     @Transactional
     void putNonExistingJob() throws Exception {
         int databaseSizeBeforeUpdate = jobRepository.findAll().size();
-        job.setId(count.incrementAndGet());
+        job.setId(longCount.incrementAndGet());
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restJobMockMvc
@@ -249,12 +249,12 @@ class JobResourceIT {
     @Transactional
     void putWithIdMismatchJob() throws Exception {
         int databaseSizeBeforeUpdate = jobRepository.findAll().size();
-        job.setId(count.incrementAndGet());
+        job.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restJobMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, count.incrementAndGet())
+                put(ENTITY_API_URL_ID, longCount.incrementAndGet())
                     .with(csrf())
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(TestUtil.convertObjectToJsonBytes(job))
@@ -270,7 +270,7 @@ class JobResourceIT {
     @Transactional
     void putWithMissingIdPathParamJob() throws Exception {
         int databaseSizeBeforeUpdate = jobRepository.findAll().size();
-        job.setId(count.incrementAndGet());
+        job.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restJobMockMvc
@@ -352,7 +352,7 @@ class JobResourceIT {
     @Transactional
     void patchNonExistingJob() throws Exception {
         int databaseSizeBeforeUpdate = jobRepository.findAll().size();
-        job.setId(count.incrementAndGet());
+        job.setId(longCount.incrementAndGet());
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restJobMockMvc
@@ -373,12 +373,12 @@ class JobResourceIT {
     @Transactional
     void patchWithIdMismatchJob() throws Exception {
         int databaseSizeBeforeUpdate = jobRepository.findAll().size();
-        job.setId(count.incrementAndGet());
+        job.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restJobMockMvc
             .perform(
-                patch(ENTITY_API_URL_ID, count.incrementAndGet())
+                patch(ENTITY_API_URL_ID, longCount.incrementAndGet())
                     .with(csrf())
                     .contentType("application/merge-patch+json")
                     .content(TestUtil.convertObjectToJsonBytes(job))
@@ -394,7 +394,7 @@ class JobResourceIT {
     @Transactional
     void patchWithMissingIdPathParamJob() throws Exception {
         int databaseSizeBeforeUpdate = jobRepository.findAll().size();
-        job.setId(count.incrementAndGet());
+        job.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restJobMockMvc
