@@ -6,11 +6,11 @@ import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { of, Subject, from } from 'rxjs';
 
-import { CountryFormService } from './country-form.service';
-import { CountryService } from '../service/country.service';
-import { ICountry } from '../country.model';
 import { IRegion } from 'app/entities/region/region.model';
 import { RegionService } from 'app/entities/region/service/region.service';
+import { CountryService } from '../service/country.service';
+import { ICountry } from '../country.model';
+import { CountryFormService } from './country-form.service';
 
 import { CountryUpdateComponent } from './country-update.component';
 
@@ -66,7 +66,7 @@ describe('Country Management Update Component', () => {
       expect(regionService.query).toHaveBeenCalled();
       expect(regionService.addRegionToCollectionIfMissing).toHaveBeenCalledWith(
         regionCollection,
-        ...additionalRegions.map(expect.objectContaining)
+        ...additionalRegions.map(expect.objectContaining),
       );
       expect(comp.regionsSharedCollection).toEqual(expectedCollection);
     });

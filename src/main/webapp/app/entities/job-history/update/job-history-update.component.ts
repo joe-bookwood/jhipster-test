@@ -4,9 +4,6 @@ import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { finalize, map } from 'rxjs/operators';
 
-import { JobHistoryFormService, JobHistoryFormGroup } from './job-history-form.service';
-import { IJobHistory } from '../job-history.model';
-import { JobHistoryService } from '../service/job-history.service';
 import { IJob } from 'app/entities/job/job.model';
 import { JobService } from 'app/entities/job/service/job.service';
 import { IDepartment } from 'app/entities/department/department.model';
@@ -14,6 +11,9 @@ import { DepartmentService } from 'app/entities/department/service/department.se
 import { IEmployee } from 'app/entities/employee/employee.model';
 import { EmployeeService } from 'app/entities/employee/service/employee.service';
 import { Language } from 'app/entities/enumerations/language.model';
+import { JobHistoryService } from '../service/job-history.service';
+import { IJobHistory } from '../job-history.model';
+import { JobHistoryFormService, JobHistoryFormGroup } from './job-history-form.service';
 
 @Component({
   selector: 'jhi-job-history-update',
@@ -36,7 +36,7 @@ export class JobHistoryUpdateComponent implements OnInit {
     protected jobService: JobService,
     protected departmentService: DepartmentService,
     protected employeeService: EmployeeService,
-    protected activatedRoute: ActivatedRoute
+    protected activatedRoute: ActivatedRoute,
   ) {}
 
   compareJob = (o1: IJob | null, o2: IJob | null): boolean => this.jobService.compareJob(o1, o2);
@@ -96,11 +96,11 @@ export class JobHistoryUpdateComponent implements OnInit {
     this.jobsSharedCollection = this.jobService.addJobToCollectionIfMissing<IJob>(this.jobsSharedCollection, jobHistory.job);
     this.departmentsSharedCollection = this.departmentService.addDepartmentToCollectionIfMissing<IDepartment>(
       this.departmentsSharedCollection,
-      jobHistory.department
+      jobHistory.department,
     );
     this.employeesSharedCollection = this.employeeService.addEmployeeToCollectionIfMissing<IEmployee>(
       this.employeesSharedCollection,
-      jobHistory.employee
+      jobHistory.employee,
     );
   }
 
@@ -116,8 +116,8 @@ export class JobHistoryUpdateComponent implements OnInit {
       .pipe(map((res: HttpResponse<IDepartment[]>) => res.body ?? []))
       .pipe(
         map((departments: IDepartment[]) =>
-          this.departmentService.addDepartmentToCollectionIfMissing<IDepartment>(departments, this.jobHistory?.department)
-        )
+          this.departmentService.addDepartmentToCollectionIfMissing<IDepartment>(departments, this.jobHistory?.department),
+        ),
       )
       .subscribe((departments: IDepartment[]) => (this.departmentsSharedCollection = departments));
 
@@ -126,8 +126,8 @@ export class JobHistoryUpdateComponent implements OnInit {
       .pipe(map((res: HttpResponse<IEmployee[]>) => res.body ?? []))
       .pipe(
         map((employees: IEmployee[]) =>
-          this.employeeService.addEmployeeToCollectionIfMissing<IEmployee>(employees, this.jobHistory?.employee)
-        )
+          this.employeeService.addEmployeeToCollectionIfMissing<IEmployee>(employees, this.jobHistory?.employee),
+        ),
       )
       .subscribe((employees: IEmployee[]) => (this.employeesSharedCollection = employees));
   }

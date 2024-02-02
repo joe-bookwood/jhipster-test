@@ -28,7 +28,10 @@ export type EntityArrayResponseType = HttpResponse<IEmployee[]>;
 export class EmployeeService {
   protected resourceUrl = this.applicationConfigService.getEndpointFor('api/employees');
 
-  constructor(protected http: HttpClient, protected applicationConfigService: ApplicationConfigService) {}
+  constructor(
+    protected http: HttpClient,
+    protected applicationConfigService: ApplicationConfigService,
+  ) {}
 
   create(employee: NewEmployee): Observable<EntityResponseType> {
     const copy = this.convertDateFromClient(employee);

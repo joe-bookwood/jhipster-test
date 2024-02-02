@@ -9,7 +9,10 @@ import { CountryService } from '../service/country.service';
 
 @Injectable({ providedIn: 'root' })
 export class CountryRoutingResolveService implements Resolve<ICountry | null> {
-  constructor(protected service: CountryService, protected router: Router) {}
+  constructor(
+    protected service: CountryService,
+    protected router: Router,
+  ) {}
 
   resolve(route: ActivatedRouteSnapshot): Observable<ICountry | null | never> {
     const id = route.params['id'];
@@ -22,7 +25,7 @@ export class CountryRoutingResolveService implements Resolve<ICountry | null> {
             this.router.navigate(['404']);
             return EMPTY;
           }
-        })
+        }),
       );
     }
     return of(null);

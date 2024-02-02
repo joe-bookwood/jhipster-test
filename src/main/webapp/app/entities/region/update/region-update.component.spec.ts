@@ -6,9 +6,9 @@ import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { of, Subject, from } from 'rxjs';
 
-import { RegionFormService } from './region-form.service';
 import { RegionService } from '../service/region.service';
 import { IRegion } from '../region.model';
+import { RegionFormService } from './region-form.service';
 
 import { RegionUpdateComponent } from './region-update.component';
 

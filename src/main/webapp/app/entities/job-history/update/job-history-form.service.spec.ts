@@ -26,7 +26,7 @@ describe('JobHistory Form Service', () => {
             job: expect.any(Object),
             department: expect.any(Object),
             employee: expect.any(Object),
-          })
+          }),
         );
       });
 
@@ -42,7 +42,7 @@ describe('JobHistory Form Service', () => {
             job: expect.any(Object),
             department: expect.any(Object),
             employee: expect.any(Object),
-          })
+          }),
         );
       });
     });

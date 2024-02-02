@@ -2,11 +2,11 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import { UserRouteAccessService } from 'app/core/auth/user-route-access.service';
+import { ASC } from 'app/config/navigation.constants';
 import { LocationComponent } from '../list/location.component';
 import { LocationDetailComponent } from '../detail/location-detail.component';
 import { LocationUpdateComponent } from '../update/location-update.component';
 import { LocationRoutingResolveService } from './location-routing-resolve.service';
-import { ASC } from 'app/config/navigation.constants';
 
 const locationRoute: Routes = [
   {

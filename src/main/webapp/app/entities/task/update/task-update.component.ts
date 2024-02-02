@@ -4,9 +4,9 @@ import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 
-import { TaskFormService, TaskFormGroup } from './task-form.service';
 import { ITask } from '../task.model';
 import { TaskService } from '../service/task.service';
+import { TaskFormService, TaskFormGroup } from './task-form.service';
 
 @Component({
   selector: 'jhi-task-update',
@@ -18,7 +18,11 @@ export class TaskUpdateComponent implements OnInit {
 
   editForm: TaskFormGroup = this.taskFormService.createTaskFormGroup();
 
-  constructor(protected taskService: TaskService, protected taskFormService: TaskFormService, protected activatedRoute: ActivatedRoute) {}
+  constructor(
+    protected taskService: TaskService,
+    protected taskFormService: TaskFormService,
+    protected activatedRoute: ActivatedRoute,
+  ) {}
 
   ngOnInit(): void {
     this.activatedRoute.data.subscribe(({ task }) => {

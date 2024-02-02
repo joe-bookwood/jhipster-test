@@ -9,7 +9,10 @@ import { TaskService } from '../service/task.service';
 
 @Injectable({ providedIn: 'root' })
 export class TaskRoutingResolveService implements Resolve<ITask | null> {
-  constructor(protected service: TaskService, protected router: Router) {}
+  constructor(
+    protected service: TaskService,
+    protected router: Router,
+  ) {}
 
   resolve(route: ActivatedRouteSnapshot): Observable<ITask | null | never> {
     const id = route.params['id'];
@@ -22,7 +25,7 @@ export class TaskRoutingResolveService implements Resolve<ITask | null> {
             this.router.navigate(['404']);
             return EMPTY;
           }
-        })
+        }),
       );
     }
     return of(null);

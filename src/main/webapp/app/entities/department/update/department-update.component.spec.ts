@@ -6,11 +6,11 @@ import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { of, Subject, from } from 'rxjs';
 
-import { DepartmentFormService } from './department-form.service';
-import { DepartmentService } from '../service/department.service';
-import { IDepartment } from '../department.model';
 import { ILocation } from 'app/entities/location/location.model';
 import { LocationService } from 'app/entities/location/service/location.service';
+import { DepartmentService } from '../service/department.service';
+import { IDepartment } from '../department.model';
+import { DepartmentFormService } from './department-form.service';
 
 import { DepartmentUpdateComponent } from './department-update.component';
 
@@ -66,7 +66,7 @@ describe('Department Management Update Component', () => {
       expect(locationService.query).toHaveBeenCalled();
       expect(locationService.addLocationToCollectionIfMissing).toHaveBeenCalledWith(
         locationCollection,
-        ...additionalLocations.map(expect.objectContaining)
+        ...additionalLocations.map(expect.objectContaining),
       );
       expect(comp.locationsSharedCollection).toEqual(expectedCollection);
     });

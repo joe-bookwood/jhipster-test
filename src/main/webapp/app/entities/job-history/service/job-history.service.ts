@@ -29,7 +29,10 @@ export type EntityArrayResponseType = HttpResponse<IJobHistory[]>;
 export class JobHistoryService {
   protected resourceUrl = this.applicationConfigService.getEndpointFor('api/job-histories');
 
-  constructor(protected http: HttpClient, protected applicationConfigService: ApplicationConfigService) {}
+  constructor(
+    protected http: HttpClient,
+    protected applicationConfigService: ApplicationConfigService,
+  ) {}
 
   create(jobHistory: NewJobHistory): Observable<EntityResponseType> {
     const copy = this.convertDateFromClient(jobHistory);
