@@ -23,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
  * Integration tests for the {@link AccountResource} REST controller.
  */
 @AutoConfigureMockMvc
-@WithMockUser(value = TEST_USER_LOGIN)
 @IntegrationTest
 class AccountResourceIT {
 
@@ -39,8 +38,7 @@ class AccountResourceIT {
     @Test
     @Transactional
     void testGetExistingAccount() throws Exception {
-        TestSecurityContextHolder
-            .getContext()
+        TestSecurityContextHolder.getContext()
             .setAuthentication(registerAuthenticationToken(authorizedClientService, clientRegistration, testAuthenticationToken()));
 
         restAccountMockMvc
@@ -54,7 +52,7 @@ class AccountResourceIT {
 
     @Test
     void testGetUnknownAccount() throws Exception {
-        restAccountMockMvc.perform(get("/api/account").accept(MediaType.APPLICATION_JSON)).andExpect(status().isInternalServerError());
+        restAccountMockMvc.perform(get("/api/account").accept(MediaType.APPLICATION_JSON)).andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -67,16 +65,10 @@ class AccountResourceIT {
     }
 
     @Test
+    @WithMockUser(TEST_USER_LOGIN)
     void testAuthenticatedUser() throws Exception {
         restAccountMockMvc
-            .perform(
-                get("/api/authenticate")
-                    .with(request -> {
-                        request.setRemoteUser(TEST_USER_LOGIN);
-                        return request;
-                    })
-                    .accept(MediaType.APPLICATION_JSON)
-            )
+            .perform(get("/api/authenticate").with(request -> request).accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(content().string(TEST_USER_LOGIN));
     }

@@ -1,21 +1,23 @@
 package de.bitc.jhipster.web.rest;
 
+import static de.bitc.jhipster.domain.JobHistoryAsserts.*;
+import static de.bitc.jhipster.web.rest.TestUtil.createUpdateProxyForBean;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import de.bitc.jhipster.IntegrationTest;
 import de.bitc.jhipster.domain.JobHistory;
 import de.bitc.jhipster.domain.enumeration.Language;
 import de.bitc.jhipster.repository.JobHistoryRepository;
+import jakarta.persistence.EntityManager;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
-import javax.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +48,10 @@ class JobHistoryResourceIT {
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
 
     private static Random random = new Random();
-    private static AtomicLong count = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
+    private static AtomicLong longCount = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
+
+    @Autowired
+    private ObjectMapper om;
 
     @Autowired
     private JobHistoryRepository jobHistoryRepository;
@@ -89,24 +94,23 @@ class JobHistoryResourceIT {
     @Test
     @Transactional
     void createJobHistory() throws Exception {
-        int databaseSizeBeforeCreate = jobHistoryRepository.findAll().size();
+        long databaseSizeBeforeCreate = getRepositoryCount();
         // Create the JobHistory
-        restJobHistoryMockMvc
-            .perform(
-                post(ENTITY_API_URL)
-                    .with(csrf())
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(jobHistory))
-            )
-            .andExpect(status().isCreated());
+        var returnedJobHistory = om.readValue(
+            restJobHistoryMockMvc
+                .perform(
+                    post(ENTITY_API_URL).with(csrf()).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(jobHistory))
+                )
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse()
+                .getContentAsString(),
+            JobHistory.class
+        );
 
         // Validate the JobHistory in the database
-        List<JobHistory> jobHistoryList = jobHistoryRepository.findAll();
-        assertThat(jobHistoryList).hasSize(databaseSizeBeforeCreate + 1);
-        JobHistory testJobHistory = jobHistoryList.get(jobHistoryList.size() - 1);
-        assertThat(testJobHistory.getStartDate()).isEqualTo(DEFAULT_START_DATE);
-        assertThat(testJobHistory.getEndDate()).isEqualTo(DEFAULT_END_DATE);
-        assertThat(testJobHistory.getLanguage()).isEqualTo(DEFAULT_LANGUAGE);
+        assertIncrementedRepositoryCount(databaseSizeBeforeCreate);
+        assertJobHistoryUpdatableFieldsEquals(returnedJobHistory, getPersistedJobHistory(returnedJobHistory));
     }
 
     @Test
@@ -115,21 +119,15 @@ class JobHistoryResourceIT {
         // Create the JobHistory with an existing ID
         jobHistory.setId(1L);
 
-        int databaseSizeBeforeCreate = jobHistoryRepository.findAll().size();
+        long databaseSizeBeforeCreate = getRepositoryCount();
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restJobHistoryMockMvc
-            .perform(
-                post(ENTITY_API_URL)
-                    .with(csrf())
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(jobHistory))
-            )
+            .perform(post(ENTITY_API_URL).with(csrf()).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(jobHistory)))
             .andExpect(status().isBadRequest());
 
         // Validate the JobHistory in the database
-        List<JobHistory> jobHistoryList = jobHistoryRepository.findAll();
-        assertThat(jobHistoryList).hasSize(databaseSizeBeforeCreate);
+        assertSameRepositoryCount(databaseSizeBeforeCreate);
     }
 
     @Test
@@ -179,10 +177,10 @@ class JobHistoryResourceIT {
         // Initialize the database
         jobHistoryRepository.saveAndFlush(jobHistory);
 
-        int databaseSizeBeforeUpdate = jobHistoryRepository.findAll().size();
+        long databaseSizeBeforeUpdate = getRepositoryCount();
 
         // Update the jobHistory
-        JobHistory updatedJobHistory = jobHistoryRepository.findById(jobHistory.getId()).get();
+        JobHistory updatedJobHistory = jobHistoryRepository.findById(jobHistory.getId()).orElseThrow();
         // Disconnect from session so that the updates on updatedJobHistory are not directly saved in db
         em.detach(updatedJobHistory);
         updatedJobHistory.startDate(UPDATED_START_DATE).endDate(UPDATED_END_DATE).language(UPDATED_LANGUAGE);
@@ -192,24 +190,20 @@ class JobHistoryResourceIT {
                 put(ENTITY_API_URL_ID, updatedJobHistory.getId())
                     .with(csrf())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(updatedJobHistory))
+                    .content(om.writeValueAsBytes(updatedJobHistory))
             )
             .andExpect(status().isOk());
 
         // Validate the JobHistory in the database
-        List<JobHistory> jobHistoryList = jobHistoryRepository.findAll();
-        assertThat(jobHistoryList).hasSize(databaseSizeBeforeUpdate);
-        JobHistory testJobHistory = jobHistoryList.get(jobHistoryList.size() - 1);
-        assertThat(testJobHistory.getStartDate()).isEqualTo(UPDATED_START_DATE);
-        assertThat(testJobHistory.getEndDate()).isEqualTo(UPDATED_END_DATE);
-        assertThat(testJobHistory.getLanguage()).isEqualTo(UPDATED_LANGUAGE);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
+        assertPersistedJobHistoryToMatchAllProperties(updatedJobHistory);
     }
 
     @Test
     @Transactional
     void putNonExistingJobHistory() throws Exception {
-        int databaseSizeBeforeUpdate = jobHistoryRepository.findAll().size();
-        jobHistory.setId(count.incrementAndGet());
+        long databaseSizeBeforeUpdate = getRepositoryCount();
+        jobHistory.setId(longCount.incrementAndGet());
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restJobHistoryMockMvc
@@ -217,55 +211,47 @@ class JobHistoryResourceIT {
                 put(ENTITY_API_URL_ID, jobHistory.getId())
                     .with(csrf())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(jobHistory))
+                    .content(om.writeValueAsBytes(jobHistory))
             )
             .andExpect(status().isBadRequest());
 
         // Validate the JobHistory in the database
-        List<JobHistory> jobHistoryList = jobHistoryRepository.findAll();
-        assertThat(jobHistoryList).hasSize(databaseSizeBeforeUpdate);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
     }
 
     @Test
     @Transactional
     void putWithIdMismatchJobHistory() throws Exception {
-        int databaseSizeBeforeUpdate = jobHistoryRepository.findAll().size();
-        jobHistory.setId(count.incrementAndGet());
+        long databaseSizeBeforeUpdate = getRepositoryCount();
+        jobHistory.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restJobHistoryMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, count.incrementAndGet())
+                put(ENTITY_API_URL_ID, longCount.incrementAndGet())
                     .with(csrf())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(jobHistory))
+                    .content(om.writeValueAsBytes(jobHistory))
             )
             .andExpect(status().isBadRequest());
 
         // Validate the JobHistory in the database
-        List<JobHistory> jobHistoryList = jobHistoryRepository.findAll();
-        assertThat(jobHistoryList).hasSize(databaseSizeBeforeUpdate);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
     }
 
     @Test
     @Transactional
     void putWithMissingIdPathParamJobHistory() throws Exception {
-        int databaseSizeBeforeUpdate = jobHistoryRepository.findAll().size();
-        jobHistory.setId(count.incrementAndGet());
+        long databaseSizeBeforeUpdate = getRepositoryCount();
+        jobHistory.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restJobHistoryMockMvc
-            .perform(
-                put(ENTITY_API_URL)
-                    .with(csrf())
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(jobHistory))
-            )
+            .perform(put(ENTITY_API_URL).with(csrf()).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(jobHistory)))
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the JobHistory in the database
-        List<JobHistory> jobHistoryList = jobHistoryRepository.findAll();
-        assertThat(jobHistoryList).hasSize(databaseSizeBeforeUpdate);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
     }
 
     @Test
@@ -274,7 +260,7 @@ class JobHistoryResourceIT {
         // Initialize the database
         jobHistoryRepository.saveAndFlush(jobHistory);
 
-        int databaseSizeBeforeUpdate = jobHistoryRepository.findAll().size();
+        long databaseSizeBeforeUpdate = getRepositoryCount();
 
         // Update the jobHistory using partial update
         JobHistory partialUpdatedJobHistory = new JobHistory();
@@ -285,17 +271,17 @@ class JobHistoryResourceIT {
                 patch(ENTITY_API_URL_ID, partialUpdatedJobHistory.getId())
                     .with(csrf())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(partialUpdatedJobHistory))
+                    .content(om.writeValueAsBytes(partialUpdatedJobHistory))
             )
             .andExpect(status().isOk());
 
         // Validate the JobHistory in the database
-        List<JobHistory> jobHistoryList = jobHistoryRepository.findAll();
-        assertThat(jobHistoryList).hasSize(databaseSizeBeforeUpdate);
-        JobHistory testJobHistory = jobHistoryList.get(jobHistoryList.size() - 1);
-        assertThat(testJobHistory.getStartDate()).isEqualTo(DEFAULT_START_DATE);
-        assertThat(testJobHistory.getEndDate()).isEqualTo(DEFAULT_END_DATE);
-        assertThat(testJobHistory.getLanguage()).isEqualTo(DEFAULT_LANGUAGE);
+
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
+        assertJobHistoryUpdatableFieldsEquals(
+            createUpdateProxyForBean(partialUpdatedJobHistory, jobHistory),
+            getPersistedJobHistory(jobHistory)
+        );
     }
 
     @Test
@@ -304,7 +290,7 @@ class JobHistoryResourceIT {
         // Initialize the database
         jobHistoryRepository.saveAndFlush(jobHistory);
 
-        int databaseSizeBeforeUpdate = jobHistoryRepository.findAll().size();
+        long databaseSizeBeforeUpdate = getRepositoryCount();
 
         // Update the jobHistory using partial update
         JobHistory partialUpdatedJobHistory = new JobHistory();
@@ -317,24 +303,21 @@ class JobHistoryResourceIT {
                 patch(ENTITY_API_URL_ID, partialUpdatedJobHistory.getId())
                     .with(csrf())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(partialUpdatedJobHistory))
+                    .content(om.writeValueAsBytes(partialUpdatedJobHistory))
             )
             .andExpect(status().isOk());
 
         // Validate the JobHistory in the database
-        List<JobHistory> jobHistoryList = jobHistoryRepository.findAll();
-        assertThat(jobHistoryList).hasSize(databaseSizeBeforeUpdate);
-        JobHistory testJobHistory = jobHistoryList.get(jobHistoryList.size() - 1);
-        assertThat(testJobHistory.getStartDate()).isEqualTo(UPDATED_START_DATE);
-        assertThat(testJobHistory.getEndDate()).isEqualTo(UPDATED_END_DATE);
-        assertThat(testJobHistory.getLanguage()).isEqualTo(UPDATED_LANGUAGE);
+
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
+        assertJobHistoryUpdatableFieldsEquals(partialUpdatedJobHistory, getPersistedJobHistory(partialUpdatedJobHistory));
     }
 
     @Test
     @Transactional
     void patchNonExistingJobHistory() throws Exception {
-        int databaseSizeBeforeUpdate = jobHistoryRepository.findAll().size();
-        jobHistory.setId(count.incrementAndGet());
+        long databaseSizeBeforeUpdate = getRepositoryCount();
+        jobHistory.setId(longCount.incrementAndGet());
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restJobHistoryMockMvc
@@ -342,55 +325,49 @@ class JobHistoryResourceIT {
                 patch(ENTITY_API_URL_ID, jobHistory.getId())
                     .with(csrf())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(jobHistory))
+                    .content(om.writeValueAsBytes(jobHistory))
             )
             .andExpect(status().isBadRequest());
 
         // Validate the JobHistory in the database
-        List<JobHistory> jobHistoryList = jobHistoryRepository.findAll();
-        assertThat(jobHistoryList).hasSize(databaseSizeBeforeUpdate);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
     }
 
     @Test
     @Transactional
     void patchWithIdMismatchJobHistory() throws Exception {
-        int databaseSizeBeforeUpdate = jobHistoryRepository.findAll().size();
-        jobHistory.setId(count.incrementAndGet());
+        long databaseSizeBeforeUpdate = getRepositoryCount();
+        jobHistory.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restJobHistoryMockMvc
             .perform(
-                patch(ENTITY_API_URL_ID, count.incrementAndGet())
+                patch(ENTITY_API_URL_ID, longCount.incrementAndGet())
                     .with(csrf())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(jobHistory))
+                    .content(om.writeValueAsBytes(jobHistory))
             )
             .andExpect(status().isBadRequest());
 
         // Validate the JobHistory in the database
-        List<JobHistory> jobHistoryList = jobHistoryRepository.findAll();
-        assertThat(jobHistoryList).hasSize(databaseSizeBeforeUpdate);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
     }
 
     @Test
     @Transactional
     void patchWithMissingIdPathParamJobHistory() throws Exception {
-        int databaseSizeBeforeUpdate = jobHistoryRepository.findAll().size();
-        jobHistory.setId(count.incrementAndGet());
+        long databaseSizeBeforeUpdate = getRepositoryCount();
+        jobHistory.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restJobHistoryMockMvc
             .perform(
-                patch(ENTITY_API_URL)
-                    .with(csrf())
-                    .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(jobHistory))
+                patch(ENTITY_API_URL).with(csrf()).contentType("application/merge-patch+json").content(om.writeValueAsBytes(jobHistory))
             )
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the JobHistory in the database
-        List<JobHistory> jobHistoryList = jobHistoryRepository.findAll();
-        assertThat(jobHistoryList).hasSize(databaseSizeBeforeUpdate);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
     }
 
     @Test
@@ -399,7 +376,7 @@ class JobHistoryResourceIT {
         // Initialize the database
         jobHistoryRepository.saveAndFlush(jobHistory);
 
-        int databaseSizeBeforeDelete = jobHistoryRepository.findAll().size();
+        long databaseSizeBeforeDelete = getRepositoryCount();
 
         // Delete the jobHistory
         restJobHistoryMockMvc
@@ -407,7 +384,34 @@ class JobHistoryResourceIT {
             .andExpect(status().isNoContent());
 
         // Validate the database contains one less item
-        List<JobHistory> jobHistoryList = jobHistoryRepository.findAll();
-        assertThat(jobHistoryList).hasSize(databaseSizeBeforeDelete - 1);
+        assertDecrementedRepositoryCount(databaseSizeBeforeDelete);
+    }
+
+    protected long getRepositoryCount() {
+        return jobHistoryRepository.count();
+    }
+
+    protected void assertIncrementedRepositoryCount(long countBefore) {
+        assertThat(countBefore + 1).isEqualTo(getRepositoryCount());
+    }
+
+    protected void assertDecrementedRepositoryCount(long countBefore) {
+        assertThat(countBefore - 1).isEqualTo(getRepositoryCount());
+    }
+
+    protected void assertSameRepositoryCount(long countBefore) {
+        assertThat(countBefore).isEqualTo(getRepositoryCount());
+    }
+
+    protected JobHistory getPersistedJobHistory(JobHistory jobHistory) {
+        return jobHistoryRepository.findById(jobHistory.getId()).orElseThrow();
+    }
+
+    protected void assertPersistedJobHistoryToMatchAllProperties(JobHistory expectedJobHistory) {
+        assertJobHistoryAllPropertiesEquals(expectedJobHistory, getPersistedJobHistory(expectedJobHistory));
+    }
+
+    protected void assertPersistedJobHistoryToMatchUpdatableProperties(JobHistory expectedJobHistory) {
+        assertJobHistoryAllUpdatablePropertiesEquals(expectedJobHistory, getPersistedJobHistory(expectedJobHistory));
     }
 }

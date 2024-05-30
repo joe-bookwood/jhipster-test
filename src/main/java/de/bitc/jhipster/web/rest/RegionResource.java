@@ -21,7 +21,7 @@ import tech.jhipster.web.util.ResponseUtil;
  * REST controller for managing {@link de.bitc.jhipster.domain.Region}.
  */
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/regions")
 public class RegionResource {
 
     private final Logger log = LoggerFactory.getLogger(RegionResource.class);
@@ -47,17 +47,16 @@ public class RegionResource {
      * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new region, or with status {@code 400 (Bad Request)} if the region has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PostMapping("/regions")
+    @PostMapping("")
     public ResponseEntity<Region> createRegion(@RequestBody Region region) throws URISyntaxException {
         log.debug("REST request to save Region : {}", region);
         if (region.getId() != null) {
             throw new BadRequestAlertException("A new region cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        Region result = regionService.save(region);
-        return ResponseEntity
-            .created(new URI("/api/regions/" + result.getId()))
-            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
-            .body(result);
+        region = regionService.save(region);
+        return ResponseEntity.created(new URI("/api/regions/" + region.getId()))
+            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, region.getId().toString()))
+            .body(region);
     }
 
     /**
@@ -70,7 +69,7 @@ public class RegionResource {
      * or with status {@code 500 (Internal Server Error)} if the region couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PutMapping("/regions/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<Region> updateRegion(@PathVariable(value = "id", required = false) final Long id, @RequestBody Region region)
         throws URISyntaxException {
         log.debug("REST request to update Region : {}, {}", id, region);
@@ -85,11 +84,10 @@ public class RegionResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        Region result = regionService.update(region);
-        return ResponseEntity
-            .ok()
+        region = regionService.update(region);
+        return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, region.getId().toString()))
-            .body(result);
+            .body(region);
     }
 
     /**
@@ -103,7 +101,7 @@ public class RegionResource {
      * or with status {@code 500 (Internal Server Error)} if the region couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PatchMapping(value = "/regions/{id}", consumes = { "application/json", "application/merge-patch+json" })
+    @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<Region> partialUpdateRegion(
         @PathVariable(value = "id", required = false) final Long id,
         @RequestBody Region region
@@ -131,10 +129,15 @@ public class RegionResource {
     /**
      * {@code GET  /regions} : get all the regions.
      *
+     * @param filter the filter of the request.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of regions in body.
      */
-    @GetMapping("/regions")
-    public List<Region> getAllRegions() {
+    @GetMapping("")
+    public List<Region> getAllRegions(@RequestParam(name = "filter", required = false) String filter) {
+        if ("country-is-null".equals(filter)) {
+            log.debug("REST request to get all Regions where country is null");
+            return regionService.findAllWhereCountryIsNull();
+        }
         log.debug("REST request to get all Regions");
         return regionService.findAll();
     }
@@ -145,8 +148,8 @@ public class RegionResource {
      * @param id the id of the region to retrieve.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the region, or with status {@code 404 (Not Found)}.
      */
-    @GetMapping("/regions/{id}")
-    public ResponseEntity<Region> getRegion(@PathVariable Long id) {
+    @GetMapping("/{id}")
+    public ResponseEntity<Region> getRegion(@PathVariable("id") Long id) {
         log.debug("REST request to get Region : {}", id);
         Optional<Region> region = regionService.findOne(id);
         return ResponseUtil.wrapOrNotFound(region);
@@ -158,12 +161,11 @@ public class RegionResource {
      * @param id the id of the region to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
-    @DeleteMapping("/regions/{id}")
-    public ResponseEntity<Void> deleteRegion(@PathVariable Long id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteRegion(@PathVariable("id") Long id) {
         log.debug("REST request to delete Region : {}", id);
         regionService.delete(id);
-        return ResponseEntity
-            .noContent()
+        return ResponseEntity.noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
     }

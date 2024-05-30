@@ -1,18 +1,20 @@
 package de.bitc.jhipster.web.rest;
 
+import static de.bitc.jhipster.domain.DepartmentAsserts.*;
+import static de.bitc.jhipster.web.rest.TestUtil.createUpdateProxyForBean;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import de.bitc.jhipster.IntegrationTest;
 import de.bitc.jhipster.domain.Department;
 import de.bitc.jhipster.repository.DepartmentRepository;
-import java.util.List;
+import jakarta.persistence.EntityManager;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
-import javax.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +39,10 @@ class DepartmentResourceIT {
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
 
     private static Random random = new Random();
-    private static AtomicLong count = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
+    private static AtomicLong longCount = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
+
+    @Autowired
+    private ObjectMapper om;
 
     @Autowired
     private DepartmentRepository departmentRepository;
@@ -80,22 +85,23 @@ class DepartmentResourceIT {
     @Test
     @Transactional
     void createDepartment() throws Exception {
-        int databaseSizeBeforeCreate = departmentRepository.findAll().size();
+        long databaseSizeBeforeCreate = getRepositoryCount();
         // Create the Department
-        restDepartmentMockMvc
-            .perform(
-                post(ENTITY_API_URL)
-                    .with(csrf())
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(department))
-            )
-            .andExpect(status().isCreated());
+        var returnedDepartment = om.readValue(
+            restDepartmentMockMvc
+                .perform(
+                    post(ENTITY_API_URL).with(csrf()).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(department))
+                )
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse()
+                .getContentAsString(),
+            Department.class
+        );
 
         // Validate the Department in the database
-        List<Department> departmentList = departmentRepository.findAll();
-        assertThat(departmentList).hasSize(databaseSizeBeforeCreate + 1);
-        Department testDepartment = departmentList.get(departmentList.size() - 1);
-        assertThat(testDepartment.getDepartmentName()).isEqualTo(DEFAULT_DEPARTMENT_NAME);
+        assertIncrementedRepositoryCount(databaseSizeBeforeCreate);
+        assertDepartmentUpdatableFieldsEquals(returnedDepartment, getPersistedDepartment(returnedDepartment));
     }
 
     @Test
@@ -104,43 +110,31 @@ class DepartmentResourceIT {
         // Create the Department with an existing ID
         department.setId(1L);
 
-        int databaseSizeBeforeCreate = departmentRepository.findAll().size();
+        long databaseSizeBeforeCreate = getRepositoryCount();
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restDepartmentMockMvc
-            .perform(
-                post(ENTITY_API_URL)
-                    .with(csrf())
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(department))
-            )
+            .perform(post(ENTITY_API_URL).with(csrf()).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(department)))
             .andExpect(status().isBadRequest());
 
         // Validate the Department in the database
-        List<Department> departmentList = departmentRepository.findAll();
-        assertThat(departmentList).hasSize(databaseSizeBeforeCreate);
+        assertSameRepositoryCount(databaseSizeBeforeCreate);
     }
 
     @Test
     @Transactional
     void checkDepartmentNameIsRequired() throws Exception {
-        int databaseSizeBeforeTest = departmentRepository.findAll().size();
+        long databaseSizeBeforeTest = getRepositoryCount();
         // set the field null
         department.setDepartmentName(null);
 
         // Create the Department, which fails.
 
         restDepartmentMockMvc
-            .perform(
-                post(ENTITY_API_URL)
-                    .with(csrf())
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(department))
-            )
+            .perform(post(ENTITY_API_URL).with(csrf()).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(department)))
             .andExpect(status().isBadRequest());
 
-        List<Department> departmentList = departmentRepository.findAll();
-        assertThat(departmentList).hasSize(databaseSizeBeforeTest);
+        assertSameRepositoryCount(databaseSizeBeforeTest);
     }
 
     @Test
@@ -186,10 +180,10 @@ class DepartmentResourceIT {
         // Initialize the database
         departmentRepository.saveAndFlush(department);
 
-        int databaseSizeBeforeUpdate = departmentRepository.findAll().size();
+        long databaseSizeBeforeUpdate = getRepositoryCount();
 
         // Update the department
-        Department updatedDepartment = departmentRepository.findById(department.getId()).get();
+        Department updatedDepartment = departmentRepository.findById(department.getId()).orElseThrow();
         // Disconnect from session so that the updates on updatedDepartment are not directly saved in db
         em.detach(updatedDepartment);
         updatedDepartment.departmentName(UPDATED_DEPARTMENT_NAME);
@@ -199,22 +193,20 @@ class DepartmentResourceIT {
                 put(ENTITY_API_URL_ID, updatedDepartment.getId())
                     .with(csrf())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(updatedDepartment))
+                    .content(om.writeValueAsBytes(updatedDepartment))
             )
             .andExpect(status().isOk());
 
         // Validate the Department in the database
-        List<Department> departmentList = departmentRepository.findAll();
-        assertThat(departmentList).hasSize(databaseSizeBeforeUpdate);
-        Department testDepartment = departmentList.get(departmentList.size() - 1);
-        assertThat(testDepartment.getDepartmentName()).isEqualTo(UPDATED_DEPARTMENT_NAME);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
+        assertPersistedDepartmentToMatchAllProperties(updatedDepartment);
     }
 
     @Test
     @Transactional
     void putNonExistingDepartment() throws Exception {
-        int databaseSizeBeforeUpdate = departmentRepository.findAll().size();
-        department.setId(count.incrementAndGet());
+        long databaseSizeBeforeUpdate = getRepositoryCount();
+        department.setId(longCount.incrementAndGet());
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restDepartmentMockMvc
@@ -222,55 +214,47 @@ class DepartmentResourceIT {
                 put(ENTITY_API_URL_ID, department.getId())
                     .with(csrf())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(department))
+                    .content(om.writeValueAsBytes(department))
             )
             .andExpect(status().isBadRequest());
 
         // Validate the Department in the database
-        List<Department> departmentList = departmentRepository.findAll();
-        assertThat(departmentList).hasSize(databaseSizeBeforeUpdate);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
     }
 
     @Test
     @Transactional
     void putWithIdMismatchDepartment() throws Exception {
-        int databaseSizeBeforeUpdate = departmentRepository.findAll().size();
-        department.setId(count.incrementAndGet());
+        long databaseSizeBeforeUpdate = getRepositoryCount();
+        department.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restDepartmentMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, count.incrementAndGet())
+                put(ENTITY_API_URL_ID, longCount.incrementAndGet())
                     .with(csrf())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(department))
+                    .content(om.writeValueAsBytes(department))
             )
             .andExpect(status().isBadRequest());
 
         // Validate the Department in the database
-        List<Department> departmentList = departmentRepository.findAll();
-        assertThat(departmentList).hasSize(databaseSizeBeforeUpdate);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
     }
 
     @Test
     @Transactional
     void putWithMissingIdPathParamDepartment() throws Exception {
-        int databaseSizeBeforeUpdate = departmentRepository.findAll().size();
-        department.setId(count.incrementAndGet());
+        long databaseSizeBeforeUpdate = getRepositoryCount();
+        department.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restDepartmentMockMvc
-            .perform(
-                put(ENTITY_API_URL)
-                    .with(csrf())
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(department))
-            )
+            .perform(put(ENTITY_API_URL).with(csrf()).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(department)))
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the Department in the database
-        List<Department> departmentList = departmentRepository.findAll();
-        assertThat(departmentList).hasSize(databaseSizeBeforeUpdate);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
     }
 
     @Test
@@ -279,7 +263,7 @@ class DepartmentResourceIT {
         // Initialize the database
         departmentRepository.saveAndFlush(department);
 
-        int databaseSizeBeforeUpdate = departmentRepository.findAll().size();
+        long databaseSizeBeforeUpdate = getRepositoryCount();
 
         // Update the department using partial update
         Department partialUpdatedDepartment = new Department();
@@ -290,15 +274,17 @@ class DepartmentResourceIT {
                 patch(ENTITY_API_URL_ID, partialUpdatedDepartment.getId())
                     .with(csrf())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(partialUpdatedDepartment))
+                    .content(om.writeValueAsBytes(partialUpdatedDepartment))
             )
             .andExpect(status().isOk());
 
         // Validate the Department in the database
-        List<Department> departmentList = departmentRepository.findAll();
-        assertThat(departmentList).hasSize(databaseSizeBeforeUpdate);
-        Department testDepartment = departmentList.get(departmentList.size() - 1);
-        assertThat(testDepartment.getDepartmentName()).isEqualTo(DEFAULT_DEPARTMENT_NAME);
+
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
+        assertDepartmentUpdatableFieldsEquals(
+            createUpdateProxyForBean(partialUpdatedDepartment, department),
+            getPersistedDepartment(department)
+        );
     }
 
     @Test
@@ -307,7 +293,7 @@ class DepartmentResourceIT {
         // Initialize the database
         departmentRepository.saveAndFlush(department);
 
-        int databaseSizeBeforeUpdate = departmentRepository.findAll().size();
+        long databaseSizeBeforeUpdate = getRepositoryCount();
 
         // Update the department using partial update
         Department partialUpdatedDepartment = new Department();
@@ -320,22 +306,21 @@ class DepartmentResourceIT {
                 patch(ENTITY_API_URL_ID, partialUpdatedDepartment.getId())
                     .with(csrf())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(partialUpdatedDepartment))
+                    .content(om.writeValueAsBytes(partialUpdatedDepartment))
             )
             .andExpect(status().isOk());
 
         // Validate the Department in the database
-        List<Department> departmentList = departmentRepository.findAll();
-        assertThat(departmentList).hasSize(databaseSizeBeforeUpdate);
-        Department testDepartment = departmentList.get(departmentList.size() - 1);
-        assertThat(testDepartment.getDepartmentName()).isEqualTo(UPDATED_DEPARTMENT_NAME);
+
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
+        assertDepartmentUpdatableFieldsEquals(partialUpdatedDepartment, getPersistedDepartment(partialUpdatedDepartment));
     }
 
     @Test
     @Transactional
     void patchNonExistingDepartment() throws Exception {
-        int databaseSizeBeforeUpdate = departmentRepository.findAll().size();
-        department.setId(count.incrementAndGet());
+        long databaseSizeBeforeUpdate = getRepositoryCount();
+        department.setId(longCount.incrementAndGet());
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restDepartmentMockMvc
@@ -343,55 +328,49 @@ class DepartmentResourceIT {
                 patch(ENTITY_API_URL_ID, department.getId())
                     .with(csrf())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(department))
+                    .content(om.writeValueAsBytes(department))
             )
             .andExpect(status().isBadRequest());
 
         // Validate the Department in the database
-        List<Department> departmentList = departmentRepository.findAll();
-        assertThat(departmentList).hasSize(databaseSizeBeforeUpdate);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
     }
 
     @Test
     @Transactional
     void patchWithIdMismatchDepartment() throws Exception {
-        int databaseSizeBeforeUpdate = departmentRepository.findAll().size();
-        department.setId(count.incrementAndGet());
+        long databaseSizeBeforeUpdate = getRepositoryCount();
+        department.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restDepartmentMockMvc
             .perform(
-                patch(ENTITY_API_URL_ID, count.incrementAndGet())
+                patch(ENTITY_API_URL_ID, longCount.incrementAndGet())
                     .with(csrf())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(department))
+                    .content(om.writeValueAsBytes(department))
             )
             .andExpect(status().isBadRequest());
 
         // Validate the Department in the database
-        List<Department> departmentList = departmentRepository.findAll();
-        assertThat(departmentList).hasSize(databaseSizeBeforeUpdate);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
     }
 
     @Test
     @Transactional
     void patchWithMissingIdPathParamDepartment() throws Exception {
-        int databaseSizeBeforeUpdate = departmentRepository.findAll().size();
-        department.setId(count.incrementAndGet());
+        long databaseSizeBeforeUpdate = getRepositoryCount();
+        department.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restDepartmentMockMvc
             .perform(
-                patch(ENTITY_API_URL)
-                    .with(csrf())
-                    .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(department))
+                patch(ENTITY_API_URL).with(csrf()).contentType("application/merge-patch+json").content(om.writeValueAsBytes(department))
             )
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the Department in the database
-        List<Department> departmentList = departmentRepository.findAll();
-        assertThat(departmentList).hasSize(databaseSizeBeforeUpdate);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
     }
 
     @Test
@@ -400,7 +379,7 @@ class DepartmentResourceIT {
         // Initialize the database
         departmentRepository.saveAndFlush(department);
 
-        int databaseSizeBeforeDelete = departmentRepository.findAll().size();
+        long databaseSizeBeforeDelete = getRepositoryCount();
 
         // Delete the department
         restDepartmentMockMvc
@@ -408,7 +387,34 @@ class DepartmentResourceIT {
             .andExpect(status().isNoContent());
 
         // Validate the database contains one less item
-        List<Department> departmentList = departmentRepository.findAll();
-        assertThat(departmentList).hasSize(databaseSizeBeforeDelete - 1);
+        assertDecrementedRepositoryCount(databaseSizeBeforeDelete);
+    }
+
+    protected long getRepositoryCount() {
+        return departmentRepository.count();
+    }
+
+    protected void assertIncrementedRepositoryCount(long countBefore) {
+        assertThat(countBefore + 1).isEqualTo(getRepositoryCount());
+    }
+
+    protected void assertDecrementedRepositoryCount(long countBefore) {
+        assertThat(countBefore - 1).isEqualTo(getRepositoryCount());
+    }
+
+    protected void assertSameRepositoryCount(long countBefore) {
+        assertThat(countBefore).isEqualTo(getRepositoryCount());
+    }
+
+    protected Department getPersistedDepartment(Department department) {
+        return departmentRepository.findById(department.getId()).orElseThrow();
+    }
+
+    protected void assertPersistedDepartmentToMatchAllProperties(Department expectedDepartment) {
+        assertDepartmentAllPropertiesEquals(expectedDepartment, getPersistedDepartment(expectedDepartment));
+    }
+
+    protected void assertPersistedDepartmentToMatchUpdatableProperties(Department expectedDepartment) {
+        assertDepartmentAllUpdatablePropertiesEquals(expectedDepartment, getPersistedDepartment(expectedDepartment));
     }
 }

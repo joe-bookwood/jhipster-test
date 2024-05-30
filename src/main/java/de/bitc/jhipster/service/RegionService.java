@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Service Interface for managing {@link Region}.
+ * Service Interface for managing {@link de.bitc.jhipster.domain.Region}.
  */
 public interface RegionService {
     /**
@@ -38,6 +38,13 @@ public interface RegionService {
      * @return the list of entities.
      */
     List<Region> findAll();
+
+    /**
+     * Get all the Region where Country is {@code null}.
+     *
+     * @return the {@link List} of entities.
+     */
+    List<Region> findAllWhereCountryIsNull();
 
     /**
      * Get the "id" region.

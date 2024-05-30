@@ -21,7 +21,7 @@ import tech.jhipster.web.util.ResponseUtil;
  * REST controller for managing {@link de.bitc.jhipster.domain.Country}.
  */
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/countries")
 public class CountryResource {
 
     private final Logger log = LoggerFactory.getLogger(CountryResource.class);
@@ -47,17 +47,16 @@ public class CountryResource {
      * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new country, or with status {@code 400 (Bad Request)} if the country has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PostMapping("/countries")
+    @PostMapping("")
     public ResponseEntity<Country> createCountry(@RequestBody Country country) throws URISyntaxException {
         log.debug("REST request to save Country : {}", country);
         if (country.getId() != null) {
             throw new BadRequestAlertException("A new country cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        Country result = countryService.save(country);
-        return ResponseEntity
-            .created(new URI("/api/countries/" + result.getId()))
-            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
-            .body(result);
+        country = countryService.save(country);
+        return ResponseEntity.created(new URI("/api/countries/" + country.getId()))
+            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, country.getId().toString()))
+            .body(country);
     }
 
     /**
@@ -70,7 +69,7 @@ public class CountryResource {
      * or with status {@code 500 (Internal Server Error)} if the country couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PutMapping("/countries/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<Country> updateCountry(@PathVariable(value = "id", required = false) final Long id, @RequestBody Country country)
         throws URISyntaxException {
         log.debug("REST request to update Country : {}, {}", id, country);
@@ -85,11 +84,10 @@ public class CountryResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        Country result = countryService.update(country);
-        return ResponseEntity
-            .ok()
+        country = countryService.update(country);
+        return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, country.getId().toString()))
-            .body(result);
+            .body(country);
     }
 
     /**
@@ -103,7 +101,7 @@ public class CountryResource {
      * or with status {@code 500 (Internal Server Error)} if the country couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PatchMapping(value = "/countries/{id}", consumes = { "application/json", "application/merge-patch+json" })
+    @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<Country> partialUpdateCountry(
         @PathVariable(value = "id", required = false) final Long id,
         @RequestBody Country country
@@ -131,10 +129,15 @@ public class CountryResource {
     /**
      * {@code GET  /countries} : get all the countries.
      *
+     * @param filter the filter of the request.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of countries in body.
      */
-    @GetMapping("/countries")
-    public List<Country> getAllCountries() {
+    @GetMapping("")
+    public List<Country> getAllCountries(@RequestParam(name = "filter", required = false) String filter) {
+        if ("location-is-null".equals(filter)) {
+            log.debug("REST request to get all Countrys where location is null");
+            return countryService.findAllWhereLocationIsNull();
+        }
         log.debug("REST request to get all Countries");
         return countryService.findAll();
     }
@@ -145,8 +148,8 @@ public class CountryResource {
      * @param id the id of the country to retrieve.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the country, or with status {@code 404 (Not Found)}.
      */
-    @GetMapping("/countries/{id}")
-    public ResponseEntity<Country> getCountry(@PathVariable Long id) {
+    @GetMapping("/{id}")
+    public ResponseEntity<Country> getCountry(@PathVariable("id") Long id) {
         log.debug("REST request to get Country : {}", id);
         Optional<Country> country = countryService.findOne(id);
         return ResponseUtil.wrapOrNotFound(country);
@@ -158,12 +161,11 @@ public class CountryResource {
      * @param id the id of the country to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
-    @DeleteMapping("/countries/{id}")
-    public ResponseEntity<Void> deleteCountry(@PathVariable Long id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteCountry(@PathVariable("id") Long id) {
         log.debug("REST request to delete Country : {}", id);
         countryService.delete(id);
-        return ResponseEntity
-            .noContent()
+        return ResponseEntity.noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
     }
