@@ -1,4 +1,7 @@
 {
+  "annotations": {
+    "changelogDate": "20220806103449"
+  },
   "applications": ["jhipsterTest"],
   "changelogDate": "20220806103449",
   "dto": "no",
@@ -16,5 +19,6 @@
   "pagination": "no",
   "readOnly": false,
   "relationships": [],
+  "searchEngine": "no",
   "service": "serviceImpl"
 }

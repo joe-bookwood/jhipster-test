@@ -26,13 +26,15 @@ public class CacheConfiguration {
     public CacheConfiguration(JHipsterProperties jHipsterProperties) {
         JHipsterProperties.Cache.Ehcache ehcache = jHipsterProperties.getCache().getEhcache();
 
-        jcacheConfiguration =
-            Eh107Configuration.fromEhcacheCacheConfiguration(
-                CacheConfigurationBuilder
-                    .newCacheConfigurationBuilder(Object.class, Object.class, ResourcePoolsBuilder.heap(ehcache.getMaxEntries()))
-                    .withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(Duration.ofSeconds(ehcache.getTimeToLiveSeconds())))
-                    .build()
-            );
+        jcacheConfiguration = Eh107Configuration.fromEhcacheCacheConfiguration(
+            CacheConfigurationBuilder.newCacheConfigurationBuilder(
+                Object.class,
+                Object.class,
+                ResourcePoolsBuilder.heap(ehcache.getMaxEntries())
+            )
+                .withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(Duration.ofSeconds(ehcache.getTimeToLiveSeconds())))
+                .build()
+        );
     }
 
     @Bean
@@ -48,6 +50,18 @@ public class CacheConfiguration {
             createCache(cm, de.bitc.jhipster.domain.User.class.getName());
             createCache(cm, de.bitc.jhipster.domain.Authority.class.getName());
             createCache(cm, de.bitc.jhipster.domain.User.class.getName() + ".authorities");
+            createCache(cm, de.bitc.jhipster.domain.Region.class.getName());
+            createCache(cm, de.bitc.jhipster.domain.Country.class.getName());
+            createCache(cm, de.bitc.jhipster.domain.Location.class.getName());
+            createCache(cm, de.bitc.jhipster.domain.Department.class.getName());
+            createCache(cm, de.bitc.jhipster.domain.Department.class.getName() + ".employees");
+            createCache(cm, de.bitc.jhipster.domain.Task.class.getName());
+            createCache(cm, de.bitc.jhipster.domain.Task.class.getName() + ".jobs");
+            createCache(cm, de.bitc.jhipster.domain.Employee.class.getName());
+            createCache(cm, de.bitc.jhipster.domain.Employee.class.getName() + ".jobs");
+            createCache(cm, de.bitc.jhipster.domain.Job.class.getName());
+            createCache(cm, de.bitc.jhipster.domain.Job.class.getName() + ".tasks");
+            createCache(cm, de.bitc.jhipster.domain.JobHistory.class.getName());
             // jhipster-needle-ehcache-add-entry
         };
     }
