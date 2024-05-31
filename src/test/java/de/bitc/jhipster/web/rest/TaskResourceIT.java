@@ -1,18 +1,20 @@
 package de.bitc.jhipster.web.rest;
 
+import static de.bitc.jhipster.domain.TaskAsserts.*;
+import static de.bitc.jhipster.web.rest.TestUtil.createUpdateProxyForBean;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import de.bitc.jhipster.IntegrationTest;
 import de.bitc.jhipster.domain.Task;
 import de.bitc.jhipster.repository.TaskRepository;
-import java.util.List;
+import jakarta.persistence.EntityManager;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
-import javax.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +42,10 @@ class TaskResourceIT {
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
 
     private static Random random = new Random();
-    private static AtomicLong count = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
+    private static AtomicLong longCount = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
+
+    @Autowired
+    private ObjectMapper om;
 
     @Autowired
     private TaskRepository taskRepository;
@@ -83,20 +88,21 @@ class TaskResourceIT {
     @Test
     @Transactional
     void createTask() throws Exception {
-        int databaseSizeBeforeCreate = taskRepository.findAll().size();
+        long databaseSizeBeforeCreate = getRepositoryCount();
         // Create the Task
-        restTaskMockMvc
-            .perform(
-                post(ENTITY_API_URL).with(csrf()).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(task))
-            )
-            .andExpect(status().isCreated());
+        var returnedTask = om.readValue(
+            restTaskMockMvc
+                .perform(post(ENTITY_API_URL).with(csrf()).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(task)))
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse()
+                .getContentAsString(),
+            Task.class
+        );
 
         // Validate the Task in the database
-        List<Task> taskList = taskRepository.findAll();
-        assertThat(taskList).hasSize(databaseSizeBeforeCreate + 1);
-        Task testTask = taskList.get(taskList.size() - 1);
-        assertThat(testTask.getTitle()).isEqualTo(DEFAULT_TITLE);
-        assertThat(testTask.getDescription()).isEqualTo(DEFAULT_DESCRIPTION);
+        assertIncrementedRepositoryCount(databaseSizeBeforeCreate);
+        assertTaskUpdatableFieldsEquals(returnedTask, getPersistedTask(returnedTask));
     }
 
     @Test
@@ -105,18 +111,15 @@ class TaskResourceIT {
         // Create the Task with an existing ID
         task.setId(1L);
 
-        int databaseSizeBeforeCreate = taskRepository.findAll().size();
+        long databaseSizeBeforeCreate = getRepositoryCount();
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restTaskMockMvc
-            .perform(
-                post(ENTITY_API_URL).with(csrf()).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(task))
-            )
+            .perform(post(ENTITY_API_URL).with(csrf()).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(task)))
             .andExpect(status().isBadRequest());
 
         // Validate the Task in the database
-        List<Task> taskList = taskRepository.findAll();
-        assertThat(taskList).hasSize(databaseSizeBeforeCreate);
+        assertSameRepositoryCount(databaseSizeBeforeCreate);
     }
 
     @Test
@@ -164,10 +167,10 @@ class TaskResourceIT {
         // Initialize the database
         taskRepository.saveAndFlush(task);
 
-        int databaseSizeBeforeUpdate = taskRepository.findAll().size();
+        long databaseSizeBeforeUpdate = getRepositoryCount();
 
         // Update the task
-        Task updatedTask = taskRepository.findById(task.getId()).get();
+        Task updatedTask = taskRepository.findById(task.getId()).orElseThrow();
         // Disconnect from session so that the updates on updatedTask are not directly saved in db
         em.detach(updatedTask);
         updatedTask.title(UPDATED_TITLE).description(UPDATED_DESCRIPTION);
@@ -177,23 +180,20 @@ class TaskResourceIT {
                 put(ENTITY_API_URL_ID, updatedTask.getId())
                     .with(csrf())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(updatedTask))
+                    .content(om.writeValueAsBytes(updatedTask))
             )
             .andExpect(status().isOk());
 
         // Validate the Task in the database
-        List<Task> taskList = taskRepository.findAll();
-        assertThat(taskList).hasSize(databaseSizeBeforeUpdate);
-        Task testTask = taskList.get(taskList.size() - 1);
-        assertThat(testTask.getTitle()).isEqualTo(UPDATED_TITLE);
-        assertThat(testTask.getDescription()).isEqualTo(UPDATED_DESCRIPTION);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
+        assertPersistedTaskToMatchAllProperties(updatedTask);
     }
 
     @Test
     @Transactional
     void putNonExistingTask() throws Exception {
-        int databaseSizeBeforeUpdate = taskRepository.findAll().size();
-        task.setId(count.incrementAndGet());
+        long databaseSizeBeforeUpdate = getRepositoryCount();
+        task.setId(longCount.incrementAndGet());
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restTaskMockMvc
@@ -201,52 +201,47 @@ class TaskResourceIT {
                 put(ENTITY_API_URL_ID, task.getId())
                     .with(csrf())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(task))
+                    .content(om.writeValueAsBytes(task))
             )
             .andExpect(status().isBadRequest());
 
         // Validate the Task in the database
-        List<Task> taskList = taskRepository.findAll();
-        assertThat(taskList).hasSize(databaseSizeBeforeUpdate);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
     }
 
     @Test
     @Transactional
     void putWithIdMismatchTask() throws Exception {
-        int databaseSizeBeforeUpdate = taskRepository.findAll().size();
-        task.setId(count.incrementAndGet());
+        long databaseSizeBeforeUpdate = getRepositoryCount();
+        task.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restTaskMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, count.incrementAndGet())
+                put(ENTITY_API_URL_ID, longCount.incrementAndGet())
                     .with(csrf())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(task))
+                    .content(om.writeValueAsBytes(task))
             )
             .andExpect(status().isBadRequest());
 
         // Validate the Task in the database
-        List<Task> taskList = taskRepository.findAll();
-        assertThat(taskList).hasSize(databaseSizeBeforeUpdate);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
     }
 
     @Test
     @Transactional
     void putWithMissingIdPathParamTask() throws Exception {
-        int databaseSizeBeforeUpdate = taskRepository.findAll().size();
-        task.setId(count.incrementAndGet());
+        long databaseSizeBeforeUpdate = getRepositoryCount();
+        task.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restTaskMockMvc
-            .perform(
-                put(ENTITY_API_URL).with(csrf()).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(task))
-            )
+            .perform(put(ENTITY_API_URL).with(csrf()).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(task)))
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the Task in the database
-        List<Task> taskList = taskRepository.findAll();
-        assertThat(taskList).hasSize(databaseSizeBeforeUpdate);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
     }
 
     @Test
@@ -255,29 +250,25 @@ class TaskResourceIT {
         // Initialize the database
         taskRepository.saveAndFlush(task);
 
-        int databaseSizeBeforeUpdate = taskRepository.findAll().size();
+        long databaseSizeBeforeUpdate = getRepositoryCount();
 
         // Update the task using partial update
         Task partialUpdatedTask = new Task();
         partialUpdatedTask.setId(task.getId());
-
-        partialUpdatedTask.description(UPDATED_DESCRIPTION);
 
         restTaskMockMvc
             .perform(
                 patch(ENTITY_API_URL_ID, partialUpdatedTask.getId())
                     .with(csrf())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(partialUpdatedTask))
+                    .content(om.writeValueAsBytes(partialUpdatedTask))
             )
             .andExpect(status().isOk());
 
         // Validate the Task in the database
-        List<Task> taskList = taskRepository.findAll();
-        assertThat(taskList).hasSize(databaseSizeBeforeUpdate);
-        Task testTask = taskList.get(taskList.size() - 1);
-        assertThat(testTask.getTitle()).isEqualTo(DEFAULT_TITLE);
-        assertThat(testTask.getDescription()).isEqualTo(UPDATED_DESCRIPTION);
+
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
+        assertTaskUpdatableFieldsEquals(createUpdateProxyForBean(partialUpdatedTask, task), getPersistedTask(task));
     }
 
     @Test
@@ -286,7 +277,7 @@ class TaskResourceIT {
         // Initialize the database
         taskRepository.saveAndFlush(task);
 
-        int databaseSizeBeforeUpdate = taskRepository.findAll().size();
+        long databaseSizeBeforeUpdate = getRepositoryCount();
 
         // Update the task using partial update
         Task partialUpdatedTask = new Task();
@@ -299,23 +290,21 @@ class TaskResourceIT {
                 patch(ENTITY_API_URL_ID, partialUpdatedTask.getId())
                     .with(csrf())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(partialUpdatedTask))
+                    .content(om.writeValueAsBytes(partialUpdatedTask))
             )
             .andExpect(status().isOk());
 
         // Validate the Task in the database
-        List<Task> taskList = taskRepository.findAll();
-        assertThat(taskList).hasSize(databaseSizeBeforeUpdate);
-        Task testTask = taskList.get(taskList.size() - 1);
-        assertThat(testTask.getTitle()).isEqualTo(UPDATED_TITLE);
-        assertThat(testTask.getDescription()).isEqualTo(UPDATED_DESCRIPTION);
+
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
+        assertTaskUpdatableFieldsEquals(partialUpdatedTask, getPersistedTask(partialUpdatedTask));
     }
 
     @Test
     @Transactional
     void patchNonExistingTask() throws Exception {
-        int databaseSizeBeforeUpdate = taskRepository.findAll().size();
-        task.setId(count.incrementAndGet());
+        long databaseSizeBeforeUpdate = getRepositoryCount();
+        task.setId(longCount.incrementAndGet());
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restTaskMockMvc
@@ -323,55 +312,47 @@ class TaskResourceIT {
                 patch(ENTITY_API_URL_ID, task.getId())
                     .with(csrf())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(task))
+                    .content(om.writeValueAsBytes(task))
             )
             .andExpect(status().isBadRequest());
 
         // Validate the Task in the database
-        List<Task> taskList = taskRepository.findAll();
-        assertThat(taskList).hasSize(databaseSizeBeforeUpdate);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
     }
 
     @Test
     @Transactional
     void patchWithIdMismatchTask() throws Exception {
-        int databaseSizeBeforeUpdate = taskRepository.findAll().size();
-        task.setId(count.incrementAndGet());
+        long databaseSizeBeforeUpdate = getRepositoryCount();
+        task.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restTaskMockMvc
             .perform(
-                patch(ENTITY_API_URL_ID, count.incrementAndGet())
+                patch(ENTITY_API_URL_ID, longCount.incrementAndGet())
                     .with(csrf())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(task))
+                    .content(om.writeValueAsBytes(task))
             )
             .andExpect(status().isBadRequest());
 
         // Validate the Task in the database
-        List<Task> taskList = taskRepository.findAll();
-        assertThat(taskList).hasSize(databaseSizeBeforeUpdate);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
     }
 
     @Test
     @Transactional
     void patchWithMissingIdPathParamTask() throws Exception {
-        int databaseSizeBeforeUpdate = taskRepository.findAll().size();
-        task.setId(count.incrementAndGet());
+        long databaseSizeBeforeUpdate = getRepositoryCount();
+        task.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restTaskMockMvc
-            .perform(
-                patch(ENTITY_API_URL)
-                    .with(csrf())
-                    .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(task))
-            )
+            .perform(patch(ENTITY_API_URL).with(csrf()).contentType("application/merge-patch+json").content(om.writeValueAsBytes(task)))
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the Task in the database
-        List<Task> taskList = taskRepository.findAll();
-        assertThat(taskList).hasSize(databaseSizeBeforeUpdate);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
     }
 
     @Test
@@ -380,7 +361,7 @@ class TaskResourceIT {
         // Initialize the database
         taskRepository.saveAndFlush(task);
 
-        int databaseSizeBeforeDelete = taskRepository.findAll().size();
+        long databaseSizeBeforeDelete = getRepositoryCount();
 
         // Delete the task
         restTaskMockMvc
@@ -388,7 +369,34 @@ class TaskResourceIT {
             .andExpect(status().isNoContent());
 
         // Validate the database contains one less item
-        List<Task> taskList = taskRepository.findAll();
-        assertThat(taskList).hasSize(databaseSizeBeforeDelete - 1);
+        assertDecrementedRepositoryCount(databaseSizeBeforeDelete);
+    }
+
+    protected long getRepositoryCount() {
+        return taskRepository.count();
+    }
+
+    protected void assertIncrementedRepositoryCount(long countBefore) {
+        assertThat(countBefore + 1).isEqualTo(getRepositoryCount());
+    }
+
+    protected void assertDecrementedRepositoryCount(long countBefore) {
+        assertThat(countBefore - 1).isEqualTo(getRepositoryCount());
+    }
+
+    protected void assertSameRepositoryCount(long countBefore) {
+        assertThat(countBefore).isEqualTo(getRepositoryCount());
+    }
+
+    protected Task getPersistedTask(Task task) {
+        return taskRepository.findById(task.getId()).orElseThrow();
+    }
+
+    protected void assertPersistedTaskToMatchAllProperties(Task expectedTask) {
+        assertTaskAllPropertiesEquals(expectedTask, getPersistedTask(expectedTask));
+    }
+
+    protected void assertPersistedTaskToMatchUpdatableProperties(Task expectedTask) {
+        assertTaskAllUpdatablePropertiesEquals(expectedTask, getPersistedTask(expectedTask));
     }
 }

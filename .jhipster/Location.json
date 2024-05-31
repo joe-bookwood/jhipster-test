@@ -1,6 +1,10 @@
 {
+  "annotations": {
+    "changelogDate": "20220806103649"
+  },
   "applications": ["jhipsterTest"],
   "changelogDate": "20220806103649",
+  "documentation": "not an ignored comment",
   "dto": "no",
   "embedded": false,
   "entityTableName": "location",
@@ -33,8 +37,10 @@
       "otherEntityName": "country",
       "ownerSide": true,
       "relationshipName": "country",
+      "relationshipSide": "left",
       "relationshipType": "one-to-one"
     }
   ],
+  "searchEngine": "no",
   "service": "serviceImpl"
 }

@@ -1,17 +1,16 @@
 import { ICountry, NewCountry } from './country.model';
 
 export const sampleWithRequiredData: ICountry = {
-  id: 4746,
+  id: 1279,
 };
 
 export const sampleWithPartialData: ICountry = {
-  id: 86879,
-  countryName: 'Automotive Pakistan Engineer',
+  id: 10725,
 };
 
 export const sampleWithFullData: ICountry = {
-  id: 63753,
-  countryName: 'content 1080p',
+  id: 13145,
+  countryName: 'vengeance aha',
 };
 
 export const sampleWithNewData: NewCountry = {

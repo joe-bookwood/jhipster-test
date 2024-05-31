@@ -3,12 +3,13 @@ import { HttpResponse } from '@angular/common/http';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { RouterTestingModule } from '@angular/router/testing';
 import { of, Subject, from } from 'rxjs';
 
-import { TaskFormService } from './task-form.service';
+import { IJob } from 'app/entities/job/job.model';
+import { JobService } from 'app/entities/job/service/job.service';
 import { TaskService } from '../service/task.service';
 import { ITask } from '../task.model';
+import { TaskFormService } from './task-form.service';
 
 import { TaskUpdateComponent } from './task-update.component';
 
@@ -18,11 +19,11 @@ describe('Task Management Update Component', () => {
   let activatedRoute: ActivatedRoute;
   let taskFormService: TaskFormService;
   let taskService: TaskService;
+  let jobService: JobService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, RouterTestingModule.withRoutes([])],
-      declarations: [TaskUpdateComponent],
+      imports: [HttpClientTestingModule, TaskUpdateComponent],
       providers: [
         FormBuilder,
         {
@@ -40,17 +41,40 @@ describe('Task Management Update Component', () => {
     activatedRoute = TestBed.inject(ActivatedRoute);
     taskFormService = TestBed.inject(TaskFormService);
     taskService = TestBed.inject(TaskService);
+    jobService = TestBed.inject(JobService);
 
     comp = fixture.componentInstance;
   });
 
   describe('ngOnInit', () => {
-    it('Should update editForm', () => {
+    it('Should call Job query and add missing value', () => {
       const task: ITask = { id: 456 };
+      const jobs: IJob[] = [{ id: 27443 }];
+      task.jobs = jobs;
+
+      const jobCollection: IJob[] = [{ id: 29283 }];
+      jest.spyOn(jobService, 'query').mockReturnValue(of(new HttpResponse({ body: jobCollection })));
+      const additionalJobs = [...jobs];
+      const expectedCollection: IJob[] = [...additionalJobs, ...jobCollection];
+      jest.spyOn(jobService, 'addJobToCollectionIfMissing').mockReturnValue(expectedCollection);
 
       activatedRoute.data = of({ task });
       comp.ngOnInit();
 
+      expect(jobService.query).toHaveBeenCalled();
+      expect(jobService.addJobToCollectionIfMissing).toHaveBeenCalledWith(jobCollection, ...additionalJobs.map(expect.objectContaining));
+      expect(comp.jobsSharedCollection).toEqual(expectedCollection);
+    });
+
+    it('Should update editForm', () => {
+      const task: ITask = { id: 456 };
+      const job: IJob = { id: 8193 };
+      task.jobs = [job];
+
+      activatedRoute.data = of({ task });
+      comp.ngOnInit();
+
+      expect(comp.jobsSharedCollection).toContain(job);
       expect(comp.task).toEqual(task);
     });
   });
@@ -120,6 +144,18 @@ describe('Task Management Update Component', () => {
       expect(taskService.update).toHaveBeenCalled();
       expect(comp.isSaving).toEqual(false);
       expect(comp.previousState).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('Compare relationships', () => {
+    describe('compareJob', () => {
+      it('Should forward to jobService', () => {
+        const entity = { id: 123 };
+        const entity2 = { id: 456 };
+        jest.spyOn(jobService, 'compareJob');
+        comp.compareJob(entity, entity2);
+        expect(jobService.compareJob).toHaveBeenCalledWith(entity, entity2);
+      });
     });
   });
 });

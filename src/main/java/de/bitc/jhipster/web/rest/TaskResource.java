@@ -21,7 +21,7 @@ import tech.jhipster.web.util.ResponseUtil;
  * REST controller for managing {@link de.bitc.jhipster.domain.Task}.
  */
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/tasks")
 public class TaskResource {
 
     private final Logger log = LoggerFactory.getLogger(TaskResource.class);
@@ -47,17 +47,16 @@ public class TaskResource {
      * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new task, or with status {@code 400 (Bad Request)} if the task has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PostMapping("/tasks")
+    @PostMapping("")
     public ResponseEntity<Task> createTask(@RequestBody Task task) throws URISyntaxException {
         log.debug("REST request to save Task : {}", task);
         if (task.getId() != null) {
             throw new BadRequestAlertException("A new task cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        Task result = taskService.save(task);
-        return ResponseEntity
-            .created(new URI("/api/tasks/" + result.getId()))
-            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
-            .body(result);
+        task = taskService.save(task);
+        return ResponseEntity.created(new URI("/api/tasks/" + task.getId()))
+            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, task.getId().toString()))
+            .body(task);
     }
 
     /**
@@ -70,7 +69,7 @@ public class TaskResource {
      * or with status {@code 500 (Internal Server Error)} if the task couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PutMapping("/tasks/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<Task> updateTask(@PathVariable(value = "id", required = false) final Long id, @RequestBody Task task)
         throws URISyntaxException {
         log.debug("REST request to update Task : {}, {}", id, task);
@@ -85,11 +84,10 @@ public class TaskResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        Task result = taskService.update(task);
-        return ResponseEntity
-            .ok()
+        task = taskService.update(task);
+        return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, task.getId().toString()))
-            .body(result);
+            .body(task);
     }
 
     /**
@@ -103,7 +101,7 @@ public class TaskResource {
      * or with status {@code 500 (Internal Server Error)} if the task couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PatchMapping(value = "/tasks/{id}", consumes = { "application/json", "application/merge-patch+json" })
+    @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<Task> partialUpdateTask(@PathVariable(value = "id", required = false) final Long id, @RequestBody Task task)
         throws URISyntaxException {
         log.debug("REST request to partial update Task partially : {}, {}", id, task);
@@ -131,7 +129,7 @@ public class TaskResource {
      *
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of tasks in body.
      */
-    @GetMapping("/tasks")
+    @GetMapping("")
     public List<Task> getAllTasks() {
         log.debug("REST request to get all Tasks");
         return taskService.findAll();
@@ -143,8 +141,8 @@ public class TaskResource {
      * @param id the id of the task to retrieve.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the task, or with status {@code 404 (Not Found)}.
      */
-    @GetMapping("/tasks/{id}")
-    public ResponseEntity<Task> getTask(@PathVariable Long id) {
+    @GetMapping("/{id}")
+    public ResponseEntity<Task> getTask(@PathVariable("id") Long id) {
         log.debug("REST request to get Task : {}", id);
         Optional<Task> task = taskService.findOne(id);
         return ResponseUtil.wrapOrNotFound(task);
@@ -156,12 +154,11 @@ public class TaskResource {
      * @param id the id of the task to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
-    @DeleteMapping("/tasks/{id}")
-    public ResponseEntity<Void> deleteTask(@PathVariable Long id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteTask(@PathVariable("id") Long id) {
         log.debug("REST request to delete Task : {}", id);
         taskService.delete(id);
-        return ResponseEntity
-            .noContent()
+        return ResponseEntity.noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
     }

@@ -5,13 +5,14 @@ import de.bitc.jhipster.repository.CountryRepository;
 import de.bitc.jhipster.service.CountryService;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.StreamSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Service Implementation for managing {@link Country}.
+ * Service Implementation for managing {@link de.bitc.jhipster.domain.Country}.
  */
 @Service
 @Transactional
@@ -58,6 +59,18 @@ public class CountryServiceImpl implements CountryService {
     public List<Country> findAll() {
         log.debug("Request to get all Countries");
         return countryRepository.findAll();
+    }
+
+    /**
+     *  Get all the countries where Location is {@code null}.
+     *  @return the list of entities.
+     */
+    @Transactional(readOnly = true)
+    public List<Country> findAllWhereLocationIsNull() {
+        log.debug("Request to get all countries where Location is null");
+        return StreamSupport.stream(countryRepository.findAll().spliterator(), false)
+            .filter(country -> country.getLocation() == null)
+            .toList();
     }
 
     @Override

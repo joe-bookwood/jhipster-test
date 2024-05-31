@@ -3,16 +3,15 @@ import { HttpResponse } from '@angular/common/http';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { RouterTestingModule } from '@angular/router/testing';
 import { of, Subject, from } from 'rxjs';
 
-import { JobFormService } from './job-form.service';
-import { JobService } from '../service/job.service';
-import { IJob } from '../job.model';
 import { ITask } from 'app/entities/task/task.model';
 import { TaskService } from 'app/entities/task/service/task.service';
 import { IEmployee } from 'app/entities/employee/employee.model';
 import { EmployeeService } from 'app/entities/employee/service/employee.service';
+import { IJob } from '../job.model';
+import { JobService } from '../service/job.service';
+import { JobFormService } from './job-form.service';
 
 import { JobUpdateComponent } from './job-update.component';
 
@@ -27,8 +26,7 @@ describe('Job Management Update Component', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, RouterTestingModule.withRoutes([])],
-      declarations: [JobUpdateComponent],
+      imports: [HttpClientTestingModule, JobUpdateComponent],
       providers: [
         FormBuilder,
         {
@@ -55,10 +53,10 @@ describe('Job Management Update Component', () => {
   describe('ngOnInit', () => {
     it('Should call Task query and add missing value', () => {
       const job: IJob = { id: 456 };
-      const tasks: ITask[] = [{ id: 92497 }];
+      const tasks: ITask[] = [{ id: 30694 }];
       job.tasks = tasks;
 
-      const taskCollection: ITask[] = [{ id: 18447 }];
+      const taskCollection: ITask[] = [{ id: 4705 }];
       jest.spyOn(taskService, 'query').mockReturnValue(of(new HttpResponse({ body: taskCollection })));
       const additionalTasks = [...tasks];
       const expectedCollection: ITask[] = [...additionalTasks, ...taskCollection];
@@ -70,17 +68,17 @@ describe('Job Management Update Component', () => {
       expect(taskService.query).toHaveBeenCalled();
       expect(taskService.addTaskToCollectionIfMissing).toHaveBeenCalledWith(
         taskCollection,
-        ...additionalTasks.map(expect.objectContaining)
+        ...additionalTasks.map(expect.objectContaining),
       );
       expect(comp.tasksSharedCollection).toEqual(expectedCollection);
     });
 
     it('Should call Employee query and add missing value', () => {
       const job: IJob = { id: 456 };
-      const employee: IEmployee = { id: 75146 };
+      const employee: IEmployee = { id: 10306 };
       job.employee = employee;
 
-      const employeeCollection: IEmployee[] = [{ id: 78248 }];
+      const employeeCollection: IEmployee[] = [{ id: 26151 }];
       jest.spyOn(employeeService, 'query').mockReturnValue(of(new HttpResponse({ body: employeeCollection })));
       const additionalEmployees = [employee];
       const expectedCollection: IEmployee[] = [...additionalEmployees, ...employeeCollection];
@@ -92,16 +90,16 @@ describe('Job Management Update Component', () => {
       expect(employeeService.query).toHaveBeenCalled();
       expect(employeeService.addEmployeeToCollectionIfMissing).toHaveBeenCalledWith(
         employeeCollection,
-        ...additionalEmployees.map(expect.objectContaining)
+        ...additionalEmployees.map(expect.objectContaining),
       );
       expect(comp.employeesSharedCollection).toEqual(expectedCollection);
     });
 
     it('Should update editForm', () => {
       const job: IJob = { id: 456 };
-      const task: ITask = { id: 88679 };
+      const task: ITask = { id: 7524 };
       job.tasks = [task];
-      const employee: IEmployee = { id: 21743 };
+      const employee: IEmployee = { id: 26741 };
       job.employee = employee;
 
       activatedRoute.data = of({ job });

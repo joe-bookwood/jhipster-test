@@ -10,8 +10,8 @@ export interface IEmployee {
   hireDate?: dayjs.Dayjs | null;
   salary?: number | null;
   commissionPct?: number | null;
-  manager?: Pick<IEmployee, 'id'> | null;
-  department?: Pick<IDepartment, 'id'> | null;
+  manager?: IEmployee | null;
+  department?: IDepartment | null;
 }
 
 export type NewEmployee = Omit<IEmployee, 'id'> & { id: null };

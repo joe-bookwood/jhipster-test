@@ -18,8 +18,7 @@ describe('JobHistory Management Delete Component', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule],
-      declarations: [JobHistoryDeleteDialogComponent],
+      imports: [HttpClientTestingModule, JobHistoryDeleteDialogComponent],
       providers: [NgbActiveModal],
     })
       .overrideTemplate(JobHistoryDeleteDialogComponent, '')
@@ -44,7 +43,7 @@ describe('JobHistory Management Delete Component', () => {
         // THEN
         expect(service.delete).toHaveBeenCalledWith(123);
         expect(mockActiveModal.close).toHaveBeenCalledWith('deleted');
-      })
+      }),
     ));
 
     it('Should not call delete service on clear', () => {

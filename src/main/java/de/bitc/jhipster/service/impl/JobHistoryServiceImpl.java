@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Service Implementation for managing {@link JobHistory}.
+ * Service Implementation for managing {@link de.bitc.jhipster.domain.JobHistory}.
  */
 @Service
 @Transactional

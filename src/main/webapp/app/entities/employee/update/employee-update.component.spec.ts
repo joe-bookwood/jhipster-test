@@ -3,14 +3,13 @@ import { HttpResponse } from '@angular/common/http';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { RouterTestingModule } from '@angular/router/testing';
 import { of, Subject, from } from 'rxjs';
 
-import { EmployeeFormService } from './employee-form.service';
-import { EmployeeService } from '../service/employee.service';
-import { IEmployee } from '../employee.model';
 import { IDepartment } from 'app/entities/department/department.model';
 import { DepartmentService } from 'app/entities/department/service/department.service';
+import { EmployeeService } from '../service/employee.service';
+import { IEmployee } from '../employee.model';
+import { EmployeeFormService } from './employee-form.service';
 
 import { EmployeeUpdateComponent } from './employee-update.component';
 
@@ -24,8 +23,7 @@ describe('Employee Management Update Component', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, RouterTestingModule.withRoutes([])],
-      declarations: [EmployeeUpdateComponent],
+      imports: [HttpClientTestingModule, EmployeeUpdateComponent],
       providers: [
         FormBuilder,
         {
@@ -51,10 +49,10 @@ describe('Employee Management Update Component', () => {
   describe('ngOnInit', () => {
     it('Should call Employee query and add missing value', () => {
       const employee: IEmployee = { id: 456 };
-      const manager: IEmployee = { id: 4374 };
+      const manager: IEmployee = { id: 25242 };
       employee.manager = manager;
 
-      const employeeCollection: IEmployee[] = [{ id: 10177 }];
+      const employeeCollection: IEmployee[] = [{ id: 6409 }];
       jest.spyOn(employeeService, 'query').mockReturnValue(of(new HttpResponse({ body: employeeCollection })));
       const additionalEmployees = [manager];
       const expectedCollection: IEmployee[] = [...additionalEmployees, ...employeeCollection];
@@ -66,17 +64,17 @@ describe('Employee Management Update Component', () => {
       expect(employeeService.query).toHaveBeenCalled();
       expect(employeeService.addEmployeeToCollectionIfMissing).toHaveBeenCalledWith(
         employeeCollection,
-        ...additionalEmployees.map(expect.objectContaining)
+        ...additionalEmployees.map(expect.objectContaining),
       );
       expect(comp.employeesSharedCollection).toEqual(expectedCollection);
     });
 
     it('Should call Department query and add missing value', () => {
       const employee: IEmployee = { id: 456 };
-      const department: IDepartment = { id: 35363 };
+      const department: IDepartment = { id: 16254 };
       employee.department = department;
 
-      const departmentCollection: IDepartment[] = [{ id: 78278 }];
+      const departmentCollection: IDepartment[] = [{ id: 10525 }];
       jest.spyOn(departmentService, 'query').mockReturnValue(of(new HttpResponse({ body: departmentCollection })));
       const additionalDepartments = [department];
       const expectedCollection: IDepartment[] = [...additionalDepartments, ...departmentCollection];
@@ -88,16 +86,16 @@ describe('Employee Management Update Component', () => {
       expect(departmentService.query).toHaveBeenCalled();
       expect(departmentService.addDepartmentToCollectionIfMissing).toHaveBeenCalledWith(
         departmentCollection,
-        ...additionalDepartments.map(expect.objectContaining)
+        ...additionalDepartments.map(expect.objectContaining),
       );
       expect(comp.departmentsSharedCollection).toEqual(expectedCollection);
     });
 
     it('Should update editForm', () => {
       const employee: IEmployee = { id: 456 };
-      const manager: IEmployee = { id: 79320 };
+      const manager: IEmployee = { id: 5099 };
       employee.manager = manager;
-      const department: IDepartment = { id: 60127 };
+      const department: IDepartment = { id: 11809 };
       employee.department = department;
 
       activatedRoute.data = of({ employee });

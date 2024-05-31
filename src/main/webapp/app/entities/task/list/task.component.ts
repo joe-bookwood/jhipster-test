@@ -1,37 +1,59 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Data, ParamMap, Router } from '@angular/router';
-import { combineLatest, filter, Observable, switchMap, tap } from 'rxjs';
+import { Component, NgZone, inject, OnInit } from '@angular/core';
+import { ActivatedRoute, Data, ParamMap, Router, RouterModule } from '@angular/router';
+import { combineLatest, filter, Observable, Subscription, tap } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
+import SharedModule from 'app/shared/shared.module';
+import { sortStateSignal, SortDirective, SortByDirective, type SortState, SortService } from 'app/shared/sort';
+import { DurationPipe, FormatMediumDatetimePipe, FormatMediumDatePipe } from 'app/shared/date';
+import { FormsModule } from '@angular/forms';
+import { SORT, ITEM_DELETED_EVENT, DEFAULT_SORT_DATA } from 'app/config/navigation.constants';
 import { ITask } from '../task.model';
-import { ASC, DESC, SORT, ITEM_DELETED_EVENT, DEFAULT_SORT_DATA } from 'app/config/navigation.constants';
 import { EntityArrayResponseType, TaskService } from '../service/task.service';
 import { TaskDeleteDialogComponent } from '../delete/task-delete-dialog.component';
-import { SortService } from 'app/shared/sort/sort.service';
 
 @Component({
+  standalone: true,
   selector: 'jhi-task',
   templateUrl: './task.component.html',
+  imports: [
+    RouterModule,
+    FormsModule,
+    SharedModule,
+    SortDirective,
+    SortByDirective,
+    DurationPipe,
+    FormatMediumDatetimePipe,
+    FormatMediumDatePipe,
+  ],
 })
 export class TaskComponent implements OnInit {
+  subscription: Subscription | null = null;
   tasks?: ITask[];
   isLoading = false;
 
-  predicate = 'id';
-  ascending = true;
+  sortState = sortStateSignal({});
 
-  constructor(
-    protected taskService: TaskService,
-    protected activatedRoute: ActivatedRoute,
-    public router: Router,
-    protected sortService: SortService,
-    protected modalService: NgbModal
-  ) {}
+  public router = inject(Router);
+  protected taskService = inject(TaskService);
+  protected activatedRoute = inject(ActivatedRoute);
+  protected sortService = inject(SortService);
+  protected modalService = inject(NgbModal);
+  protected ngZone = inject(NgZone);
 
   trackId = (_index: number, item: ITask): number => this.taskService.getTaskIdentifier(item);
 
   ngOnInit(): void {
-    this.load();
+    this.subscription = combineLatest([this.activatedRoute.queryParamMap, this.activatedRoute.data])
+      .pipe(
+        tap(([params, data]) => this.fillComponentAttributeFromRoute(params, data)),
+        tap(() => {
+          if (!this.tasks || this.tasks.length === 0) {
+            this.load();
+          }
+        }),
+      )
+      .subscribe();
   }
 
   delete(task: ITask): void {
@@ -41,38 +63,25 @@ export class TaskComponent implements OnInit {
     modalRef.closed
       .pipe(
         filter(reason => reason === ITEM_DELETED_EVENT),
-        switchMap(() => this.loadFromBackendWithRouteInformations())
+        tap(() => this.load()),
       )
-      .subscribe({
-        next: (res: EntityArrayResponseType) => {
-          this.onResponseSuccess(res);
-        },
-      });
+      .subscribe();
   }
 
   load(): void {
-    this.loadFromBackendWithRouteInformations().subscribe({
+    this.queryBackend().subscribe({
       next: (res: EntityArrayResponseType) => {
         this.onResponseSuccess(res);
       },
     });
   }
 
-  navigateToWithComponentValues(): void {
-    this.handleNavigation(this.predicate, this.ascending);
-  }
-
-  protected loadFromBackendWithRouteInformations(): Observable<EntityArrayResponseType> {
-    return combineLatest([this.activatedRoute.queryParamMap, this.activatedRoute.data]).pipe(
-      tap(([params, data]) => this.fillComponentAttributeFromRoute(params, data)),
-      switchMap(() => this.queryBackend(this.predicate, this.ascending))
-    );
+  navigateToWithComponentValues(event: SortState): void {
+    this.handleNavigation(event);
   }
 
   protected fillComponentAttributeFromRoute(params: ParamMap, data: Data): void {
-    const sort = (params.get(SORT) ?? data[DEFAULT_SORT_DATA]).split(',');
-    this.predicate = sort[0];
-    this.ascending = sort[1] === ASC;
+    this.sortState.set(this.sortService.parseSortParam(params.get(SORT) ?? data[DEFAULT_SORT_DATA]));
   }
 
   protected onResponseSuccess(response: EntityArrayResponseType): void {
@@ -81,38 +90,32 @@ export class TaskComponent implements OnInit {
   }
 
   protected refineData(data: ITask[]): ITask[] {
-    return data.sort(this.sortService.startSort(this.predicate, this.ascending ? 1 : -1));
+    const { predicate, order } = this.sortState();
+    return predicate && order ? data.sort(this.sortService.startSort({ predicate, order })) : data;
   }
 
   protected fillComponentAttributesFromResponseBody(data: ITask[] | null): ITask[] {
     return data ?? [];
   }
 
-  protected queryBackend(predicate?: string, ascending?: boolean): Observable<EntityArrayResponseType> {
+  protected queryBackend(): Observable<EntityArrayResponseType> {
     this.isLoading = true;
-    const queryObject = {
-      sort: this.getSortQueryParam(predicate, ascending),
+    const queryObject: any = {
+      sort: this.sortService.buildSortParam(this.sortState()),
     };
     return this.taskService.query(queryObject).pipe(tap(() => (this.isLoading = false)));
   }
 
-  protected handleNavigation(predicate?: string, ascending?: boolean): void {
+  protected handleNavigation(sortState: SortState): void {
     const queryParamsObj = {
-      sort: this.getSortQueryParam(predicate, ascending),
+      sort: this.sortService.buildSortParam(sortState),
     };
 
-    this.router.navigate(['./'], {
-      relativeTo: this.activatedRoute,
-      queryParams: queryParamsObj,
+    this.ngZone.run(() => {
+      this.router.navigate(['./'], {
+        relativeTo: this.activatedRoute,
+        queryParams: queryParamsObj,
+      });
     });
-  }
-
-  protected getSortQueryParam(predicate = this.predicate, ascending = this.ascending): string[] {
-    const ascendingQueryParam = ascending ? ASC : DESC;
-    if (predicate === '') {
-      return [];
-    } else {
-      return [predicate + ',' + ascendingQueryParam];
-    }
   }
 }

@@ -1,17 +1,17 @@
 import { IRegion, NewRegion } from './region.model';
 
 export const sampleWithRequiredData: IRegion = {
-  id: 27363,
+  id: 2585,
 };
 
 export const sampleWithPartialData: IRegion = {
-  id: 78962,
-  regionName: 'Car',
+  id: 7016,
+  regionName: 'than',
 };
 
 export const sampleWithFullData: IRegion = {
-  id: 18782,
-  regionName: 'Cotton 1080p',
+  id: 20685,
+  regionName: 'naming',
 };
 
 export const sampleWithNewData: NewRegion = {
