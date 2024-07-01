@@ -15,6 +15,7 @@ import de.bitc.jhipster.repository.RegionRepository;
 import jakarta.persistence.EntityManager;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,6 +56,8 @@ class RegionResourceIT {
 
     private Region region;
 
+    private Region insertedRegion;
+
     /**
      * Create an entity for this test.
      *
@@ -82,6 +85,14 @@ class RegionResourceIT {
         region = createEntity(em);
     }
 
+    @AfterEach
+    public void cleanup() {
+        if (insertedRegion != null) {
+            regionRepository.delete(insertedRegion);
+            insertedRegion = null;
+        }
+    }
+
     @Test
     @Transactional
     void createRegion() throws Exception {
@@ -100,6 +111,8 @@ class RegionResourceIT {
         // Validate the Region in the database
         assertIncrementedRepositoryCount(databaseSizeBeforeCreate);
         assertRegionUpdatableFieldsEquals(returnedRegion, getPersistedRegion(returnedRegion));
+
+        insertedRegion = returnedRegion;
     }
 
     @Test
@@ -123,7 +136,7 @@ class RegionResourceIT {
     @Transactional
     void getAllRegions() throws Exception {
         // Initialize the database
-        regionRepository.saveAndFlush(region);
+        insertedRegion = regionRepository.saveAndFlush(region);
 
         // Get all the regionList
         restRegionMockMvc
@@ -138,7 +151,7 @@ class RegionResourceIT {
     @Transactional
     void getRegion() throws Exception {
         // Initialize the database
-        regionRepository.saveAndFlush(region);
+        insertedRegion = regionRepository.saveAndFlush(region);
 
         // Get the region
         restRegionMockMvc
@@ -160,7 +173,7 @@ class RegionResourceIT {
     @Transactional
     void putExistingRegion() throws Exception {
         // Initialize the database
-        regionRepository.saveAndFlush(region);
+        insertedRegion = regionRepository.saveAndFlush(region);
 
         long databaseSizeBeforeUpdate = getRepositoryCount();
 
@@ -243,13 +256,15 @@ class RegionResourceIT {
     @Transactional
     void partialUpdateRegionWithPatch() throws Exception {
         // Initialize the database
-        regionRepository.saveAndFlush(region);
+        insertedRegion = regionRepository.saveAndFlush(region);
 
         long databaseSizeBeforeUpdate = getRepositoryCount();
 
         // Update the region using partial update
         Region partialUpdatedRegion = new Region();
         partialUpdatedRegion.setId(region.getId());
+
+        partialUpdatedRegion.regionName(UPDATED_REGION_NAME);
 
         restRegionMockMvc
             .perform(
@@ -270,7 +285,7 @@ class RegionResourceIT {
     @Transactional
     void fullUpdateRegionWithPatch() throws Exception {
         // Initialize the database
-        regionRepository.saveAndFlush(region);
+        insertedRegion = regionRepository.saveAndFlush(region);
 
         long databaseSizeBeforeUpdate = getRepositoryCount();
 
@@ -354,7 +369,7 @@ class RegionResourceIT {
     @Transactional
     void deleteRegion() throws Exception {
         // Initialize the database
-        regionRepository.saveAndFlush(region);
+        insertedRegion = regionRepository.saveAndFlush(region);
 
         long databaseSizeBeforeDelete = getRepositoryCount();
 

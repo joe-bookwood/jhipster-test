@@ -17,6 +17,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,6 +76,8 @@ class EmployeeResourceIT {
 
     private Employee employee;
 
+    private Employee insertedEmployee;
+
     /**
      * Create an entity for this test.
      *
@@ -116,6 +119,14 @@ class EmployeeResourceIT {
         employee = createEntity(em);
     }
 
+    @AfterEach
+    public void cleanup() {
+        if (insertedEmployee != null) {
+            employeeRepository.delete(insertedEmployee);
+            insertedEmployee = null;
+        }
+    }
+
     @Test
     @Transactional
     void createEmployee() throws Exception {
@@ -134,6 +145,8 @@ class EmployeeResourceIT {
         // Validate the Employee in the database
         assertIncrementedRepositoryCount(databaseSizeBeforeCreate);
         assertEmployeeUpdatableFieldsEquals(returnedEmployee, getPersistedEmployee(returnedEmployee));
+
+        insertedEmployee = returnedEmployee;
     }
 
     @Test
@@ -157,7 +170,7 @@ class EmployeeResourceIT {
     @Transactional
     void getAllEmployees() throws Exception {
         // Initialize the database
-        employeeRepository.saveAndFlush(employee);
+        insertedEmployee = employeeRepository.saveAndFlush(employee);
 
         // Get all the employeeList
         restEmployeeMockMvc
@@ -178,7 +191,7 @@ class EmployeeResourceIT {
     @Transactional
     void getEmployee() throws Exception {
         // Initialize the database
-        employeeRepository.saveAndFlush(employee);
+        insertedEmployee = employeeRepository.saveAndFlush(employee);
 
         // Get the employee
         restEmployeeMockMvc
@@ -206,7 +219,7 @@ class EmployeeResourceIT {
     @Transactional
     void putExistingEmployee() throws Exception {
         // Initialize the database
-        employeeRepository.saveAndFlush(employee);
+        insertedEmployee = employeeRepository.saveAndFlush(employee);
 
         long databaseSizeBeforeUpdate = getRepositoryCount();
 
@@ -296,7 +309,7 @@ class EmployeeResourceIT {
     @Transactional
     void partialUpdateEmployeeWithPatch() throws Exception {
         // Initialize the database
-        employeeRepository.saveAndFlush(employee);
+        insertedEmployee = employeeRepository.saveAndFlush(employee);
 
         long databaseSizeBeforeUpdate = getRepositoryCount();
 
@@ -304,11 +317,7 @@ class EmployeeResourceIT {
         Employee partialUpdatedEmployee = new Employee();
         partialUpdatedEmployee.setId(employee.getId());
 
-        partialUpdatedEmployee
-            .firstName(UPDATED_FIRST_NAME)
-            .phoneNumber(UPDATED_PHONE_NUMBER)
-            .hireDate(UPDATED_HIRE_DATE)
-            .commissionPct(UPDATED_COMMISSION_PCT);
+        partialUpdatedEmployee.firstName(UPDATED_FIRST_NAME).email(UPDATED_EMAIL).phoneNumber(UPDATED_PHONE_NUMBER).salary(UPDATED_SALARY);
 
         restEmployeeMockMvc
             .perform(
@@ -329,7 +338,7 @@ class EmployeeResourceIT {
     @Transactional
     void fullUpdateEmployeeWithPatch() throws Exception {
         // Initialize the database
-        employeeRepository.saveAndFlush(employee);
+        insertedEmployee = employeeRepository.saveAndFlush(employee);
 
         long databaseSizeBeforeUpdate = getRepositoryCount();
 
@@ -420,7 +429,7 @@ class EmployeeResourceIT {
     @Transactional
     void deleteEmployee() throws Exception {
         // Initialize the database
-        employeeRepository.saveAndFlush(employee);
+        insertedEmployee = employeeRepository.saveAndFlush(employee);
 
         long databaseSizeBeforeDelete = getRepositoryCount();
 

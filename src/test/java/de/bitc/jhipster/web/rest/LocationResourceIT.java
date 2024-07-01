@@ -15,6 +15,7 @@ import de.bitc.jhipster.repository.LocationRepository;
 import jakarta.persistence.EntityManager;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,6 +65,8 @@ class LocationResourceIT {
 
     private Location location;
 
+    private Location insertedLocation;
+
     /**
      * Create an entity for this test.
      *
@@ -99,6 +102,14 @@ class LocationResourceIT {
         location = createEntity(em);
     }
 
+    @AfterEach
+    public void cleanup() {
+        if (insertedLocation != null) {
+            locationRepository.delete(insertedLocation);
+            insertedLocation = null;
+        }
+    }
+
     @Test
     @Transactional
     void createLocation() throws Exception {
@@ -117,6 +128,8 @@ class LocationResourceIT {
         // Validate the Location in the database
         assertIncrementedRepositoryCount(databaseSizeBeforeCreate);
         assertLocationUpdatableFieldsEquals(returnedLocation, getPersistedLocation(returnedLocation));
+
+        insertedLocation = returnedLocation;
     }
 
     @Test
@@ -140,7 +153,7 @@ class LocationResourceIT {
     @Transactional
     void getAllLocations() throws Exception {
         // Initialize the database
-        locationRepository.saveAndFlush(location);
+        insertedLocation = locationRepository.saveAndFlush(location);
 
         // Get all the locationList
         restLocationMockMvc
@@ -158,7 +171,7 @@ class LocationResourceIT {
     @Transactional
     void getLocation() throws Exception {
         // Initialize the database
-        locationRepository.saveAndFlush(location);
+        insertedLocation = locationRepository.saveAndFlush(location);
 
         // Get the location
         restLocationMockMvc
@@ -183,7 +196,7 @@ class LocationResourceIT {
     @Transactional
     void putExistingLocation() throws Exception {
         // Initialize the database
-        locationRepository.saveAndFlush(location);
+        insertedLocation = locationRepository.saveAndFlush(location);
 
         long databaseSizeBeforeUpdate = getRepositoryCount();
 
@@ -270,7 +283,7 @@ class LocationResourceIT {
     @Transactional
     void partialUpdateLocationWithPatch() throws Exception {
         // Initialize the database
-        locationRepository.saveAndFlush(location);
+        insertedLocation = locationRepository.saveAndFlush(location);
 
         long databaseSizeBeforeUpdate = getRepositoryCount();
 
@@ -278,7 +291,7 @@ class LocationResourceIT {
         Location partialUpdatedLocation = new Location();
         partialUpdatedLocation.setId(location.getId());
 
-        partialUpdatedLocation.streetAddress(UPDATED_STREET_ADDRESS).postalCode(UPDATED_POSTAL_CODE).stateProvince(UPDATED_STATE_PROVINCE);
+        partialUpdatedLocation.streetAddress(UPDATED_STREET_ADDRESS).postalCode(UPDATED_POSTAL_CODE).city(UPDATED_CITY);
 
         restLocationMockMvc
             .perform(
@@ -299,7 +312,7 @@ class LocationResourceIT {
     @Transactional
     void fullUpdateLocationWithPatch() throws Exception {
         // Initialize the database
-        locationRepository.saveAndFlush(location);
+        insertedLocation = locationRepository.saveAndFlush(location);
 
         long databaseSizeBeforeUpdate = getRepositoryCount();
 
@@ -387,7 +400,7 @@ class LocationResourceIT {
     @Transactional
     void deleteLocation() throws Exception {
         // Initialize the database
-        locationRepository.saveAndFlush(location);
+        insertedLocation = locationRepository.saveAndFlush(location);
 
         long databaseSizeBeforeDelete = getRepositoryCount();
 

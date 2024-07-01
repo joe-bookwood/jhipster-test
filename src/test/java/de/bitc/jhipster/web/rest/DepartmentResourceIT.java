@@ -15,6 +15,7 @@ import de.bitc.jhipster.repository.DepartmentRepository;
 import jakarta.persistence.EntityManager;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,6 +56,8 @@ class DepartmentResourceIT {
 
     private Department department;
 
+    private Department insertedDepartment;
+
     /**
      * Create an entity for this test.
      *
@@ -82,6 +85,14 @@ class DepartmentResourceIT {
         department = createEntity(em);
     }
 
+    @AfterEach
+    public void cleanup() {
+        if (insertedDepartment != null) {
+            departmentRepository.delete(insertedDepartment);
+            insertedDepartment = null;
+        }
+    }
+
     @Test
     @Transactional
     void createDepartment() throws Exception {
@@ -102,6 +113,8 @@ class DepartmentResourceIT {
         // Validate the Department in the database
         assertIncrementedRepositoryCount(databaseSizeBeforeCreate);
         assertDepartmentUpdatableFieldsEquals(returnedDepartment, getPersistedDepartment(returnedDepartment));
+
+        insertedDepartment = returnedDepartment;
     }
 
     @Test
@@ -141,7 +154,7 @@ class DepartmentResourceIT {
     @Transactional
     void getAllDepartments() throws Exception {
         // Initialize the database
-        departmentRepository.saveAndFlush(department);
+        insertedDepartment = departmentRepository.saveAndFlush(department);
 
         // Get all the departmentList
         restDepartmentMockMvc
@@ -156,7 +169,7 @@ class DepartmentResourceIT {
     @Transactional
     void getDepartment() throws Exception {
         // Initialize the database
-        departmentRepository.saveAndFlush(department);
+        insertedDepartment = departmentRepository.saveAndFlush(department);
 
         // Get the department
         restDepartmentMockMvc
@@ -178,7 +191,7 @@ class DepartmentResourceIT {
     @Transactional
     void putExistingDepartment() throws Exception {
         // Initialize the database
-        departmentRepository.saveAndFlush(department);
+        insertedDepartment = departmentRepository.saveAndFlush(department);
 
         long databaseSizeBeforeUpdate = getRepositoryCount();
 
@@ -261,7 +274,7 @@ class DepartmentResourceIT {
     @Transactional
     void partialUpdateDepartmentWithPatch() throws Exception {
         // Initialize the database
-        departmentRepository.saveAndFlush(department);
+        insertedDepartment = departmentRepository.saveAndFlush(department);
 
         long databaseSizeBeforeUpdate = getRepositoryCount();
 
@@ -291,7 +304,7 @@ class DepartmentResourceIT {
     @Transactional
     void fullUpdateDepartmentWithPatch() throws Exception {
         // Initialize the database
-        departmentRepository.saveAndFlush(department);
+        insertedDepartment = departmentRepository.saveAndFlush(department);
 
         long databaseSizeBeforeUpdate = getRepositoryCount();
 
@@ -377,7 +390,7 @@ class DepartmentResourceIT {
     @Transactional
     void deleteDepartment() throws Exception {
         // Initialize the database
-        departmentRepository.saveAndFlush(department);
+        insertedDepartment = departmentRepository.saveAndFlush(department);
 
         long databaseSizeBeforeDelete = getRepositoryCount();
 
