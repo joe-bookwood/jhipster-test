@@ -15,6 +15,7 @@ import de.bitc.jhipster.repository.TaskRepository;
 import jakarta.persistence.EntityManager;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +59,8 @@ class TaskResourceIT {
 
     private Task task;
 
+    private Task insertedTask;
+
     /**
      * Create an entity for this test.
      *
@@ -85,6 +88,14 @@ class TaskResourceIT {
         task = createEntity(em);
     }
 
+    @AfterEach
+    public void cleanup() {
+        if (insertedTask != null) {
+            taskRepository.delete(insertedTask);
+            insertedTask = null;
+        }
+    }
+
     @Test
     @Transactional
     void createTask() throws Exception {
@@ -103,6 +114,8 @@ class TaskResourceIT {
         // Validate the Task in the database
         assertIncrementedRepositoryCount(databaseSizeBeforeCreate);
         assertTaskUpdatableFieldsEquals(returnedTask, getPersistedTask(returnedTask));
+
+        insertedTask = returnedTask;
     }
 
     @Test
@@ -126,7 +139,7 @@ class TaskResourceIT {
     @Transactional
     void getAllTasks() throws Exception {
         // Initialize the database
-        taskRepository.saveAndFlush(task);
+        insertedTask = taskRepository.saveAndFlush(task);
 
         // Get all the taskList
         restTaskMockMvc
@@ -142,7 +155,7 @@ class TaskResourceIT {
     @Transactional
     void getTask() throws Exception {
         // Initialize the database
-        taskRepository.saveAndFlush(task);
+        insertedTask = taskRepository.saveAndFlush(task);
 
         // Get the task
         restTaskMockMvc
@@ -165,7 +178,7 @@ class TaskResourceIT {
     @Transactional
     void putExistingTask() throws Exception {
         // Initialize the database
-        taskRepository.saveAndFlush(task);
+        insertedTask = taskRepository.saveAndFlush(task);
 
         long databaseSizeBeforeUpdate = getRepositoryCount();
 
@@ -248,7 +261,7 @@ class TaskResourceIT {
     @Transactional
     void partialUpdateTaskWithPatch() throws Exception {
         // Initialize the database
-        taskRepository.saveAndFlush(task);
+        insertedTask = taskRepository.saveAndFlush(task);
 
         long databaseSizeBeforeUpdate = getRepositoryCount();
 
@@ -275,7 +288,7 @@ class TaskResourceIT {
     @Transactional
     void fullUpdateTaskWithPatch() throws Exception {
         // Initialize the database
-        taskRepository.saveAndFlush(task);
+        insertedTask = taskRepository.saveAndFlush(task);
 
         long databaseSizeBeforeUpdate = getRepositoryCount();
 
@@ -359,7 +372,7 @@ class TaskResourceIT {
     @Transactional
     void deleteTask() throws Exception {
         // Initialize the database
-        taskRepository.saveAndFlush(task);
+        insertedTask = taskRepository.saveAndFlush(task);
 
         long databaseSizeBeforeDelete = getRepositoryCount();
 
