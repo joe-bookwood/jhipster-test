@@ -4,7 +4,7 @@
   },
   "applications": ["jhipsterTest"],
   "changelogDate": "20220806103449",
-  "dto": "no",
+  "dto": "mapstruct",
   "embedded": false,
   "entityTableName": "region",
   "fields": [

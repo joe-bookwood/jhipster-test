@@ -5,7 +5,7 @@
   "applications": ["jhipsterTest"],
   "changelogDate": "20220806103949",
   "documentation": "The Employee entity.",
-  "dto": "no",
+  "dto": "mapstruct",
   "embedded": false,
   "entityTableName": "employee",
   "fields": [

@@ -5,7 +5,7 @@
   "applications": ["jhipsterTest"],
   "changelogDate": "20220806103849",
   "documentation": "Task entity.\\n@author The JHipster team.",
-  "dto": "no",
+  "dto": "mapstruct",
   "embedded": false,
   "entityTableName": "task",
   "fields": [

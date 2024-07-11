@@ -4,7 +4,7 @@
   },
   "applications": ["jhipsterTest"],
   "changelogDate": "20220806104049",
-  "dto": "no",
+  "dto": "mapstruct",
   "embedded": false,
   "entityTableName": "job",
   "fields": [
