@@ -73,13 +73,12 @@ class LocationResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static Location createEntity(EntityManager em) {
-        Location location = new Location()
+    public static Location createEntity() {
+        return new Location()
             .streetAddress(DEFAULT_STREET_ADDRESS)
             .postalCode(DEFAULT_POSTAL_CODE)
             .city(DEFAULT_CITY)
             .stateProvince(DEFAULT_STATE_PROVINCE);
-        return location;
     }
 
     /**
@@ -88,18 +87,17 @@ class LocationResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static Location createUpdatedEntity(EntityManager em) {
-        Location location = new Location()
+    public static Location createUpdatedEntity() {
+        return new Location()
             .streetAddress(UPDATED_STREET_ADDRESS)
             .postalCode(UPDATED_POSTAL_CODE)
             .city(UPDATED_CITY)
             .stateProvince(UPDATED_STATE_PROVINCE);
-        return location;
     }
 
     @BeforeEach
     public void initTest() {
-        location = createEntity(em);
+        location = createEntity();
     }
 
     @AfterEach

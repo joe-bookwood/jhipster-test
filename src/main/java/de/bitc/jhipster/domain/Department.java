@@ -1,6 +1,7 @@
 package de.bitc.jhipster.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import java.io.Serializable;
@@ -38,6 +39,7 @@ public class Department implements Serializable {
     /**
      * A relationship
      */
+    @Schema(description = "A relationship")
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "department")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @JsonIgnoreProperties(value = { "jobs", "manager", "department", "jobHistory" }, allowSetters = true)

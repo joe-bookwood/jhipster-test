@@ -17,7 +17,7 @@ describe('Country Management Detail Component', () => {
           [
             {
               path: '**',
-              component: CountryDetailComponent,
+              loadComponent: () => import('./country-detail.component').then(m => m.CountryDetailComponent),
               resolve: { country: () => of({ id: 123 }) },
             },
           ],

@@ -17,7 +17,7 @@ describe('Task Management Detail Component', () => {
           [
             {
               path: '**',
-              component: TaskDetailComponent,
+              loadComponent: () => import('./task-detail.component').then(m => m.TaskDetailComponent),
               resolve: { task: () => of({ id: 123 }) },
             },
           ],

@@ -24,7 +24,7 @@ import tech.jhipster.web.util.ResponseUtil;
 @RequestMapping("/api/locations")
 public class LocationResource {
 
-    private static final Logger log = LoggerFactory.getLogger(LocationResource.class);
+    private static final Logger LOG = LoggerFactory.getLogger(LocationResource.class);
 
     private static final String ENTITY_NAME = "location";
 
@@ -49,7 +49,7 @@ public class LocationResource {
      */
     @PostMapping("")
     public ResponseEntity<Location> createLocation(@RequestBody Location location) throws URISyntaxException {
-        log.debug("REST request to save Location : {}", location);
+        LOG.debug("REST request to save Location : {}", location);
         if (location.getId() != null) {
             throw new BadRequestAlertException("A new location cannot already have an ID", ENTITY_NAME, "idexists");
         }
@@ -74,7 +74,7 @@ public class LocationResource {
         @PathVariable(value = "id", required = false) final Long id,
         @RequestBody Location location
     ) throws URISyntaxException {
-        log.debug("REST request to update Location : {}, {}", id, location);
+        LOG.debug("REST request to update Location : {}, {}", id, location);
         if (location.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
@@ -108,7 +108,7 @@ public class LocationResource {
         @PathVariable(value = "id", required = false) final Long id,
         @RequestBody Location location
     ) throws URISyntaxException {
-        log.debug("REST request to partial update Location partially : {}, {}", id, location);
+        LOG.debug("REST request to partial update Location partially : {}, {}", id, location);
         if (location.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
@@ -137,10 +137,10 @@ public class LocationResource {
     @GetMapping("")
     public List<Location> getAllLocations(@RequestParam(name = "filter", required = false) String filter) {
         if ("department-is-null".equals(filter)) {
-            log.debug("REST request to get all Locations where department is null");
+            LOG.debug("REST request to get all Locations where department is null");
             return locationService.findAllWhereDepartmentIsNull();
         }
-        log.debug("REST request to get all Locations");
+        LOG.debug("REST request to get all Locations");
         return locationService.findAll();
     }
 
@@ -152,7 +152,7 @@ public class LocationResource {
      */
     @GetMapping("/{id}")
     public ResponseEntity<Location> getLocation(@PathVariable("id") Long id) {
-        log.debug("REST request to get Location : {}", id);
+        LOG.debug("REST request to get Location : {}", id);
         Optional<Location> location = locationService.findOne(id);
         return ResponseUtil.wrapOrNotFound(location);
     }
@@ -165,7 +165,7 @@ public class LocationResource {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteLocation(@PathVariable("id") Long id) {
-        log.debug("REST request to delete Location : {}", id);
+        LOG.debug("REST request to delete Location : {}", id);
         locationService.delete(id);
         return ResponseEntity.noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))

@@ -64,9 +64,8 @@ class RegionResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static Region createEntity(EntityManager em) {
-        Region region = new Region().regionName(DEFAULT_REGION_NAME);
-        return region;
+    public static Region createEntity() {
+        return new Region().regionName(DEFAULT_REGION_NAME);
     }
 
     /**
@@ -75,14 +74,13 @@ class RegionResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static Region createUpdatedEntity(EntityManager em) {
-        Region region = new Region().regionName(UPDATED_REGION_NAME);
-        return region;
+    public static Region createUpdatedEntity() {
+        return new Region().regionName(UPDATED_REGION_NAME);
     }
 
     @BeforeEach
     public void initTest() {
-        region = createEntity(em);
+        region = createEntity();
     }
 
     @AfterEach

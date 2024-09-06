@@ -24,7 +24,7 @@ import tech.jhipster.web.util.ResponseUtil;
 @RequestMapping("/api/tasks")
 public class TaskResource {
 
-    private static final Logger log = LoggerFactory.getLogger(TaskResource.class);
+    private static final Logger LOG = LoggerFactory.getLogger(TaskResource.class);
 
     private static final String ENTITY_NAME = "task";
 
@@ -49,7 +49,7 @@ public class TaskResource {
      */
     @PostMapping("")
     public ResponseEntity<Task> createTask(@RequestBody Task task) throws URISyntaxException {
-        log.debug("REST request to save Task : {}", task);
+        LOG.debug("REST request to save Task : {}", task);
         if (task.getId() != null) {
             throw new BadRequestAlertException("A new task cannot already have an ID", ENTITY_NAME, "idexists");
         }
@@ -72,7 +72,7 @@ public class TaskResource {
     @PutMapping("/{id}")
     public ResponseEntity<Task> updateTask(@PathVariable(value = "id", required = false) final Long id, @RequestBody Task task)
         throws URISyntaxException {
-        log.debug("REST request to update Task : {}, {}", id, task);
+        LOG.debug("REST request to update Task : {}, {}", id, task);
         if (task.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
@@ -104,7 +104,7 @@ public class TaskResource {
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<Task> partialUpdateTask(@PathVariable(value = "id", required = false) final Long id, @RequestBody Task task)
         throws URISyntaxException {
-        log.debug("REST request to partial update Task partially : {}, {}", id, task);
+        LOG.debug("REST request to partial update Task partially : {}, {}", id, task);
         if (task.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
@@ -131,7 +131,7 @@ public class TaskResource {
      */
     @GetMapping("")
     public List<Task> getAllTasks() {
-        log.debug("REST request to get all Tasks");
+        LOG.debug("REST request to get all Tasks");
         return taskService.findAll();
     }
 
@@ -143,7 +143,7 @@ public class TaskResource {
      */
     @GetMapping("/{id}")
     public ResponseEntity<Task> getTask(@PathVariable("id") Long id) {
-        log.debug("REST request to get Task : {}", id);
+        LOG.debug("REST request to get Task : {}", id);
         Optional<Task> task = taskService.findOne(id);
         return ResponseUtil.wrapOrNotFound(task);
     }
@@ -156,7 +156,7 @@ public class TaskResource {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTask(@PathVariable("id") Long id) {
-        log.debug("REST request to delete Task : {}", id);
+        LOG.debug("REST request to delete Task : {}", id);
         taskService.delete(id);
         return ResponseEntity.noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
