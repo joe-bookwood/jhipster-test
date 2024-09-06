@@ -65,6 +65,7 @@ public class Employee implements Serializable {
     /**
      * Another side of the same relationship
      */
+    @Schema(description = "Another side of the same relationship")
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value = { "location", "employees", "jobHistory" }, allowSetters = true)
     private Department department;

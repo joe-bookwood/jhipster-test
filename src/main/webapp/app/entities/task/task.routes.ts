@@ -2,23 +2,20 @@ import { Routes } from '@angular/router';
 
 import { UserRouteAccessService } from 'app/core/auth/user-route-access.service';
 import { ASC } from 'app/config/navigation.constants';
-import { TaskComponent } from './list/task.component';
-import { TaskDetailComponent } from './detail/task-detail.component';
-import { TaskUpdateComponent } from './update/task-update.component';
 import TaskResolve from './route/task-routing-resolve.service';
 
 const taskRoute: Routes = [
   {
     path: '',
-    component: TaskComponent,
+    loadComponent: () => import('./list/task.component').then(m => m.TaskComponent),
     data: {
-      defaultSort: 'id,' + ASC,
+      defaultSort: `id,${ASC}`,
     },
     canActivate: [UserRouteAccessService],
   },
   {
     path: ':id/view',
-    component: TaskDetailComponent,
+    loadComponent: () => import('./detail/task-detail.component').then(m => m.TaskDetailComponent),
     resolve: {
       task: TaskResolve,
     },
@@ -26,7 +23,7 @@ const taskRoute: Routes = [
   },
   {
     path: 'new',
-    component: TaskUpdateComponent,
+    loadComponent: () => import('./update/task-update.component').then(m => m.TaskUpdateComponent),
     resolve: {
       task: TaskResolve,
     },
@@ -34,7 +31,7 @@ const taskRoute: Routes = [
   },
   {
     path: ':id/edit',
-    component: TaskUpdateComponent,
+    loadComponent: () => import('./update/task-update.component').then(m => m.TaskUpdateComponent),
     resolve: {
       task: TaskResolve,
     },

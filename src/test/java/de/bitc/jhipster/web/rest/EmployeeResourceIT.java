@@ -84,8 +84,8 @@ class EmployeeResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static Employee createEntity(EntityManager em) {
-        Employee employee = new Employee()
+    public static Employee createEntity() {
+        return new Employee()
             .firstName(DEFAULT_FIRST_NAME)
             .lastName(DEFAULT_LAST_NAME)
             .email(DEFAULT_EMAIL)
@@ -93,7 +93,6 @@ class EmployeeResourceIT {
             .hireDate(DEFAULT_HIRE_DATE)
             .salary(DEFAULT_SALARY)
             .commissionPct(DEFAULT_COMMISSION_PCT);
-        return employee;
     }
 
     /**
@@ -102,8 +101,8 @@ class EmployeeResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static Employee createUpdatedEntity(EntityManager em) {
-        Employee employee = new Employee()
+    public static Employee createUpdatedEntity() {
+        return new Employee()
             .firstName(UPDATED_FIRST_NAME)
             .lastName(UPDATED_LAST_NAME)
             .email(UPDATED_EMAIL)
@@ -111,12 +110,11 @@ class EmployeeResourceIT {
             .hireDate(UPDATED_HIRE_DATE)
             .salary(UPDATED_SALARY)
             .commissionPct(UPDATED_COMMISSION_PCT);
-        return employee;
     }
 
     @BeforeEach
     public void initTest() {
-        employee = createEntity(em);
+        employee = createEntity();
     }
 
     @AfterEach

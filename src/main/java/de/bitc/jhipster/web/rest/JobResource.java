@@ -32,7 +32,7 @@ import tech.jhipster.web.util.ResponseUtil;
 @Transactional
 public class JobResource {
 
-    private static final Logger log = LoggerFactory.getLogger(JobResource.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JobResource.class);
 
     private static final String ENTITY_NAME = "job";
 
@@ -54,7 +54,7 @@ public class JobResource {
      */
     @PostMapping("")
     public ResponseEntity<Job> createJob(@RequestBody Job job) throws URISyntaxException {
-        log.debug("REST request to save Job : {}", job);
+        LOG.debug("REST request to save Job : {}", job);
         if (job.getId() != null) {
             throw new BadRequestAlertException("A new job cannot already have an ID", ENTITY_NAME, "idexists");
         }
@@ -77,7 +77,7 @@ public class JobResource {
     @PutMapping("/{id}")
     public ResponseEntity<Job> updateJob(@PathVariable(value = "id", required = false) final Long id, @RequestBody Job job)
         throws URISyntaxException {
-        log.debug("REST request to update Job : {}, {}", id, job);
+        LOG.debug("REST request to update Job : {}, {}", id, job);
         if (job.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
@@ -109,7 +109,7 @@ public class JobResource {
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<Job> partialUpdateJob(@PathVariable(value = "id", required = false) final Long id, @RequestBody Job job)
         throws URISyntaxException {
-        log.debug("REST request to partial update Job partially : {}, {}", id, job);
+        LOG.debug("REST request to partial update Job partially : {}, {}", id, job);
         if (job.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
@@ -159,13 +159,13 @@ public class JobResource {
         @RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload
     ) {
         if ("jobhistory-is-null".equals(filter)) {
-            log.debug("REST request to get all Jobs where jobHistory is null");
+            LOG.debug("REST request to get all Jobs where jobHistory is null");
             return new ResponseEntity<>(
                 StreamSupport.stream(jobRepository.findAll().spliterator(), false).filter(job -> job.getJobHistory() == null).toList(),
                 HttpStatus.OK
             );
         }
-        log.debug("REST request to get a page of Jobs");
+        LOG.debug("REST request to get a page of Jobs");
         Page<Job> page;
         if (eagerload) {
             page = jobRepository.findAllWithEagerRelationships(pageable);
@@ -184,7 +184,7 @@ public class JobResource {
      */
     @GetMapping("/{id}")
     public ResponseEntity<Job> getJob(@PathVariable("id") Long id) {
-        log.debug("REST request to get Job : {}", id);
+        LOG.debug("REST request to get Job : {}", id);
         Optional<Job> job = jobRepository.findOneWithEagerRelationships(id);
         return ResponseUtil.wrapOrNotFound(job);
     }
@@ -197,7 +197,7 @@ public class JobResource {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteJob(@PathVariable("id") Long id) {
-        log.debug("REST request to delete Job : {}", id);
+        LOG.debug("REST request to delete Job : {}", id);
         jobRepository.deleteById(id);
         return ResponseEntity.noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))

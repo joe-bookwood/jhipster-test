@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class LocationServiceImpl implements LocationService {
 
-    private static final Logger log = LoggerFactory.getLogger(LocationServiceImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(LocationServiceImpl.class);
 
     private final LocationRepository locationRepository;
 
@@ -28,19 +28,19 @@ public class LocationServiceImpl implements LocationService {
 
     @Override
     public Location save(Location location) {
-        log.debug("Request to save Location : {}", location);
+        LOG.debug("Request to save Location : {}", location);
         return locationRepository.save(location);
     }
 
     @Override
     public Location update(Location location) {
-        log.debug("Request to update Location : {}", location);
+        LOG.debug("Request to update Location : {}", location);
         return locationRepository.save(location);
     }
 
     @Override
     public Optional<Location> partialUpdate(Location location) {
-        log.debug("Request to partially update Location : {}", location);
+        LOG.debug("Request to partially update Location : {}", location);
 
         return locationRepository
             .findById(location.getId())
@@ -66,7 +66,7 @@ public class LocationServiceImpl implements LocationService {
     @Override
     @Transactional(readOnly = true)
     public List<Location> findAll() {
-        log.debug("Request to get all Locations");
+        LOG.debug("Request to get all Locations");
         return locationRepository.findAll();
     }
 
@@ -76,7 +76,7 @@ public class LocationServiceImpl implements LocationService {
      */
     @Transactional(readOnly = true)
     public List<Location> findAllWhereDepartmentIsNull() {
-        log.debug("Request to get all locations where Department is null");
+        LOG.debug("Request to get all locations where Department is null");
         return StreamSupport.stream(locationRepository.findAll().spliterator(), false)
             .filter(location -> location.getDepartment() == null)
             .toList();
@@ -85,13 +85,13 @@ public class LocationServiceImpl implements LocationService {
     @Override
     @Transactional(readOnly = true)
     public Optional<Location> findOne(Long id) {
-        log.debug("Request to get Location : {}", id);
+        LOG.debug("Request to get Location : {}", id);
         return locationRepository.findById(id);
     }
 
     @Override
     public void delete(Long id) {
-        log.debug("Request to delete Location : {}", id);
+        LOG.debug("Request to delete Location : {}", id);
         locationRepository.deleteById(id);
     }
 }

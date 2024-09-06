@@ -26,7 +26,7 @@ import tech.jhipster.web.util.ResponseUtil;
 @RequestMapping("/api/departments")
 public class DepartmentResource {
 
-    private static final Logger log = LoggerFactory.getLogger(DepartmentResource.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DepartmentResource.class);
 
     private static final String ENTITY_NAME = "department";
 
@@ -51,7 +51,7 @@ public class DepartmentResource {
      */
     @PostMapping("")
     public ResponseEntity<Department> createDepartment(@Valid @RequestBody Department department) throws URISyntaxException {
-        log.debug("REST request to save Department : {}", department);
+        LOG.debug("REST request to save Department : {}", department);
         if (department.getId() != null) {
             throw new BadRequestAlertException("A new department cannot already have an ID", ENTITY_NAME, "idexists");
         }
@@ -76,7 +76,7 @@ public class DepartmentResource {
         @PathVariable(value = "id", required = false) final Long id,
         @Valid @RequestBody Department department
     ) throws URISyntaxException {
-        log.debug("REST request to update Department : {}, {}", id, department);
+        LOG.debug("REST request to update Department : {}, {}", id, department);
         if (department.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
@@ -110,7 +110,7 @@ public class DepartmentResource {
         @PathVariable(value = "id", required = false) final Long id,
         @NotNull @RequestBody Department department
     ) throws URISyntaxException {
-        log.debug("REST request to partial update Department partially : {}, {}", id, department);
+        LOG.debug("REST request to partial update Department partially : {}, {}", id, department);
         if (department.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
@@ -139,10 +139,10 @@ public class DepartmentResource {
     @GetMapping("")
     public List<Department> getAllDepartments(@RequestParam(name = "filter", required = false) String filter) {
         if ("jobhistory-is-null".equals(filter)) {
-            log.debug("REST request to get all Departments where jobHistory is null");
+            LOG.debug("REST request to get all Departments where jobHistory is null");
             return departmentService.findAllWhereJobHistoryIsNull();
         }
-        log.debug("REST request to get all Departments");
+        LOG.debug("REST request to get all Departments");
         return departmentService.findAll();
     }
 
@@ -154,7 +154,7 @@ public class DepartmentResource {
      */
     @GetMapping("/{id}")
     public ResponseEntity<Department> getDepartment(@PathVariable("id") Long id) {
-        log.debug("REST request to get Department : {}", id);
+        LOG.debug("REST request to get Department : {}", id);
         Optional<Department> department = departmentService.findOne(id);
         return ResponseUtil.wrapOrNotFound(department);
     }
@@ -167,7 +167,7 @@ public class DepartmentResource {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteDepartment(@PathVariable("id") Long id) {
-        log.debug("REST request to delete Department : {}", id);
+        LOG.debug("REST request to delete Department : {}", id);
         departmentService.delete(id);
         return ResponseEntity.noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
