@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class JobHistoryServiceImpl implements JobHistoryService {
 
-    private static final Logger log = LoggerFactory.getLogger(JobHistoryServiceImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JobHistoryServiceImpl.class);
 
     private final JobHistoryRepository jobHistoryRepository;
 
@@ -28,19 +28,19 @@ public class JobHistoryServiceImpl implements JobHistoryService {
 
     @Override
     public JobHistory save(JobHistory jobHistory) {
-        log.debug("Request to save JobHistory : {}", jobHistory);
+        LOG.debug("Request to save JobHistory : {}", jobHistory);
         return jobHistoryRepository.save(jobHistory);
     }
 
     @Override
     public JobHistory update(JobHistory jobHistory) {
-        log.debug("Request to update JobHistory : {}", jobHistory);
+        LOG.debug("Request to update JobHistory : {}", jobHistory);
         return jobHistoryRepository.save(jobHistory);
     }
 
     @Override
     public Optional<JobHistory> partialUpdate(JobHistory jobHistory) {
-        log.debug("Request to partially update JobHistory : {}", jobHistory);
+        LOG.debug("Request to partially update JobHistory : {}", jobHistory);
 
         return jobHistoryRepository
             .findById(jobHistory.getId())
@@ -63,20 +63,20 @@ public class JobHistoryServiceImpl implements JobHistoryService {
     @Override
     @Transactional(readOnly = true)
     public Page<JobHistory> findAll(Pageable pageable) {
-        log.debug("Request to get all JobHistories");
+        LOG.debug("Request to get all JobHistories");
         return jobHistoryRepository.findAll(pageable);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Optional<JobHistory> findOne(Long id) {
-        log.debug("Request to get JobHistory : {}", id);
+        LOG.debug("Request to get JobHistory : {}", id);
         return jobHistoryRepository.findById(id);
     }
 
     @Override
     public void delete(Long id) {
-        log.debug("Request to delete JobHistory : {}", id);
+        LOG.debug("Request to delete JobHistory : {}", id);
         jobHistoryRepository.deleteById(id);
     }
 }

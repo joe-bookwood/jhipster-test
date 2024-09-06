@@ -17,7 +17,7 @@ describe('JobHistory Management Detail Component', () => {
           [
             {
               path: '**',
-              component: JobHistoryDetailComponent,
+              loadComponent: () => import('./job-history-detail.component').then(m => m.JobHistoryDetailComponent),
               resolve: { jobHistory: () => of({ id: 123 }) },
             },
           ],

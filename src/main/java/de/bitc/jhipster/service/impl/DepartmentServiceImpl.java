@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class DepartmentServiceImpl implements DepartmentService {
 
-    private static final Logger log = LoggerFactory.getLogger(DepartmentServiceImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DepartmentServiceImpl.class);
 
     private final DepartmentRepository departmentRepository;
 
@@ -28,19 +28,19 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public Department save(Department department) {
-        log.debug("Request to save Department : {}", department);
+        LOG.debug("Request to save Department : {}", department);
         return departmentRepository.save(department);
     }
 
     @Override
     public Department update(Department department) {
-        log.debug("Request to update Department : {}", department);
+        LOG.debug("Request to update Department : {}", department);
         return departmentRepository.save(department);
     }
 
     @Override
     public Optional<Department> partialUpdate(Department department) {
-        log.debug("Request to partially update Department : {}", department);
+        LOG.debug("Request to partially update Department : {}", department);
 
         return departmentRepository
             .findById(department.getId())
@@ -57,7 +57,7 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Override
     @Transactional(readOnly = true)
     public List<Department> findAll() {
-        log.debug("Request to get all Departments");
+        LOG.debug("Request to get all Departments");
         return departmentRepository.findAll();
     }
 
@@ -67,7 +67,7 @@ public class DepartmentServiceImpl implements DepartmentService {
      */
     @Transactional(readOnly = true)
     public List<Department> findAllWhereJobHistoryIsNull() {
-        log.debug("Request to get all departments where JobHistory is null");
+        LOG.debug("Request to get all departments where JobHistory is null");
         return StreamSupport.stream(departmentRepository.findAll().spliterator(), false)
             .filter(department -> department.getJobHistory() == null)
             .toList();
@@ -76,13 +76,13 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Override
     @Transactional(readOnly = true)
     public Optional<Department> findOne(Long id) {
-        log.debug("Request to get Department : {}", id);
+        LOG.debug("Request to get Department : {}", id);
         return departmentRepository.findById(id);
     }
 
     @Override
     public void delete(Long id) {
-        log.debug("Request to delete Department : {}", id);
+        LOG.debug("Request to delete Department : {}", id);
         departmentRepository.deleteById(id);
     }
 }

@@ -7,7 +7,6 @@ import de.bitc.jhipster.IntegrationTest;
 import de.bitc.jhipster.domain.User;
 import de.bitc.jhipster.repository.UserRepository;
 import de.bitc.jhipster.security.AuthoritiesConstants;
-import jakarta.persistence.EntityManager;
 import java.util.Objects;
 import java.util.Set;
 import org.junit.jupiter.api.AfterEach;
@@ -30,13 +29,8 @@ import org.springframework.transaction.annotation.Transactional;
 @IntegrationTest
 class PublicUserResourceIT {
 
-    private static final String DEFAULT_LOGIN = "johndoe";
-
     @Autowired
     private UserRepository userRepository;
-
-    @Autowired
-    private EntityManager em;
 
     @Autowired
     private CacheManager cacheManager;
@@ -48,7 +42,7 @@ class PublicUserResourceIT {
 
     @BeforeEach
     public void initTest() {
-        user = UserResourceIT.initTestUser(em);
+        user = UserResourceIT.initTestUser();
     }
 
     @AfterEach

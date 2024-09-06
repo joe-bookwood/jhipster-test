@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class RegionServiceImpl implements RegionService {
 
-    private static final Logger log = LoggerFactory.getLogger(RegionServiceImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RegionServiceImpl.class);
 
     private final RegionRepository regionRepository;
 
@@ -28,19 +28,19 @@ public class RegionServiceImpl implements RegionService {
 
     @Override
     public Region save(Region region) {
-        log.debug("Request to save Region : {}", region);
+        LOG.debug("Request to save Region : {}", region);
         return regionRepository.save(region);
     }
 
     @Override
     public Region update(Region region) {
-        log.debug("Request to update Region : {}", region);
+        LOG.debug("Request to update Region : {}", region);
         return regionRepository.save(region);
     }
 
     @Override
     public Optional<Region> partialUpdate(Region region) {
-        log.debug("Request to partially update Region : {}", region);
+        LOG.debug("Request to partially update Region : {}", region);
 
         return regionRepository
             .findById(region.getId())
@@ -57,7 +57,7 @@ public class RegionServiceImpl implements RegionService {
     @Override
     @Transactional(readOnly = true)
     public List<Region> findAll() {
-        log.debug("Request to get all Regions");
+        LOG.debug("Request to get all Regions");
         return regionRepository.findAll();
     }
 
@@ -67,20 +67,20 @@ public class RegionServiceImpl implements RegionService {
      */
     @Transactional(readOnly = true)
     public List<Region> findAllWhereCountryIsNull() {
-        log.debug("Request to get all regions where Country is null");
+        LOG.debug("Request to get all regions where Country is null");
         return StreamSupport.stream(regionRepository.findAll().spliterator(), false).filter(region -> region.getCountry() == null).toList();
     }
 
     @Override
     @Transactional(readOnly = true)
     public Optional<Region> findOne(Long id) {
-        log.debug("Request to get Region : {}", id);
+        LOG.debug("Request to get Region : {}", id);
         return regionRepository.findById(id);
     }
 
     @Override
     public void delete(Long id) {
-        log.debug("Request to delete Region : {}", id);
+        LOG.debug("Request to delete Region : {}", id);
         regionRepository.deleteById(id);
     }
 }

@@ -17,7 +17,7 @@ describe('Employee Management Detail Component', () => {
           [
             {
               path: '**',
-              component: EmployeeDetailComponent,
+              loadComponent: () => import('./employee-detail.component').then(m => m.EmployeeDetailComponent),
               resolve: { employee: () => of({ id: 123 }) },
             },
           ],

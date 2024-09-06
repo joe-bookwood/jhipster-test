@@ -17,7 +17,7 @@ describe('Region Management Detail Component', () => {
           [
             {
               path: '**',
-              component: RegionDetailComponent,
+              loadComponent: () => import('./region-detail.component').then(m => m.RegionDetailComponent),
               resolve: { region: () => of({ id: 123 }) },
             },
           ],

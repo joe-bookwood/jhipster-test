@@ -17,7 +17,7 @@ describe('Location Management Detail Component', () => {
           [
             {
               path: '**',
-              component: LocationDetailComponent,
+              loadComponent: () => import('./location-detail.component').then(m => m.LocationDetailComponent),
               resolve: { location: () => of({ id: 123 }) },
             },
           ],

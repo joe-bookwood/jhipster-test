@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class CountryServiceImpl implements CountryService {
 
-    private static final Logger log = LoggerFactory.getLogger(CountryServiceImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CountryServiceImpl.class);
 
     private final CountryRepository countryRepository;
 
@@ -28,19 +28,19 @@ public class CountryServiceImpl implements CountryService {
 
     @Override
     public Country save(Country country) {
-        log.debug("Request to save Country : {}", country);
+        LOG.debug("Request to save Country : {}", country);
         return countryRepository.save(country);
     }
 
     @Override
     public Country update(Country country) {
-        log.debug("Request to update Country : {}", country);
+        LOG.debug("Request to update Country : {}", country);
         return countryRepository.save(country);
     }
 
     @Override
     public Optional<Country> partialUpdate(Country country) {
-        log.debug("Request to partially update Country : {}", country);
+        LOG.debug("Request to partially update Country : {}", country);
 
         return countryRepository
             .findById(country.getId())
@@ -57,7 +57,7 @@ public class CountryServiceImpl implements CountryService {
     @Override
     @Transactional(readOnly = true)
     public List<Country> findAll() {
-        log.debug("Request to get all Countries");
+        LOG.debug("Request to get all Countries");
         return countryRepository.findAll();
     }
 
@@ -67,7 +67,7 @@ public class CountryServiceImpl implements CountryService {
      */
     @Transactional(readOnly = true)
     public List<Country> findAllWhereLocationIsNull() {
-        log.debug("Request to get all countries where Location is null");
+        LOG.debug("Request to get all countries where Location is null");
         return StreamSupport.stream(countryRepository.findAll().spliterator(), false)
             .filter(country -> country.getLocation() == null)
             .toList();
@@ -76,13 +76,13 @@ public class CountryServiceImpl implements CountryService {
     @Override
     @Transactional(readOnly = true)
     public Optional<Country> findOne(Long id) {
-        log.debug("Request to get Country : {}", id);
+        LOG.debug("Request to get Country : {}", id);
         return countryRepository.findById(id);
     }
 
     @Override
     public void delete(Long id) {
-        log.debug("Request to delete Country : {}", id);
+        LOG.debug("Request to delete Country : {}", id);
         countryRepository.deleteById(id);
     }
 }

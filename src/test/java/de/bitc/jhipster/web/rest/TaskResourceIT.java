@@ -67,9 +67,8 @@ class TaskResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static Task createEntity(EntityManager em) {
-        Task task = new Task().title(DEFAULT_TITLE).description(DEFAULT_DESCRIPTION);
-        return task;
+    public static Task createEntity() {
+        return new Task().title(DEFAULT_TITLE).description(DEFAULT_DESCRIPTION);
     }
 
     /**
@@ -78,14 +77,13 @@ class TaskResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static Task createUpdatedEntity(EntityManager em) {
-        Task task = new Task().title(UPDATED_TITLE).description(UPDATED_DESCRIPTION);
-        return task;
+    public static Task createUpdatedEntity() {
+        return new Task().title(UPDATED_TITLE).description(UPDATED_DESCRIPTION);
     }
 
     @BeforeEach
     public void initTest() {
-        task = createEntity(em);
+        task = createEntity();
     }
 
     @AfterEach

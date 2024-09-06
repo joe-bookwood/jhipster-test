@@ -24,7 +24,7 @@ import tech.jhipster.web.util.ResponseUtil;
 @RequestMapping("/api/regions")
 public class RegionResource {
 
-    private static final Logger log = LoggerFactory.getLogger(RegionResource.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RegionResource.class);
 
     private static final String ENTITY_NAME = "region";
 
@@ -49,7 +49,7 @@ public class RegionResource {
      */
     @PostMapping("")
     public ResponseEntity<Region> createRegion(@RequestBody Region region) throws URISyntaxException {
-        log.debug("REST request to save Region : {}", region);
+        LOG.debug("REST request to save Region : {}", region);
         if (region.getId() != null) {
             throw new BadRequestAlertException("A new region cannot already have an ID", ENTITY_NAME, "idexists");
         }
@@ -72,7 +72,7 @@ public class RegionResource {
     @PutMapping("/{id}")
     public ResponseEntity<Region> updateRegion(@PathVariable(value = "id", required = false) final Long id, @RequestBody Region region)
         throws URISyntaxException {
-        log.debug("REST request to update Region : {}, {}", id, region);
+        LOG.debug("REST request to update Region : {}, {}", id, region);
         if (region.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
@@ -106,7 +106,7 @@ public class RegionResource {
         @PathVariable(value = "id", required = false) final Long id,
         @RequestBody Region region
     ) throws URISyntaxException {
-        log.debug("REST request to partial update Region partially : {}, {}", id, region);
+        LOG.debug("REST request to partial update Region partially : {}, {}", id, region);
         if (region.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
@@ -135,10 +135,10 @@ public class RegionResource {
     @GetMapping("")
     public List<Region> getAllRegions(@RequestParam(name = "filter", required = false) String filter) {
         if ("country-is-null".equals(filter)) {
-            log.debug("REST request to get all Regions where country is null");
+            LOG.debug("REST request to get all Regions where country is null");
             return regionService.findAllWhereCountryIsNull();
         }
-        log.debug("REST request to get all Regions");
+        LOG.debug("REST request to get all Regions");
         return regionService.findAll();
     }
 
@@ -150,7 +150,7 @@ public class RegionResource {
      */
     @GetMapping("/{id}")
     public ResponseEntity<Region> getRegion(@PathVariable("id") Long id) {
-        log.debug("REST request to get Region : {}", id);
+        LOG.debug("REST request to get Region : {}", id);
         Optional<Region> region = regionService.findOne(id);
         return ResponseUtil.wrapOrNotFound(region);
     }
@@ -163,7 +163,7 @@ public class RegionResource {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteRegion(@PathVariable("id") Long id) {
-        log.debug("REST request to delete Region : {}", id);
+        LOG.debug("REST request to delete Region : {}", id);
         regionService.delete(id);
         return ResponseEntity.noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
