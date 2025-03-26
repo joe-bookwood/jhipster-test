@@ -1,4 +1,4 @@
-import { Component, NgZone, OnInit, inject } from '@angular/core';
+import { Component, NgZone, OnInit, inject, signal } from '@angular/core';
 import { HttpHeaders } from '@angular/common/http';
 import { ActivatedRoute, Data, ParamMap, Router, RouterModule } from '@angular/router';
 import { Observable, Subscription, combineLatest, filter, tap } from 'rxjs';
@@ -6,7 +6,6 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import SharedModule from 'app/shared/shared.module';
 import { SortByDirective, SortDirective, SortService, type SortState, sortStateSignal } from 'app/shared/sort';
-import { DurationPipe, FormatMediumDatePipe, FormatMediumDatetimePipe } from 'app/shared/date';
 import { ItemCountComponent } from 'app/shared/pagination';
 import { FormsModule } from '@angular/forms';
 
@@ -17,24 +16,13 @@ import { EntityArrayResponseType, JobService } from '../service/job.service';
 import { JobDeleteDialogComponent } from '../delete/job-delete-dialog.component';
 
 @Component({
-  standalone: true,
   selector: 'jhi-job',
   templateUrl: './job.component.html',
-  imports: [
-    RouterModule,
-    FormsModule,
-    SharedModule,
-    SortDirective,
-    SortByDirective,
-    DurationPipe,
-    FormatMediumDatetimePipe,
-    FormatMediumDatePipe,
-    ItemCountComponent,
-  ],
+  imports: [RouterModule, FormsModule, SharedModule, SortDirective, SortByDirective, ItemCountComponent],
 })
 export class JobComponent implements OnInit {
   subscription: Subscription | null = null;
-  jobs?: IJob[];
+  jobs = signal<IJob[]>([]);
   isLoading = false;
 
   sortState = sortStateSignal({});
@@ -43,14 +31,14 @@ export class JobComponent implements OnInit {
   totalItems = 0;
   page = 1;
 
-  public router = inject(Router);
-  protected jobService = inject(JobService);
-  protected activatedRoute = inject(ActivatedRoute);
-  protected sortService = inject(SortService);
+  public readonly router = inject(Router);
+  protected readonly jobService = inject(JobService);
+  protected readonly activatedRoute = inject(ActivatedRoute);
+  protected readonly sortService = inject(SortService);
   protected modalService = inject(NgbModal);
   protected ngZone = inject(NgZone);
 
-  trackId = (_index: number, item: IJob): number => this.jobService.getJobIdentifier(item);
+  trackId = (item: IJob): number => this.jobService.getJobIdentifier(item);
 
   ngOnInit(): void {
     this.subscription = combineLatest([this.activatedRoute.queryParamMap, this.activatedRoute.data])
@@ -98,7 +86,7 @@ export class JobComponent implements OnInit {
   protected onResponseSuccess(response: EntityArrayResponseType): void {
     this.fillComponentAttributesFromResponseHeader(response.headers);
     const dataFromBody = this.fillComponentAttributesFromResponseBody(response.body);
-    this.jobs = dataFromBody;
+    this.jobs.set(dataFromBody);
   }
 
   protected fillComponentAttributesFromResponseBody(data: IJob[] | null): IJob[] {

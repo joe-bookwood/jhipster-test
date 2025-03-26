@@ -1,21 +1,21 @@
 import { ILocation, NewLocation } from './location.model';
 
 export const sampleWithRequiredData: ILocation = {
-  id: 16218,
+  id: 12482,
 };
 
 export const sampleWithPartialData: ILocation = {
-  id: 26252,
-  postalCode: 'woeful congressperson',
-  stateProvince: 'vineyard gee',
+  id: 30179,
+  postalCode: 'wallaby',
+  city: 'Amirview',
 };
 
 export const sampleWithFullData: ILocation = {
-  id: 17803,
-  streetAddress: 'when',
-  postalCode: 'retina',
-  city: 'Sanfordview',
-  stateProvince: 'sage nestmate flan',
+  id: 22007,
+  streetAddress: 'abseil given',
+  postalCode: 'underneath emerge excluding',
+  city: 'Port Peyton',
+  stateProvince: 'sweet cemetery quickly',
 };
 
 export const sampleWithNewData: NewLocation = {

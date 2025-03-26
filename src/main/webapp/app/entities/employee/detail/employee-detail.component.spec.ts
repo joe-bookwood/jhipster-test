@@ -18,7 +18,7 @@ describe('Employee Management Detail Component', () => {
             {
               path: '**',
               loadComponent: () => import('./employee-detail.component').then(m => m.EmployeeDetailComponent),
-              resolve: { employee: () => of({ id: 123 }) },
+              resolve: { employee: () => of({ id: 1749 }) },
             },
           ],
           withComponentInputBinding(),
@@ -40,7 +40,7 @@ describe('Employee Management Detail Component', () => {
       const instance = await harness.navigateByUrl('/', EmployeeDetailComponent);
 
       // THEN
-      expect(instance.employee()).toEqual(expect.objectContaining({ id: 123 }));
+      expect(instance.employee()).toEqual(expect.objectContaining({ id: 1749 }));
     });
   });
 

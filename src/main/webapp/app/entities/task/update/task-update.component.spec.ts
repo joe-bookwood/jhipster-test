@@ -48,11 +48,11 @@ describe('Task Management Update Component', () => {
 
   describe('ngOnInit', () => {
     it('Should call Job query and add missing value', () => {
-      const task: ITask = { id: 456 };
-      const jobs: IJob[] = [{ id: 10279 }];
+      const task: ITask = { id: 22244 };
+      const jobs: IJob[] = [{ id: 30796 }];
       task.jobs = jobs;
 
-      const jobCollection: IJob[] = [{ id: 27793 }];
+      const jobCollection: IJob[] = [{ id: 30796 }];
       jest.spyOn(jobService, 'query').mockReturnValue(of(new HttpResponse({ body: jobCollection })));
       const additionalJobs = [...jobs];
       const expectedCollection: IJob[] = [...additionalJobs, ...jobCollection];
@@ -67,14 +67,14 @@ describe('Task Management Update Component', () => {
     });
 
     it('Should update editForm', () => {
-      const task: ITask = { id: 456 };
-      const job: IJob = { id: 5064 };
+      const task: ITask = { id: 22244 };
+      const job: IJob = { id: 30796 };
       task.jobs = [job];
 
       activatedRoute.data = of({ task });
       comp.ngOnInit();
 
-      expect(comp.jobsSharedCollection).toContain(job);
+      expect(comp.jobsSharedCollection).toContainEqual(job);
       expect(comp.task).toEqual(task);
     });
   });
@@ -83,7 +83,7 @@ describe('Task Management Update Component', () => {
     it('Should call update service on save for existing entity', () => {
       // GIVEN
       const saveSubject = new Subject<HttpResponse<ITask>>();
-      const task = { id: 123 };
+      const task = { id: 25192 };
       jest.spyOn(taskFormService, 'getTask').mockReturnValue(task);
       jest.spyOn(taskService, 'update').mockReturnValue(saveSubject);
       jest.spyOn(comp, 'previousState');
@@ -106,7 +106,7 @@ describe('Task Management Update Component', () => {
     it('Should call create service on save for new entity', () => {
       // GIVEN
       const saveSubject = new Subject<HttpResponse<ITask>>();
-      const task = { id: 123 };
+      const task = { id: 25192 };
       jest.spyOn(taskFormService, 'getTask').mockReturnValue({ id: null });
       jest.spyOn(taskService, 'create').mockReturnValue(saveSubject);
       jest.spyOn(comp, 'previousState');
@@ -129,7 +129,7 @@ describe('Task Management Update Component', () => {
     it('Should set isSaving to false on error', () => {
       // GIVEN
       const saveSubject = new Subject<HttpResponse<ITask>>();
-      const task = { id: 123 };
+      const task = { id: 25192 };
       jest.spyOn(taskService, 'update').mockReturnValue(saveSubject);
       jest.spyOn(comp, 'previousState');
       activatedRoute.data = of({ task });
@@ -150,8 +150,8 @@ describe('Task Management Update Component', () => {
   describe('Compare relationships', () => {
     describe('compareJob', () => {
       it('Should forward to jobService', () => {
-        const entity = { id: 123 };
-        const entity2 = { id: 456 };
+        const entity = { id: 30796 };
+        const entity2 = { id: 29383 };
         jest.spyOn(jobService, 'compareJob');
         comp.compareJob(entity, entity2);
         expect(jobService.compareJob).toHaveBeenCalledWith(entity, entity2);

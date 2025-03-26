@@ -59,7 +59,7 @@ describe('Region Management Component', () => {
       .mockReturnValueOnce(
         of(
           new HttpResponse({
-            body: [{ id: 123 }],
+            body: [{ id: 3454 }],
             headers: new HttpHeaders({
               link: '<http://localhost/api/foo?page=1&size=20>; rel="next"',
             }),
@@ -69,7 +69,7 @@ describe('Region Management Component', () => {
       .mockReturnValueOnce(
         of(
           new HttpResponse({
-            body: [{ id: 456 }],
+            body: [{ id: 30405 }],
             headers: new HttpHeaders({
               link: '<http://localhost/api/foo?page=0&size=20>; rel="prev",<http://localhost/api/foo?page=2&size=20>; rel="next"',
             }),
@@ -84,14 +84,14 @@ describe('Region Management Component', () => {
 
     // THEN
     expect(service.query).toHaveBeenCalled();
-    expect(comp.regions?.[0]).toEqual(expect.objectContaining({ id: 123 }));
+    expect(comp.regions()[0]).toEqual(expect.objectContaining({ id: 3454 }));
   });
 
   describe('trackId', () => {
     it('Should forward to regionService', () => {
-      const entity = { id: 123 };
+      const entity = { id: 3454 };
       jest.spyOn(service, 'getRegionIdentifier');
-      const id = comp.trackId(0, entity);
+      const id = comp.trackId(entity);
       expect(service.getRegionIdentifier).toHaveBeenCalledWith(entity);
       expect(id).toBe(entity.id);
     });

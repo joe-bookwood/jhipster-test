@@ -56,11 +56,11 @@ describe('JobHistory Management Update Component', () => {
 
   describe('ngOnInit', () => {
     it('Should call job query and add missing value', () => {
-      const jobHistory: IJobHistory = { id: 456 };
-      const job: IJob = { id: 12670 };
+      const jobHistory: IJobHistory = { id: 27293 };
+      const job: IJob = { id: 30796 };
       jobHistory.job = job;
 
-      const jobCollection: IJob[] = [{ id: 8952 }];
+      const jobCollection: IJob[] = [{ id: 30796 }];
       jest.spyOn(jobService, 'query').mockReturnValue(of(new HttpResponse({ body: jobCollection })));
       const expectedCollection: IJob[] = [job, ...jobCollection];
       jest.spyOn(jobService, 'addJobToCollectionIfMissing').mockReturnValue(expectedCollection);
@@ -74,11 +74,11 @@ describe('JobHistory Management Update Component', () => {
     });
 
     it('Should call department query and add missing value', () => {
-      const jobHistory: IJobHistory = { id: 456 };
-      const department: IDepartment = { id: 7647 };
+      const jobHistory: IJobHistory = { id: 27293 };
+      const department: IDepartment = { id: 29518 };
       jobHistory.department = department;
 
-      const departmentCollection: IDepartment[] = [{ id: 28480 }];
+      const departmentCollection: IDepartment[] = [{ id: 29518 }];
       jest.spyOn(departmentService, 'query').mockReturnValue(of(new HttpResponse({ body: departmentCollection })));
       const expectedCollection: IDepartment[] = [department, ...departmentCollection];
       jest.spyOn(departmentService, 'addDepartmentToCollectionIfMissing').mockReturnValue(expectedCollection);
@@ -92,11 +92,11 @@ describe('JobHistory Management Update Component', () => {
     });
 
     it('Should call employee query and add missing value', () => {
-      const jobHistory: IJobHistory = { id: 456 };
-      const employee: IEmployee = { id: 31306 };
+      const jobHistory: IJobHistory = { id: 27293 };
+      const employee: IEmployee = { id: 1749 };
       jobHistory.employee = employee;
 
-      const employeeCollection: IEmployee[] = [{ id: 17122 }];
+      const employeeCollection: IEmployee[] = [{ id: 1749 }];
       jest.spyOn(employeeService, 'query').mockReturnValue(of(new HttpResponse({ body: employeeCollection })));
       const expectedCollection: IEmployee[] = [employee, ...employeeCollection];
       jest.spyOn(employeeService, 'addEmployeeToCollectionIfMissing').mockReturnValue(expectedCollection);
@@ -110,20 +110,20 @@ describe('JobHistory Management Update Component', () => {
     });
 
     it('Should update editForm', () => {
-      const jobHistory: IJobHistory = { id: 456 };
-      const job: IJob = { id: 11516 };
+      const jobHistory: IJobHistory = { id: 27293 };
+      const job: IJob = { id: 30796 };
       jobHistory.job = job;
-      const department: IDepartment = { id: 32240 };
+      const department: IDepartment = { id: 29518 };
       jobHistory.department = department;
-      const employee: IEmployee = { id: 17618 };
+      const employee: IEmployee = { id: 1749 };
       jobHistory.employee = employee;
 
       activatedRoute.data = of({ jobHistory });
       comp.ngOnInit();
 
-      expect(comp.jobsCollection).toContain(job);
-      expect(comp.departmentsCollection).toContain(department);
-      expect(comp.employeesCollection).toContain(employee);
+      expect(comp.jobsCollection).toContainEqual(job);
+      expect(comp.departmentsCollection).toContainEqual(department);
+      expect(comp.employeesCollection).toContainEqual(employee);
       expect(comp.jobHistory).toEqual(jobHistory);
     });
   });
@@ -132,7 +132,7 @@ describe('JobHistory Management Update Component', () => {
     it('Should call update service on save for existing entity', () => {
       // GIVEN
       const saveSubject = new Subject<HttpResponse<IJobHistory>>();
-      const jobHistory = { id: 123 };
+      const jobHistory = { id: 18667 };
       jest.spyOn(jobHistoryFormService, 'getJobHistory').mockReturnValue(jobHistory);
       jest.spyOn(jobHistoryService, 'update').mockReturnValue(saveSubject);
       jest.spyOn(comp, 'previousState');
@@ -155,7 +155,7 @@ describe('JobHistory Management Update Component', () => {
     it('Should call create service on save for new entity', () => {
       // GIVEN
       const saveSubject = new Subject<HttpResponse<IJobHistory>>();
-      const jobHistory = { id: 123 };
+      const jobHistory = { id: 18667 };
       jest.spyOn(jobHistoryFormService, 'getJobHistory').mockReturnValue({ id: null });
       jest.spyOn(jobHistoryService, 'create').mockReturnValue(saveSubject);
       jest.spyOn(comp, 'previousState');
@@ -178,7 +178,7 @@ describe('JobHistory Management Update Component', () => {
     it('Should set isSaving to false on error', () => {
       // GIVEN
       const saveSubject = new Subject<HttpResponse<IJobHistory>>();
-      const jobHistory = { id: 123 };
+      const jobHistory = { id: 18667 };
       jest.spyOn(jobHistoryService, 'update').mockReturnValue(saveSubject);
       jest.spyOn(comp, 'previousState');
       activatedRoute.data = of({ jobHistory });
@@ -199,8 +199,8 @@ describe('JobHistory Management Update Component', () => {
   describe('Compare relationships', () => {
     describe('compareJob', () => {
       it('Should forward to jobService', () => {
-        const entity = { id: 123 };
-        const entity2 = { id: 456 };
+        const entity = { id: 30796 };
+        const entity2 = { id: 29383 };
         jest.spyOn(jobService, 'compareJob');
         comp.compareJob(entity, entity2);
         expect(jobService.compareJob).toHaveBeenCalledWith(entity, entity2);
@@ -209,8 +209,8 @@ describe('JobHistory Management Update Component', () => {
 
     describe('compareDepartment', () => {
       it('Should forward to departmentService', () => {
-        const entity = { id: 123 };
-        const entity2 = { id: 456 };
+        const entity = { id: 29518 };
+        const entity2 = { id: 15970 };
         jest.spyOn(departmentService, 'compareDepartment');
         comp.compareDepartment(entity, entity2);
         expect(departmentService.compareDepartment).toHaveBeenCalledWith(entity, entity2);
@@ -219,8 +219,8 @@ describe('JobHistory Management Update Component', () => {
 
     describe('compareEmployee', () => {
       it('Should forward to employeeService', () => {
-        const entity = { id: 123 };
-        const entity2 = { id: 456 };
+        const entity = { id: 1749 };
+        const entity2 = { id: 1545 };
         jest.spyOn(employeeService, 'compareEmployee');
         comp.compareEmployee(entity, entity2);
         expect(employeeService.compareEmployee).toHaveBeenCalledWith(entity, entity2);

@@ -59,7 +59,7 @@ describe('Country Management Component', () => {
       .mockReturnValueOnce(
         of(
           new HttpResponse({
-            body: [{ id: 123 }],
+            body: [{ id: 21165 }],
             headers: new HttpHeaders({
               link: '<http://localhost/api/foo?page=1&size=20>; rel="next"',
             }),
@@ -69,7 +69,7 @@ describe('Country Management Component', () => {
       .mockReturnValueOnce(
         of(
           new HttpResponse({
-            body: [{ id: 456 }],
+            body: [{ id: 2258 }],
             headers: new HttpHeaders({
               link: '<http://localhost/api/foo?page=0&size=20>; rel="prev",<http://localhost/api/foo?page=2&size=20>; rel="next"',
             }),
@@ -84,14 +84,14 @@ describe('Country Management Component', () => {
 
     // THEN
     expect(service.query).toHaveBeenCalled();
-    expect(comp.countries?.[0]).toEqual(expect.objectContaining({ id: 123 }));
+    expect(comp.countries()[0]).toEqual(expect.objectContaining({ id: 21165 }));
   });
 
   describe('trackId', () => {
     it('Should forward to countryService', () => {
-      const entity = { id: 123 };
+      const entity = { id: 21165 };
       jest.spyOn(service, 'getCountryIdentifier');
-      const id = comp.trackId(0, entity);
+      const id = comp.trackId(entity);
       expect(service.getCountryIdentifier).toHaveBeenCalledWith(entity);
       expect(id).toBe(entity.id);
     });
