@@ -6,7 +6,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import SharedModule from 'app/shared/shared.module';
 import { SortByDirective, SortDirective, SortService, type SortState, sortStateSignal } from 'app/shared/sort';
-import { DurationPipe, FormatMediumDatePipe, FormatMediumDatetimePipe } from 'app/shared/date';
+import { FormatMediumDatetimePipe } from 'app/shared/date';
 import { FormsModule } from '@angular/forms';
 
 import { ITEMS_PER_PAGE } from 'app/config/pagination.constants';
@@ -18,24 +18,13 @@ import { JobHistoryDeleteDialogComponent } from '../delete/job-history-delete-di
 import { IJobHistory } from '../job-history.model';
 
 @Component({
-  standalone: true,
   selector: 'jhi-job-history',
   templateUrl: './job-history.component.html',
-  imports: [
-    RouterModule,
-    FormsModule,
-    SharedModule,
-    SortDirective,
-    SortByDirective,
-    DurationPipe,
-    FormatMediumDatetimePipe,
-    FormatMediumDatePipe,
-    InfiniteScrollDirective,
-  ],
+  imports: [RouterModule, FormsModule, SharedModule, SortDirective, SortByDirective, FormatMediumDatetimePipe, InfiniteScrollDirective],
 })
 export class JobHistoryComponent implements OnInit {
   subscription: Subscription | null = null;
-  jobHistories?: IJobHistory[];
+  jobHistories = signal<IJobHistory[]>([]);
   isLoading = false;
 
   sortState = sortStateSignal({});
@@ -45,15 +34,15 @@ export class JobHistoryComponent implements OnInit {
   hasMorePage = computed(() => !!this.links().next);
   isFirstFetch = computed(() => Object.keys(this.links()).length === 0);
 
-  public router = inject(Router);
-  protected jobHistoryService = inject(JobHistoryService);
-  protected activatedRoute = inject(ActivatedRoute);
-  protected sortService = inject(SortService);
+  public readonly router = inject(Router);
+  protected readonly jobHistoryService = inject(JobHistoryService);
+  protected readonly activatedRoute = inject(ActivatedRoute);
+  protected readonly sortService = inject(SortService);
   protected parseLinks = inject(ParseLinks);
   protected modalService = inject(NgbModal);
   protected ngZone = inject(NgZone);
 
-  trackId = (_index: number, item: IJobHistory): number => this.jobHistoryService.getJobHistoryIdentifier(item);
+  trackId = (item: IJobHistory): number => this.jobHistoryService.getJobHistoryIdentifier(item);
 
   ngOnInit(): void {
     this.subscription = combineLatest([this.activatedRoute.queryParamMap, this.activatedRoute.data])
@@ -66,7 +55,7 @@ export class JobHistoryComponent implements OnInit {
   }
 
   reset(): void {
-    this.jobHistories = [];
+    this.jobHistories.set([]);
   }
 
   loadNextPage(): void {
@@ -104,13 +93,13 @@ export class JobHistoryComponent implements OnInit {
   protected onResponseSuccess(response: EntityArrayResponseType): void {
     this.fillComponentAttributesFromResponseHeader(response.headers);
     const dataFromBody = this.fillComponentAttributesFromResponseBody(response.body);
-    this.jobHistories = dataFromBody;
+    this.jobHistories.set(dataFromBody);
   }
 
   protected fillComponentAttributesFromResponseBody(data: IJobHistory[] | null): IJobHistory[] {
     // If there is previous link, data is a infinite scroll pagination content.
     if (this.links().prev) {
-      const jobHistoriesNew = this.jobHistories ?? [];
+      const jobHistoriesNew = this.jobHistories();
       if (data) {
         for (const d of data) {
           if (jobHistoriesNew.some(op => op.id === d.id)) {

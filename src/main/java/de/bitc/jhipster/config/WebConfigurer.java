@@ -5,7 +5,7 @@ import static java.net.URLDecoder.decode;
 import jakarta.servlet.*;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.web.server.*;
@@ -46,7 +46,7 @@ public class WebConfigurer implements ServletContextInitializer, WebServerFactor
             LOG.info("Web application configuration, using profiles: {}", (Object[]) env.getActiveProfiles());
         }
 
-        if (env.acceptsProfiles(Profiles.of(JHipsterConstants.SPRING_PROFILE_DEVELOPMENT))) {
+        if (h2ConsoleIsEnabled(env)) {
             initH2Console(servletContext);
         }
         LOG.info("Web application fully configured");
@@ -65,7 +65,7 @@ public class WebConfigurer implements ServletContextInitializer, WebServerFactor
         if (server instanceof ConfigurableServletWebServerFactory servletWebServer) {
             File root;
             String prefixPath = resolvePathPrefix();
-            root = new File(prefixPath + "target/classes/static/");
+            root = Path.of(prefixPath + "target/classes/static/").toFile();
             if (root.exists() && root.isDirectory()) {
                 servletWebServer.setDocumentRoot(root);
             }
@@ -77,7 +77,7 @@ public class WebConfigurer implements ServletContextInitializer, WebServerFactor
      */
     private String resolvePathPrefix() {
         String fullExecutablePath = decode(this.getClass().getResource("").getPath(), StandardCharsets.UTF_8);
-        String rootPath = Paths.get(".").toUri().normalize().getPath();
+        String rootPath = Path.of(".").toUri().normalize().getPath();
         String extractedPath = fullExecutablePath.replace(rootPath, "");
         int extractionEndIndex = extractedPath.indexOf("target/");
         if (extractionEndIndex <= 0) {
@@ -100,11 +100,18 @@ public class WebConfigurer implements ServletContextInitializer, WebServerFactor
         return new CorsFilter(source);
     }
 
+    private boolean h2ConsoleIsEnabled(Environment env) {
+        return (
+            env.acceptsProfiles(Profiles.of(JHipsterConstants.SPRING_PROFILE_DEVELOPMENT)) &&
+            "true".equals(env.getProperty("spring.h2.console.enabled"))
+        );
+    }
+
     /**
      * Initializes H2 console.
      */
     private void initH2Console(ServletContext servletContext) {
-        LOG.debug("Initialize H2 console");
+        LOG.info("Initialize H2 console");
         H2ConfigurationHelper.initH2Console(servletContext);
     }
 }

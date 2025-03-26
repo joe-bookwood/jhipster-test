@@ -11,15 +11,15 @@ import { ApplicationConfigService } from '../config/application-config.service';
 
 @Injectable({ providedIn: 'root' })
 export class AccountService {
-  private userIdentity = signal<Account | null>(null);
-  private authenticationState = new ReplaySubject<Account | null>(1);
+  private readonly userIdentity = signal<Account | null>(null);
+  private readonly authenticationState = new ReplaySubject<Account | null>(1);
   private accountCache$?: Observable<Account> | null;
 
-  private translateService = inject(TranslateService);
-  private http = inject(HttpClient);
-  private stateStorageService = inject(StateStorageService);
-  private router = inject(Router);
-  private applicationConfigService = inject(ApplicationConfigService);
+  private readonly translateService = inject(TranslateService);
+  private readonly http = inject(HttpClient);
+  private readonly stateStorageService = inject(StateStorageService);
+  private readonly router = inject(Router);
+  private readonly applicationConfigService = inject(ApplicationConfigService);
 
   authenticate(identity: Account | null): void {
     this.userIdentity.set(identity);
@@ -52,7 +52,7 @@ export class AccountService {
 
           // After retrieve the account info, the language will be changed to
           // the user's preferred language configured in the account setting
-          // unless user have choosed other language in the current session
+          // unless user have chosen another language in the current session
           if (!this.stateStorageService.getLocale()) {
             this.translateService.use(account.langKey);
           }

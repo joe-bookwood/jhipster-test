@@ -52,11 +52,11 @@ describe('Job Management Update Component', () => {
 
   describe('ngOnInit', () => {
     it('Should call Task query and add missing value', () => {
-      const job: IJob = { id: 456 };
-      const tasks: ITask[] = [{ id: 14853 }];
+      const job: IJob = { id: 29383 };
+      const tasks: ITask[] = [{ id: 25192 }];
       job.tasks = tasks;
 
-      const taskCollection: ITask[] = [{ id: 12788 }];
+      const taskCollection: ITask[] = [{ id: 25192 }];
       jest.spyOn(taskService, 'query').mockReturnValue(of(new HttpResponse({ body: taskCollection })));
       const additionalTasks = [...tasks];
       const expectedCollection: ITask[] = [...additionalTasks, ...taskCollection];
@@ -74,11 +74,11 @@ describe('Job Management Update Component', () => {
     });
 
     it('Should call Employee query and add missing value', () => {
-      const job: IJob = { id: 456 };
-      const employee: IEmployee = { id: 31172 };
+      const job: IJob = { id: 29383 };
+      const employee: IEmployee = { id: 1749 };
       job.employee = employee;
 
-      const employeeCollection: IEmployee[] = [{ id: 4109 }];
+      const employeeCollection: IEmployee[] = [{ id: 1749 }];
       jest.spyOn(employeeService, 'query').mockReturnValue(of(new HttpResponse({ body: employeeCollection })));
       const additionalEmployees = [employee];
       const expectedCollection: IEmployee[] = [...additionalEmployees, ...employeeCollection];
@@ -96,17 +96,17 @@ describe('Job Management Update Component', () => {
     });
 
     it('Should update editForm', () => {
-      const job: IJob = { id: 456 };
-      const task: ITask = { id: 15635 };
+      const job: IJob = { id: 29383 };
+      const task: ITask = { id: 25192 };
       job.tasks = [task];
-      const employee: IEmployee = { id: 16553 };
+      const employee: IEmployee = { id: 1749 };
       job.employee = employee;
 
       activatedRoute.data = of({ job });
       comp.ngOnInit();
 
-      expect(comp.tasksSharedCollection).toContain(task);
-      expect(comp.employeesSharedCollection).toContain(employee);
+      expect(comp.tasksSharedCollection).toContainEqual(task);
+      expect(comp.employeesSharedCollection).toContainEqual(employee);
       expect(comp.job).toEqual(job);
     });
   });
@@ -115,7 +115,7 @@ describe('Job Management Update Component', () => {
     it('Should call update service on save for existing entity', () => {
       // GIVEN
       const saveSubject = new Subject<HttpResponse<IJob>>();
-      const job = { id: 123 };
+      const job = { id: 30796 };
       jest.spyOn(jobFormService, 'getJob').mockReturnValue(job);
       jest.spyOn(jobService, 'update').mockReturnValue(saveSubject);
       jest.spyOn(comp, 'previousState');
@@ -138,7 +138,7 @@ describe('Job Management Update Component', () => {
     it('Should call create service on save for new entity', () => {
       // GIVEN
       const saveSubject = new Subject<HttpResponse<IJob>>();
-      const job = { id: 123 };
+      const job = { id: 30796 };
       jest.spyOn(jobFormService, 'getJob').mockReturnValue({ id: null });
       jest.spyOn(jobService, 'create').mockReturnValue(saveSubject);
       jest.spyOn(comp, 'previousState');
@@ -161,7 +161,7 @@ describe('Job Management Update Component', () => {
     it('Should set isSaving to false on error', () => {
       // GIVEN
       const saveSubject = new Subject<HttpResponse<IJob>>();
-      const job = { id: 123 };
+      const job = { id: 30796 };
       jest.spyOn(jobService, 'update').mockReturnValue(saveSubject);
       jest.spyOn(comp, 'previousState');
       activatedRoute.data = of({ job });
@@ -182,8 +182,8 @@ describe('Job Management Update Component', () => {
   describe('Compare relationships', () => {
     describe('compareTask', () => {
       it('Should forward to taskService', () => {
-        const entity = { id: 123 };
-        const entity2 = { id: 456 };
+        const entity = { id: 25192 };
+        const entity2 = { id: 22244 };
         jest.spyOn(taskService, 'compareTask');
         comp.compareTask(entity, entity2);
         expect(taskService.compareTask).toHaveBeenCalledWith(entity, entity2);
@@ -192,8 +192,8 @@ describe('Job Management Update Component', () => {
 
     describe('compareEmployee', () => {
       it('Should forward to employeeService', () => {
-        const entity = { id: 123 };
-        const entity2 = { id: 456 };
+        const entity = { id: 1749 };
+        const entity2 = { id: 1545 };
         jest.spyOn(employeeService, 'compareEmployee');
         comp.compareEmployee(entity, entity2);
         expect(employeeService.compareEmployee).toHaveBeenCalledWith(entity, entity2);

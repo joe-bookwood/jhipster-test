@@ -44,7 +44,7 @@ describe('Region Management Update Component', () => {
 
   describe('ngOnInit', () => {
     it('Should update editForm', () => {
-      const region: IRegion = { id: 456 };
+      const region: IRegion = { id: 30405 };
 
       activatedRoute.data = of({ region });
       comp.ngOnInit();
@@ -57,7 +57,7 @@ describe('Region Management Update Component', () => {
     it('Should call update service on save for existing entity', () => {
       // GIVEN
       const saveSubject = new Subject<HttpResponse<IRegion>>();
-      const region = { id: 123 };
+      const region = { id: 3454 };
       jest.spyOn(regionFormService, 'getRegion').mockReturnValue(region);
       jest.spyOn(regionService, 'update').mockReturnValue(saveSubject);
       jest.spyOn(comp, 'previousState');
@@ -80,7 +80,7 @@ describe('Region Management Update Component', () => {
     it('Should call create service on save for new entity', () => {
       // GIVEN
       const saveSubject = new Subject<HttpResponse<IRegion>>();
-      const region = { id: 123 };
+      const region = { id: 3454 };
       jest.spyOn(regionFormService, 'getRegion').mockReturnValue({ id: null });
       jest.spyOn(regionService, 'create').mockReturnValue(saveSubject);
       jest.spyOn(comp, 'previousState');
@@ -103,7 +103,7 @@ describe('Region Management Update Component', () => {
     it('Should set isSaving to false on error', () => {
       // GIVEN
       const saveSubject = new Subject<HttpResponse<IRegion>>();
-      const region = { id: 123 };
+      const region = { id: 3454 };
       jest.spyOn(regionService, 'update').mockReturnValue(saveSubject);
       jest.spyOn(comp, 'previousState');
       activatedRoute.data = of({ region });

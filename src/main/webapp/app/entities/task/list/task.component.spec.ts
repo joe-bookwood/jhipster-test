@@ -59,7 +59,7 @@ describe('Task Management Component', () => {
       .mockReturnValueOnce(
         of(
           new HttpResponse({
-            body: [{ id: 123 }],
+            body: [{ id: 25192 }],
             headers: new HttpHeaders({
               link: '<http://localhost/api/foo?page=1&size=20>; rel="next"',
             }),
@@ -69,7 +69,7 @@ describe('Task Management Component', () => {
       .mockReturnValueOnce(
         of(
           new HttpResponse({
-            body: [{ id: 456 }],
+            body: [{ id: 22244 }],
             headers: new HttpHeaders({
               link: '<http://localhost/api/foo?page=0&size=20>; rel="prev",<http://localhost/api/foo?page=2&size=20>; rel="next"',
             }),
@@ -84,14 +84,14 @@ describe('Task Management Component', () => {
 
     // THEN
     expect(service.query).toHaveBeenCalled();
-    expect(comp.tasks?.[0]).toEqual(expect.objectContaining({ id: 123 }));
+    expect(comp.tasks()[0]).toEqual(expect.objectContaining({ id: 25192 }));
   });
 
   describe('trackId', () => {
     it('Should forward to taskService', () => {
-      const entity = { id: 123 };
+      const entity = { id: 25192 };
       jest.spyOn(service, 'getTaskIdentifier');
-      const id = comp.trackId(0, entity);
+      const id = comp.trackId(entity);
       expect(service.getTaskIdentifier).toHaveBeenCalledWith(entity);
       expect(id).toBe(entity.id);
     });

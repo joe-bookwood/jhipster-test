@@ -315,7 +315,7 @@ class EmployeeResourceIT {
         Employee partialUpdatedEmployee = new Employee();
         partialUpdatedEmployee.setId(employee.getId());
 
-        partialUpdatedEmployee.firstName(UPDATED_FIRST_NAME).email(UPDATED_EMAIL).phoneNumber(UPDATED_PHONE_NUMBER).salary(UPDATED_SALARY);
+        partialUpdatedEmployee.firstName(UPDATED_FIRST_NAME).lastName(UPDATED_LAST_NAME);
 
         restEmployeeMockMvc
             .perform(

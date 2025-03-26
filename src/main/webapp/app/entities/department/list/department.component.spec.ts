@@ -59,7 +59,7 @@ describe('Department Management Component', () => {
       .mockReturnValueOnce(
         of(
           new HttpResponse({
-            body: [{ id: 123 }],
+            body: [{ id: 29518 }],
             headers: new HttpHeaders({
               link: '<http://localhost/api/foo?page=1&size=20>; rel="next"',
             }),
@@ -69,7 +69,7 @@ describe('Department Management Component', () => {
       .mockReturnValueOnce(
         of(
           new HttpResponse({
-            body: [{ id: 456 }],
+            body: [{ id: 15970 }],
             headers: new HttpHeaders({
               link: '<http://localhost/api/foo?page=0&size=20>; rel="prev",<http://localhost/api/foo?page=2&size=20>; rel="next"',
             }),
@@ -84,14 +84,14 @@ describe('Department Management Component', () => {
 
     // THEN
     expect(service.query).toHaveBeenCalled();
-    expect(comp.departments?.[0]).toEqual(expect.objectContaining({ id: 123 }));
+    expect(comp.departments()[0]).toEqual(expect.objectContaining({ id: 29518 }));
   });
 
   describe('trackId', () => {
     it('Should forward to departmentService', () => {
-      const entity = { id: 123 };
+      const entity = { id: 29518 };
       jest.spyOn(service, 'getDepartmentIdentifier');
-      const id = comp.trackId(0, entity);
+      const id = comp.trackId(entity);
       expect(service.getDepartmentIdentifier).toHaveBeenCalledWith(entity);
       expect(id).toBe(entity.id);
     });

@@ -165,7 +165,7 @@ describe('Country Service', () => {
       });
 
       it('Should return false if one entity is null', () => {
-        const entity1 = { id: 123 };
+        const entity1 = { id: 21165 };
         const entity2 = null;
 
         const compareResult1 = service.compareCountry(entity1, entity2);
@@ -176,8 +176,8 @@ describe('Country Service', () => {
       });
 
       it('Should return false if primaryKey differs', () => {
-        const entity1 = { id: 123 };
-        const entity2 = { id: 456 };
+        const entity1 = { id: 21165 };
+        const entity2 = { id: 2258 };
 
         const compareResult1 = service.compareCountry(entity1, entity2);
         const compareResult2 = service.compareCountry(entity2, entity1);
@@ -187,8 +187,8 @@ describe('Country Service', () => {
       });
 
       it('Should return false if primaryKey matches', () => {
-        const entity1 = { id: 123 };
-        const entity2 = { id: 123 };
+        const entity1 = { id: 21165 };
+        const entity2 = { id: 21165 };
 
         const compareResult1 = service.compareCountry(entity1, entity2);
         const compareResult2 = service.compareCountry(entity2, entity1);

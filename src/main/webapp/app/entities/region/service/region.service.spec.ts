@@ -165,7 +165,7 @@ describe('Region Service', () => {
       });
 
       it('Should return false if one entity is null', () => {
-        const entity1 = { id: 123 };
+        const entity1 = { id: 3454 };
         const entity2 = null;
 
         const compareResult1 = service.compareRegion(entity1, entity2);
@@ -176,8 +176,8 @@ describe('Region Service', () => {
       });
 
       it('Should return false if primaryKey differs', () => {
-        const entity1 = { id: 123 };
-        const entity2 = { id: 456 };
+        const entity1 = { id: 3454 };
+        const entity2 = { id: 30405 };
 
         const compareResult1 = service.compareRegion(entity1, entity2);
         const compareResult2 = service.compareRegion(entity2, entity1);
@@ -187,8 +187,8 @@ describe('Region Service', () => {
       });
 
       it('Should return false if primaryKey matches', () => {
-        const entity1 = { id: 123 };
-        const entity2 = { id: 123 };
+        const entity1 = { id: 3454 };
+        const entity2 = { id: 3454 };
 
         const compareResult1 = service.compareRegion(entity1, entity2);
         const compareResult2 = service.compareRegion(entity2, entity1);

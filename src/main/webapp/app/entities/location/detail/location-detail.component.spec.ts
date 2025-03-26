@@ -18,7 +18,7 @@ describe('Location Management Detail Component', () => {
             {
               path: '**',
               loadComponent: () => import('./location-detail.component').then(m => m.LocationDetailComponent),
-              resolve: { location: () => of({ id: 123 }) },
+              resolve: { location: () => of({ id: 8454 }) },
             },
           ],
           withComponentInputBinding(),
@@ -40,7 +40,7 @@ describe('Location Management Detail Component', () => {
       const instance = await harness.navigateByUrl('/', LocationDetailComponent);
 
       // THEN
-      expect(instance.location()).toEqual(expect.objectContaining({ id: 123 }));
+      expect(instance.location()).toEqual(expect.objectContaining({ id: 8454 }));
     });
   });
 

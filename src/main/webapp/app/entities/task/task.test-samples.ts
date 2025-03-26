@@ -1,17 +1,18 @@
 import { ITask, NewTask } from './task.model';
 
 export const sampleWithRequiredData: ITask = {
-  id: 18099,
+  id: 9181,
 };
 
 export const sampleWithPartialData: ITask = {
-  id: 1800,
+  id: 24321,
+  title: 'ride whenever',
 };
 
 export const sampleWithFullData: ITask = {
-  id: 18475,
-  title: 'knowing despite huzzah',
-  description: 'bike um',
+  id: 13396,
+  title: 'where wherever',
+  description: 'but than',
 };
 
 export const sampleWithNewData: NewTask = {
