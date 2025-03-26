@@ -7,7 +7,6 @@ import { AccountService } from 'app/core/auth/account.service';
 import { Account } from 'app/core/auth/account.model';
 
 @Component({
-  standalone: true,
   selector: 'jhi-home',
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
@@ -16,8 +15,8 @@ import { Account } from 'app/core/auth/account.model';
 export default class HomeComponent implements OnInit {
   account = signal<Account | null>(null);
 
-  private accountService = inject(AccountService);
-  private loginService = inject(LoginService);
+  private readonly accountService = inject(AccountService);
+  private readonly loginService = inject(LoginService);
 
   ngOnInit(): void {
     this.accountService.identity().subscribe(account => this.account.set(account));

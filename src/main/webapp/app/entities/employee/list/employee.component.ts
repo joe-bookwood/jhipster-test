@@ -6,7 +6,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import SharedModule from 'app/shared/shared.module';
 import { SortByDirective, SortDirective, SortService, type SortState, sortStateSignal } from 'app/shared/sort';
-import { DurationPipe, FormatMediumDatePipe, FormatMediumDatetimePipe } from 'app/shared/date';
+import { FormatMediumDatetimePipe } from 'app/shared/date';
 import { FormsModule } from '@angular/forms';
 
 import { ITEMS_PER_PAGE } from 'app/config/pagination.constants';
@@ -18,24 +18,13 @@ import { EmployeeDeleteDialogComponent } from '../delete/employee-delete-dialog.
 import { IEmployee } from '../employee.model';
 
 @Component({
-  standalone: true,
   selector: 'jhi-employee',
   templateUrl: './employee.component.html',
-  imports: [
-    RouterModule,
-    FormsModule,
-    SharedModule,
-    SortDirective,
-    SortByDirective,
-    DurationPipe,
-    FormatMediumDatetimePipe,
-    FormatMediumDatePipe,
-    InfiniteScrollDirective,
-  ],
+  imports: [RouterModule, FormsModule, SharedModule, SortDirective, SortByDirective, FormatMediumDatetimePipe, InfiniteScrollDirective],
 })
 export class EmployeeComponent implements OnInit {
   subscription: Subscription | null = null;
-  employees?: IEmployee[];
+  employees = signal<IEmployee[]>([]);
   isLoading = false;
 
   sortState = sortStateSignal({});
@@ -45,15 +34,15 @@ export class EmployeeComponent implements OnInit {
   hasMorePage = computed(() => !!this.links().next);
   isFirstFetch = computed(() => Object.keys(this.links()).length === 0);
 
-  public router = inject(Router);
-  protected employeeService = inject(EmployeeService);
-  protected activatedRoute = inject(ActivatedRoute);
-  protected sortService = inject(SortService);
+  public readonly router = inject(Router);
+  protected readonly employeeService = inject(EmployeeService);
+  protected readonly activatedRoute = inject(ActivatedRoute);
+  protected readonly sortService = inject(SortService);
   protected parseLinks = inject(ParseLinks);
   protected modalService = inject(NgbModal);
   protected ngZone = inject(NgZone);
 
-  trackId = (_index: number, item: IEmployee): number => this.employeeService.getEmployeeIdentifier(item);
+  trackId = (item: IEmployee): number => this.employeeService.getEmployeeIdentifier(item);
 
   ngOnInit(): void {
     this.subscription = combineLatest([this.activatedRoute.queryParamMap, this.activatedRoute.data])
@@ -66,7 +55,7 @@ export class EmployeeComponent implements OnInit {
   }
 
   reset(): void {
-    this.employees = [];
+    this.employees.set([]);
   }
 
   loadNextPage(): void {
@@ -104,13 +93,13 @@ export class EmployeeComponent implements OnInit {
   protected onResponseSuccess(response: EntityArrayResponseType): void {
     this.fillComponentAttributesFromResponseHeader(response.headers);
     const dataFromBody = this.fillComponentAttributesFromResponseBody(response.body);
-    this.employees = dataFromBody;
+    this.employees.set(dataFromBody);
   }
 
   protected fillComponentAttributesFromResponseBody(data: IEmployee[] | null): IEmployee[] {
     // If there is previous link, data is a infinite scroll pagination content.
     if (this.links().prev) {
-      const employeesNew = this.employees ?? [];
+      const employeesNew = this.employees();
       if (data) {
         for (const d of data) {
           if (employeesNew.some(op => op.id === d.id)) {

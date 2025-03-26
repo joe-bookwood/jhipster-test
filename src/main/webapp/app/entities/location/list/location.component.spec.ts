@@ -59,7 +59,7 @@ describe('Location Management Component', () => {
       .mockReturnValueOnce(
         of(
           new HttpResponse({
-            body: [{ id: 123 }],
+            body: [{ id: 8454 }],
             headers: new HttpHeaders({
               link: '<http://localhost/api/foo?page=1&size=20>; rel="next"',
             }),
@@ -69,7 +69,7 @@ describe('Location Management Component', () => {
       .mockReturnValueOnce(
         of(
           new HttpResponse({
-            body: [{ id: 456 }],
+            body: [{ id: 13013 }],
             headers: new HttpHeaders({
               link: '<http://localhost/api/foo?page=0&size=20>; rel="prev",<http://localhost/api/foo?page=2&size=20>; rel="next"',
             }),
@@ -84,14 +84,14 @@ describe('Location Management Component', () => {
 
     // THEN
     expect(service.query).toHaveBeenCalled();
-    expect(comp.locations?.[0]).toEqual(expect.objectContaining({ id: 123 }));
+    expect(comp.locations()[0]).toEqual(expect.objectContaining({ id: 8454 }));
   });
 
   describe('trackId', () => {
     it('Should forward to locationService', () => {
-      const entity = { id: 123 };
+      const entity = { id: 8454 };
       jest.spyOn(service, 'getLocationIdentifier');
-      const id = comp.trackId(0, entity);
+      const id = comp.trackId(entity);
       expect(service.getLocationIdentifier).toHaveBeenCalledWith(entity);
       expect(id).toBe(entity.id);
     });

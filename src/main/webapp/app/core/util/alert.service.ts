@@ -30,8 +30,8 @@ export class AlertService {
   private alertId = 0;
   private alerts: Alert[] = [];
 
-  private sanitizer = inject(DomSanitizer);
-  private translateService = inject(TranslateService);
+  private readonly sanitizer = inject(DomSanitizer);
+  private readonly translateService = inject(TranslateService);
 
   clear(): void {
     this.alerts = [];
@@ -43,7 +43,7 @@ export class AlertService {
 
   /**
    * Adds alert to alerts array and returns added alert.
-   * @param alert      Alert to add. If `timeout`, `toast` or `position` is missing then applying default value.
+   * @param alertToAdd Alert to add. If `timeout`, `toast` or `position` is missing then applying default value.
    *                   If `translateKey` is available then it's translation else `message` is used for showing.
    * @param extAlerts  If missing then adding `alert` to `AlertService` internal array and alerts can be retrieved by `get()`.
    *                   Else adding `alert` to `extAlerts`.

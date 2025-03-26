@@ -18,7 +18,7 @@ describe('Region Management Detail Component', () => {
             {
               path: '**',
               loadComponent: () => import('./region-detail.component').then(m => m.RegionDetailComponent),
-              resolve: { region: () => of({ id: 123 }) },
+              resolve: { region: () => of({ id: 3454 }) },
             },
           ],
           withComponentInputBinding(),
@@ -40,7 +40,7 @@ describe('Region Management Detail Component', () => {
       const instance = await harness.navigateByUrl('/', RegionDetailComponent);
 
       // THEN
-      expect(instance.region()).toEqual(expect.objectContaining({ id: 123 }));
+      expect(instance.region()).toEqual(expect.objectContaining({ id: 3454 }));
     });
   });
 

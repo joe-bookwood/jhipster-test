@@ -48,11 +48,11 @@ describe('Country Management Update Component', () => {
 
   describe('ngOnInit', () => {
     it('Should call region query and add missing value', () => {
-      const country: ICountry = { id: 456 };
-      const region: IRegion = { id: 20392 };
+      const country: ICountry = { id: 2258 };
+      const region: IRegion = { id: 3454 };
       country.region = region;
 
-      const regionCollection: IRegion[] = [{ id: 9249 }];
+      const regionCollection: IRegion[] = [{ id: 3454 }];
       jest.spyOn(regionService, 'query').mockReturnValue(of(new HttpResponse({ body: regionCollection })));
       const expectedCollection: IRegion[] = [region, ...regionCollection];
       jest.spyOn(regionService, 'addRegionToCollectionIfMissing').mockReturnValue(expectedCollection);
@@ -66,14 +66,14 @@ describe('Country Management Update Component', () => {
     });
 
     it('Should update editForm', () => {
-      const country: ICountry = { id: 456 };
-      const region: IRegion = { id: 9298 };
+      const country: ICountry = { id: 2258 };
+      const region: IRegion = { id: 3454 };
       country.region = region;
 
       activatedRoute.data = of({ country });
       comp.ngOnInit();
 
-      expect(comp.regionsCollection).toContain(region);
+      expect(comp.regionsCollection).toContainEqual(region);
       expect(comp.country).toEqual(country);
     });
   });
@@ -82,7 +82,7 @@ describe('Country Management Update Component', () => {
     it('Should call update service on save for existing entity', () => {
       // GIVEN
       const saveSubject = new Subject<HttpResponse<ICountry>>();
-      const country = { id: 123 };
+      const country = { id: 21165 };
       jest.spyOn(countryFormService, 'getCountry').mockReturnValue(country);
       jest.spyOn(countryService, 'update').mockReturnValue(saveSubject);
       jest.spyOn(comp, 'previousState');
@@ -105,7 +105,7 @@ describe('Country Management Update Component', () => {
     it('Should call create service on save for new entity', () => {
       // GIVEN
       const saveSubject = new Subject<HttpResponse<ICountry>>();
-      const country = { id: 123 };
+      const country = { id: 21165 };
       jest.spyOn(countryFormService, 'getCountry').mockReturnValue({ id: null });
       jest.spyOn(countryService, 'create').mockReturnValue(saveSubject);
       jest.spyOn(comp, 'previousState');
@@ -128,7 +128,7 @@ describe('Country Management Update Component', () => {
     it('Should set isSaving to false on error', () => {
       // GIVEN
       const saveSubject = new Subject<HttpResponse<ICountry>>();
-      const country = { id: 123 };
+      const country = { id: 21165 };
       jest.spyOn(countryService, 'update').mockReturnValue(saveSubject);
       jest.spyOn(comp, 'previousState');
       activatedRoute.data = of({ country });
@@ -149,8 +149,8 @@ describe('Country Management Update Component', () => {
   describe('Compare relationships', () => {
     describe('compareRegion', () => {
       it('Should forward to regionService', () => {
-        const entity = { id: 123 };
-        const entity2 = { id: 456 };
+        const entity = { id: 3454 };
+        const entity2 = { id: 30405 };
         jest.spyOn(regionService, 'compareRegion');
         comp.compareRegion(entity, entity2);
         expect(regionService.compareRegion).toHaveBeenCalledWith(entity, entity2);

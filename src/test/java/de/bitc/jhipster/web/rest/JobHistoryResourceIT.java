@@ -277,7 +277,7 @@ class JobHistoryResourceIT {
         JobHistory partialUpdatedJobHistory = new JobHistory();
         partialUpdatedJobHistory.setId(jobHistory.getId());
 
-        partialUpdatedJobHistory.startDate(UPDATED_START_DATE).endDate(UPDATED_END_DATE);
+        partialUpdatedJobHistory.startDate(UPDATED_START_DATE);
 
         restJobHistoryMockMvc
             .perform(

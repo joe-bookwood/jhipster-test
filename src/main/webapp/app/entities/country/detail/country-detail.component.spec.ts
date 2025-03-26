@@ -18,7 +18,7 @@ describe('Country Management Detail Component', () => {
             {
               path: '**',
               loadComponent: () => import('./country-detail.component').then(m => m.CountryDetailComponent),
-              resolve: { country: () => of({ id: 123 }) },
+              resolve: { country: () => of({ id: 21165 }) },
             },
           ],
           withComponentInputBinding(),
@@ -40,7 +40,7 @@ describe('Country Management Detail Component', () => {
       const instance = await harness.navigateByUrl('/', CountryDetailComponent);
 
       // THEN
-      expect(instance.country()).toEqual(expect.objectContaining({ id: 123 }));
+      expect(instance.country()).toEqual(expect.objectContaining({ id: 21165 }));
     });
   });
 

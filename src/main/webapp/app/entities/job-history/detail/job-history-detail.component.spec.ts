@@ -18,7 +18,7 @@ describe('JobHistory Management Detail Component', () => {
             {
               path: '**',
               loadComponent: () => import('./job-history-detail.component').then(m => m.JobHistoryDetailComponent),
-              resolve: { jobHistory: () => of({ id: 123 }) },
+              resolve: { jobHistory: () => of({ id: 18667 }) },
             },
           ],
           withComponentInputBinding(),
@@ -40,7 +40,7 @@ describe('JobHistory Management Detail Component', () => {
       const instance = await harness.navigateByUrl('/', JobHistoryDetailComponent);
 
       // THEN
-      expect(instance.jobHistory()).toEqual(expect.objectContaining({ id: 123 }));
+      expect(instance.jobHistory()).toEqual(expect.objectContaining({ id: 18667 }));
     });
   });
 

@@ -289,7 +289,11 @@ class LocationResourceIT {
         Location partialUpdatedLocation = new Location();
         partialUpdatedLocation.setId(location.getId());
 
-        partialUpdatedLocation.streetAddress(UPDATED_STREET_ADDRESS).postalCode(UPDATED_POSTAL_CODE).city(UPDATED_CITY);
+        partialUpdatedLocation
+            .streetAddress(UPDATED_STREET_ADDRESS)
+            .postalCode(UPDATED_POSTAL_CODE)
+            .city(UPDATED_CITY)
+            .stateProvince(UPDATED_STATE_PROVINCE);
 
         restLocationMockMvc
             .perform(

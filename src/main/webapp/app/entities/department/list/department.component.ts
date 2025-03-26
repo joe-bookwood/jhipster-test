@@ -1,11 +1,10 @@
-import { Component, NgZone, OnInit, inject } from '@angular/core';
+import { Component, NgZone, OnInit, inject, signal } from '@angular/core';
 import { ActivatedRoute, Data, ParamMap, Router, RouterModule } from '@angular/router';
 import { Observable, Subscription, combineLatest, filter, tap } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import SharedModule from 'app/shared/shared.module';
 import { SortByDirective, SortDirective, SortService, type SortState, sortStateSignal } from 'app/shared/sort';
-import { DurationPipe, FormatMediumDatePipe, FormatMediumDatetimePipe } from 'app/shared/date';
 import { FormsModule } from '@angular/forms';
 import { DEFAULT_SORT_DATA, ITEM_DELETED_EVENT, SORT } from 'app/config/navigation.constants';
 import { IDepartment } from '../department.model';
@@ -13,43 +12,35 @@ import { DepartmentService, EntityArrayResponseType } from '../service/departmen
 import { DepartmentDeleteDialogComponent } from '../delete/department-delete-dialog.component';
 
 @Component({
-  standalone: true,
   selector: 'jhi-department',
   templateUrl: './department.component.html',
-  imports: [
-    RouterModule,
-    FormsModule,
-    SharedModule,
-    SortDirective,
-    SortByDirective,
-    DurationPipe,
-    FormatMediumDatetimePipe,
-    FormatMediumDatePipe,
-  ],
+  imports: [RouterModule, FormsModule, SharedModule, SortDirective, SortByDirective],
 })
 export class DepartmentComponent implements OnInit {
   subscription: Subscription | null = null;
-  departments?: IDepartment[];
+  departments = signal<IDepartment[]>([]);
   isLoading = false;
 
   sortState = sortStateSignal({});
 
-  public router = inject(Router);
-  protected departmentService = inject(DepartmentService);
-  protected activatedRoute = inject(ActivatedRoute);
-  protected sortService = inject(SortService);
+  public readonly router = inject(Router);
+  protected readonly departmentService = inject(DepartmentService);
+  protected readonly activatedRoute = inject(ActivatedRoute);
+  protected readonly sortService = inject(SortService);
   protected modalService = inject(NgbModal);
   protected ngZone = inject(NgZone);
 
-  trackId = (_index: number, item: IDepartment): number => this.departmentService.getDepartmentIdentifier(item);
+  trackId = (item: IDepartment): number => this.departmentService.getDepartmentIdentifier(item);
 
   ngOnInit(): void {
     this.subscription = combineLatest([this.activatedRoute.queryParamMap, this.activatedRoute.data])
       .pipe(
         tap(([params, data]) => this.fillComponentAttributeFromRoute(params, data)),
         tap(() => {
-          if (!this.departments || this.departments.length === 0) {
+          if (this.departments().length === 0) {
             this.load();
+          } else {
+            this.departments.set(this.refineData(this.departments()));
           }
         }),
       )
@@ -86,7 +77,7 @@ export class DepartmentComponent implements OnInit {
 
   protected onResponseSuccess(response: EntityArrayResponseType): void {
     const dataFromBody = this.fillComponentAttributesFromResponseBody(response.body);
-    this.departments = this.refineData(dataFromBody);
+    this.departments.set(this.refineData(dataFromBody));
   }
 
   protected refineData(data: IDepartment[]): IDepartment[] {
