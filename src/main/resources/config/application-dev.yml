@@ -10,7 +10,7 @@
 # ===================================================================
 # Standard Spring Boot properties.
 # Full reference is available at:
-# http://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html
+# https://docs.spring.io/spring-boot/appendix/application-properties/index.html
 # ===================================================================
 
 logging:
@@ -32,14 +32,12 @@ spring:
       enabled: true
       profiles:
         active: dev
-  jackson:
+  jackson2:
     serialization:
       indent-output: true
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
     url: jdbc:h2:file:./target/h2db/db/jhipsterTest;DB_CLOSE_DELAY=-1
-    username: jhipsterTest
-    password:
     hikari:
       poolName: Hikari
       auto-commit: false

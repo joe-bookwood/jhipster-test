@@ -5,6 +5,7 @@ import de.bitc.jhipster.repository.DepartmentRepository;
 import de.bitc.jhipster.service.DepartmentService;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.stream.StreamSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,9 +46,7 @@ public class DepartmentServiceImpl implements DepartmentService {
         return departmentRepository
             .findById(department.getId())
             .map(existingDepartment -> {
-                if (department.getDepartmentName() != null) {
-                    existingDepartment.setDepartmentName(department.getDepartmentName());
-                }
+                updateIfPresent(existingDepartment::setDepartmentName, department.getDepartmentName());
 
                 return existingDepartment;
             })
@@ -84,5 +83,11 @@ public class DepartmentServiceImpl implements DepartmentService {
     public void delete(Long id) {
         LOG.debug("Request to delete Department : {}", id);
         departmentRepository.deleteById(id);
+    }
+
+    private <T> void updateIfPresent(Consumer<T> setter, T value) {
+        if (value != null) {
+            setter.accept(value);
+        }
     }
 }

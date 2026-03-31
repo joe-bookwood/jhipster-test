@@ -5,6 +5,7 @@ import de.bitc.jhipster.repository.LocationRepository;
 import de.bitc.jhipster.service.LocationService;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.stream.StreamSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,18 +46,10 @@ public class LocationServiceImpl implements LocationService {
         return locationRepository
             .findById(location.getId())
             .map(existingLocation -> {
-                if (location.getStreetAddress() != null) {
-                    existingLocation.setStreetAddress(location.getStreetAddress());
-                }
-                if (location.getPostalCode() != null) {
-                    existingLocation.setPostalCode(location.getPostalCode());
-                }
-                if (location.getCity() != null) {
-                    existingLocation.setCity(location.getCity());
-                }
-                if (location.getStateProvince() != null) {
-                    existingLocation.setStateProvince(location.getStateProvince());
-                }
+                updateIfPresent(existingLocation::setStreetAddress, location.getStreetAddress());
+                updateIfPresent(existingLocation::setPostalCode, location.getPostalCode());
+                updateIfPresent(existingLocation::setCity, location.getCity());
+                updateIfPresent(existingLocation::setStateProvince, location.getStateProvince());
 
                 return existingLocation;
             })
@@ -93,5 +86,11 @@ public class LocationServiceImpl implements LocationService {
     public void delete(Long id) {
         LOG.debug("Request to delete Location : {}", id);
         locationRepository.deleteById(id);
+    }
+
+    private <T> void updateIfPresent(Consumer<T> setter, T value) {
+        if (value != null) {
+            setter.accept(value);
+        }
     }
 }

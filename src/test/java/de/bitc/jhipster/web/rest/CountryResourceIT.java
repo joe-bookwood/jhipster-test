@@ -19,7 +19,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -40,7 +40,7 @@ class CountryResourceIT {
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
 
     private static Random random = new Random();
-    private static AtomicLong longCount = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
+    private static AtomicLong longCount = new AtomicLong(random.nextInt() + (2L * Integer.MAX_VALUE));
 
     @Autowired
     private ObjectMapper om;
@@ -79,12 +79,12 @@ class CountryResourceIT {
     }
 
     @BeforeEach
-    public void initTest() {
+    void initTest() {
         country = createEntity();
     }
 
     @AfterEach
-    public void cleanup() {
+    void cleanup() {
         if (insertedCountry != null) {
             countryRepository.delete(insertedCountry);
             insertedCountry = null;
@@ -261,6 +261,8 @@ class CountryResourceIT {
         // Update the country using partial update
         Country partialUpdatedCountry = new Country();
         partialUpdatedCountry.setId(country.getId());
+
+        partialUpdatedCountry.countryName(UPDATED_COUNTRY_NAME);
 
         restCountryMockMvc
             .perform(

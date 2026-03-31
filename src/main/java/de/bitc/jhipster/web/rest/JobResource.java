@@ -8,6 +8,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.stream.StreamSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +37,7 @@ public class JobResource {
 
     private static final String ENTITY_NAME = "job";
 
-    @Value("${jhipster.clientApp.name}")
+    @Value("${jhipster.clientApp.name:jhipsterTest}")
     private String applicationName;
 
     private final JobRepository jobRepository;
@@ -124,15 +125,9 @@ public class JobResource {
         Optional<Job> result = jobRepository
             .findById(job.getId())
             .map(existingJob -> {
-                if (job.getJobTitle() != null) {
-                    existingJob.setJobTitle(job.getJobTitle());
-                }
-                if (job.getMinSalary() != null) {
-                    existingJob.setMinSalary(job.getMinSalary());
-                }
-                if (job.getMaxSalary() != null) {
-                    existingJob.setMaxSalary(job.getMaxSalary());
-                }
+                updateIfPresent(existingJob::setJobTitle, job.getJobTitle());
+                updateIfPresent(existingJob::setMinSalary, job.getMinSalary());
+                updateIfPresent(existingJob::setMaxSalary, job.getMaxSalary());
 
                 return existingJob;
             })
@@ -145,12 +140,12 @@ public class JobResource {
     }
 
     /**
-     * {@code GET  /jobs} : get all the jobs.
+     * {@code GET  /jobs} : get all the Jobs.
      *
      * @param pageable the pagination information.
      * @param eagerload flag to eager load entities from relationships (This is applicable for many-to-many).
      * @param filter the filter of the request.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of jobs in body.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of Jobs in body.
      */
     @GetMapping("")
     public ResponseEntity<List<Job>> getAllJobs(
@@ -161,7 +156,9 @@ public class JobResource {
         if ("jobhistory-is-null".equals(filter)) {
             LOG.debug("REST request to get all Jobs where jobHistory is null");
             return new ResponseEntity<>(
-                StreamSupport.stream(jobRepository.findAll().spliterator(), false).filter(job -> job.getJobHistory() == null).toList(),
+                StreamSupport.stream(jobRepository.findAll().spliterator(), false)
+                    .filter(job -> job.getJobHistory() == null)
+                    .toList(),
                 HttpStatus.OK
             );
         }
@@ -202,5 +199,11 @@ public class JobResource {
         return ResponseEntity.noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
+    }
+
+    private <T> void updateIfPresent(Consumer<T> setter, T value) {
+        if (value != null) {
+            setter.accept(value);
+        }
     }
 }

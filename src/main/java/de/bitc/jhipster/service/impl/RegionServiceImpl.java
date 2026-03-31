@@ -5,6 +5,7 @@ import de.bitc.jhipster.repository.RegionRepository;
 import de.bitc.jhipster.service.RegionService;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.stream.StreamSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,9 +46,7 @@ public class RegionServiceImpl implements RegionService {
         return regionRepository
             .findById(region.getId())
             .map(existingRegion -> {
-                if (region.getRegionName() != null) {
-                    existingRegion.setRegionName(region.getRegionName());
-                }
+                updateIfPresent(existingRegion::setRegionName, region.getRegionName());
 
                 return existingRegion;
             })
@@ -68,7 +67,9 @@ public class RegionServiceImpl implements RegionService {
     @Transactional(readOnly = true)
     public List<Region> findAllWhereCountryIsNull() {
         LOG.debug("Request to get all regions where Country is null");
-        return StreamSupport.stream(regionRepository.findAll().spliterator(), false).filter(region -> region.getCountry() == null).toList();
+        return StreamSupport.stream(regionRepository.findAll().spliterator(), false)
+            .filter(region -> region.getCountry() == null)
+            .toList();
     }
 
     @Override
@@ -82,5 +83,11 @@ public class RegionServiceImpl implements RegionService {
     public void delete(Long id) {
         LOG.debug("Request to delete Region : {}", id);
         regionRepository.deleteById(id);
+    }
+
+    private <T> void updateIfPresent(Consumer<T> setter, T value) {
+        if (value != null) {
+            setter.accept(value);
+        }
     }
 }

@@ -1,13 +1,14 @@
 import { Routes } from '@angular/router';
 
-import { UserRouteAccessService } from 'app/core/auth/user-route-access.service';
 import { ASC } from 'app/config/navigation.constants';
+import { UserRouteAccessService } from 'app/core/auth/user-route-access.service';
+
 import JobResolve from './route/job-routing-resolve.service';
 
 const jobRoute: Routes = [
   {
     path: '',
-    loadComponent: () => import('./list/job.component').then(m => m.JobComponent),
+    loadComponent: () => import('./list/job').then(m => m.Job),
     data: {
       defaultSort: `id,${ASC}`,
     },
@@ -15,7 +16,7 @@ const jobRoute: Routes = [
   },
   {
     path: ':id/view',
-    loadComponent: () => import('./detail/job-detail.component').then(m => m.JobDetailComponent),
+    loadComponent: () => import('./detail/job-detail').then(m => m.JobDetail),
     resolve: {
       job: JobResolve,
     },
@@ -23,7 +24,7 @@ const jobRoute: Routes = [
   },
   {
     path: 'new',
-    loadComponent: () => import('./update/job-update.component').then(m => m.JobUpdateComponent),
+    loadComponent: () => import('./update/job-update').then(m => m.JobUpdate),
     resolve: {
       job: JobResolve,
     },
@@ -31,7 +32,7 @@ const jobRoute: Routes = [
   },
   {
     path: ':id/edit',
-    loadComponent: () => import('./update/job-update.component').then(m => m.JobUpdateComponent),
+    loadComponent: () => import('./update/job-update').then(m => m.JobUpdate),
     resolve: {
       job: JobResolve,
     },

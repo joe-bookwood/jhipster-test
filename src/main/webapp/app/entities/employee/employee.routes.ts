@@ -1,13 +1,14 @@
 import { Routes } from '@angular/router';
 
-import { UserRouteAccessService } from 'app/core/auth/user-route-access.service';
 import { ASC } from 'app/config/navigation.constants';
+import { UserRouteAccessService } from 'app/core/auth/user-route-access.service';
+
 import EmployeeResolve from './route/employee-routing-resolve.service';
 
 const employeeRoute: Routes = [
   {
     path: '',
-    loadComponent: () => import('./list/employee.component').then(m => m.EmployeeComponent),
+    loadComponent: () => import('./list/employee').then(m => m.Employee),
     data: {
       defaultSort: `id,${ASC}`,
     },
@@ -15,7 +16,7 @@ const employeeRoute: Routes = [
   },
   {
     path: ':id/view',
-    loadComponent: () => import('./detail/employee-detail.component').then(m => m.EmployeeDetailComponent),
+    loadComponent: () => import('./detail/employee-detail').then(m => m.EmployeeDetail),
     resolve: {
       employee: EmployeeResolve,
     },
@@ -23,7 +24,7 @@ const employeeRoute: Routes = [
   },
   {
     path: 'new',
-    loadComponent: () => import('./update/employee-update.component').then(m => m.EmployeeUpdateComponent),
+    loadComponent: () => import('./update/employee-update').then(m => m.EmployeeUpdate),
     resolve: {
       employee: EmployeeResolve,
     },
@@ -31,7 +32,7 @@ const employeeRoute: Routes = [
   },
   {
     path: ':id/edit',
-    loadComponent: () => import('./update/employee-update.component').then(m => m.EmployeeUpdateComponent),
+    loadComponent: () => import('./update/employee-update').then(m => m.EmployeeUpdate),
     resolve: {
       employee: EmployeeResolve,
     },

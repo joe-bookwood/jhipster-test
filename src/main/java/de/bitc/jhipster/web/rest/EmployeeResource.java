@@ -8,6 +8,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.stream.StreamSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +37,7 @@ public class EmployeeResource {
 
     private static final String ENTITY_NAME = "employee";
 
-    @Value("${jhipster.clientApp.name}")
+    @Value("${jhipster.clientApp.name:jhipsterTest}")
     private String applicationName;
 
     private final EmployeeRepository employeeRepository;
@@ -128,27 +129,13 @@ public class EmployeeResource {
         Optional<Employee> result = employeeRepository
             .findById(employee.getId())
             .map(existingEmployee -> {
-                if (employee.getFirstName() != null) {
-                    existingEmployee.setFirstName(employee.getFirstName());
-                }
-                if (employee.getLastName() != null) {
-                    existingEmployee.setLastName(employee.getLastName());
-                }
-                if (employee.getEmail() != null) {
-                    existingEmployee.setEmail(employee.getEmail());
-                }
-                if (employee.getPhoneNumber() != null) {
-                    existingEmployee.setPhoneNumber(employee.getPhoneNumber());
-                }
-                if (employee.getHireDate() != null) {
-                    existingEmployee.setHireDate(employee.getHireDate());
-                }
-                if (employee.getSalary() != null) {
-                    existingEmployee.setSalary(employee.getSalary());
-                }
-                if (employee.getCommissionPct() != null) {
-                    existingEmployee.setCommissionPct(employee.getCommissionPct());
-                }
+                updateIfPresent(existingEmployee::setFirstName, employee.getFirstName());
+                updateIfPresent(existingEmployee::setLastName, employee.getLastName());
+                updateIfPresent(existingEmployee::setEmail, employee.getEmail());
+                updateIfPresent(existingEmployee::setPhoneNumber, employee.getPhoneNumber());
+                updateIfPresent(existingEmployee::setHireDate, employee.getHireDate());
+                updateIfPresent(existingEmployee::setSalary, employee.getSalary());
+                updateIfPresent(existingEmployee::setCommissionPct, employee.getCommissionPct());
 
                 return existingEmployee;
             })
@@ -161,11 +148,11 @@ public class EmployeeResource {
     }
 
     /**
-     * {@code GET  /employees} : get all the employees.
+     * {@code GET  /employees} : get all the Employees.
      *
      * @param pageable the pagination information.
      * @param filter the filter of the request.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of employees in body.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of Employees in body.
      */
     @GetMapping("")
     public ResponseEntity<List<Employee>> getAllEmployees(
@@ -213,5 +200,11 @@ public class EmployeeResource {
         return ResponseEntity.noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
+    }
+
+    private <T> void updateIfPresent(Consumer<T> setter, T value) {
+        if (value != null) {
+            setter.accept(value);
+        }
     }
 }

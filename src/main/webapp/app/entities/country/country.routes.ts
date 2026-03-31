@@ -1,13 +1,14 @@
 import { Routes } from '@angular/router';
 
-import { UserRouteAccessService } from 'app/core/auth/user-route-access.service';
 import { ASC } from 'app/config/navigation.constants';
+import { UserRouteAccessService } from 'app/core/auth/user-route-access.service';
+
 import CountryResolve from './route/country-routing-resolve.service';
 
 const countryRoute: Routes = [
   {
     path: '',
-    loadComponent: () => import('./list/country.component').then(m => m.CountryComponent),
+    loadComponent: () => import('./list/country').then(m => m.Country),
     data: {
       defaultSort: `id,${ASC}`,
     },
@@ -15,7 +16,7 @@ const countryRoute: Routes = [
   },
   {
     path: ':id/view',
-    loadComponent: () => import('./detail/country-detail.component').then(m => m.CountryDetailComponent),
+    loadComponent: () => import('./detail/country-detail').then(m => m.CountryDetail),
     resolve: {
       country: CountryResolve,
     },
@@ -23,7 +24,7 @@ const countryRoute: Routes = [
   },
   {
     path: 'new',
-    loadComponent: () => import('./update/country-update.component').then(m => m.CountryUpdateComponent),
+    loadComponent: () => import('./update/country-update').then(m => m.CountryUpdate),
     resolve: {
       country: CountryResolve,
     },
@@ -31,7 +32,7 @@ const countryRoute: Routes = [
   },
   {
     path: ':id/edit',
-    loadComponent: () => import('./update/country-update.component').then(m => m.CountryUpdateComponent),
+    loadComponent: () => import('./update/country-update').then(m => m.CountryUpdate),
     resolve: {
       country: CountryResolve,
     },

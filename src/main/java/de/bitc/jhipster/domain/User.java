@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Locale;
@@ -24,15 +25,17 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class User extends AbstractAuditingEntity<String> implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
+    @Column(name = "id")
     private String id;
 
     @NotNull
     @Pattern(regexp = Constants.LOGIN_REGEX)
     @Size(min = 1, max = 50)
-    @Column(length = 50, unique = true, nullable = false)
+    @Column(name = "login", length = 50, unique = true, nullable = false)
     private String login;
 
     @Size(max = 50)
@@ -45,11 +48,11 @@ public class User extends AbstractAuditingEntity<String> implements Serializable
 
     @Email
     @Size(min = 5, max = 254)
-    @Column(length = 254, unique = true)
+    @Column(name = "email", length = 254, unique = true)
     private String email;
 
     @NotNull
-    @Column(nullable = false)
+    @Column(name = "activated", nullable = false)
     private boolean activated = false;
 
     @Size(min = 2, max = 10)

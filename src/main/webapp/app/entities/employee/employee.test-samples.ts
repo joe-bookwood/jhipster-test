@@ -8,22 +8,22 @@ export const sampleWithRequiredData: IEmployee = {
 
 export const sampleWithPartialData: IEmployee = {
   id: 29906,
-  firstName: 'Jade',
-  lastName: 'Rogahn',
-  email: 'Ayla_Ullrich@gmail.com',
-  phoneNumber: 'furthermore joyous ah',
-  salary: 9334,
+  firstName: 'Neil',
+  lastName: 'Kuvalis',
+  email: 'Ivan.DuBuque29@yahoo.com',
+  phoneNumber: 'preregister whose broadcast',
+  salary: 9573,
 };
 
 export const sampleWithFullData: IEmployee = {
   id: 19019,
-  firstName: 'Osborne',
-  lastName: 'Luettgen',
-  email: 'Lavern.Bartoletti-Reinger@hotmail.com',
-  phoneNumber: 'vein pear short',
-  hireDate: dayjs('2022-08-06T02:26'),
-  salary: 21951,
-  commissionPct: 30084,
+  firstName: 'Kayla',
+  lastName: 'Wiegand',
+  email: 'Alton.Grimes@gmail.com',
+  phoneNumber: 'vacantly',
+  hireDate: dayjs('2022-08-05T13:42'),
+  salary: 21307,
+  commissionPct: 7424,
 };
 
 export const sampleWithNewData: NewEmployee = {
