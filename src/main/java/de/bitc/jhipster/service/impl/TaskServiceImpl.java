@@ -5,6 +5,7 @@ import de.bitc.jhipster.repository.TaskRepository;
 import de.bitc.jhipster.service.TaskService;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -44,12 +45,8 @@ public class TaskServiceImpl implements TaskService {
         return taskRepository
             .findById(task.getId())
             .map(existingTask -> {
-                if (task.getTitle() != null) {
-                    existingTask.setTitle(task.getTitle());
-                }
-                if (task.getDescription() != null) {
-                    existingTask.setDescription(task.getDescription());
-                }
+                updateIfPresent(existingTask::setTitle, task.getTitle());
+                updateIfPresent(existingTask::setDescription, task.getDescription());
 
                 return existingTask;
             })
@@ -74,5 +71,11 @@ public class TaskServiceImpl implements TaskService {
     public void delete(Long id) {
         LOG.debug("Request to delete Task : {}", id);
         taskRepository.deleteById(id);
+    }
+
+    private <T> void updateIfPresent(Consumer<T> setter, T value) {
+        if (value != null) {
+            setter.accept(value);
+        }
     }
 }

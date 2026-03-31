@@ -1,6 +1,6 @@
-import { TestBed } from '@angular/core/testing';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { provideHttpClient } from '@angular/common/http';
+import { TestBed } from '@angular/core/testing';
 
 import { ICountry } from '../country.model';
 import { sampleWithFullData, sampleWithNewData, sampleWithPartialData, sampleWithRequiredData } from '../country.test-samples';
@@ -18,7 +18,7 @@ describe('Country Service', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [provideHttpClient(), provideHttpClientTesting()],
+      providers: [provideHttpClientTesting()],
     });
     expectedResult = null;
     service = TestBed.inject(CountryService);
@@ -30,7 +30,7 @@ describe('Country Service', () => {
       const returnedFromService = { ...requireRestSample };
       const expected = { ...sampleWithRequiredData };
 
-      service.find(123).subscribe(resp => (expectedResult = resp.body));
+      service.find(123).subscribe(resp => (expectedResult = resp));
 
       const req = httpMock.expectOne({ method: 'GET' });
       req.flush(returnedFromService);
@@ -42,7 +42,7 @@ describe('Country Service', () => {
       const returnedFromService = { ...requireRestSample };
       const expected = { ...sampleWithRequiredData };
 
-      service.create(country).subscribe(resp => (expectedResult = resp.body));
+      service.create(country).subscribe(resp => (expectedResult = resp));
 
       const req = httpMock.expectOne({ method: 'POST' });
       req.flush(returnedFromService);
@@ -54,7 +54,7 @@ describe('Country Service', () => {
       const returnedFromService = { ...requireRestSample };
       const expected = { ...sampleWithRequiredData };
 
-      service.update(country).subscribe(resp => (expectedResult = resp.body));
+      service.update(country).subscribe(resp => (expectedResult = resp));
 
       const req = httpMock.expectOne({ method: 'PUT' });
       req.flush(returnedFromService);
@@ -66,7 +66,7 @@ describe('Country Service', () => {
       const returnedFromService = { ...requireRestSample };
       const expected = { ...sampleWithRequiredData };
 
-      service.partialUpdate(patchObject).subscribe(resp => (expectedResult = resp.body));
+      service.partialUpdate(patchObject).subscribe(resp => (expectedResult = resp));
 
       const req = httpMock.expectOne({ method: 'PATCH' });
       req.flush(returnedFromService);
@@ -87,21 +87,17 @@ describe('Country Service', () => {
     });
 
     it('should delete a Country', () => {
-      const expected = true;
+      service.delete(123).subscribe();
 
-      service.delete(123).subscribe(resp => (expectedResult = resp.ok));
-
-      const req = httpMock.expectOne({ method: 'DELETE' });
-      req.flush({ status: 200 });
-      expect(expectedResult).toBe(expected);
+      const requests = httpMock.match({ method: 'DELETE' });
+      expect(requests.length).toBe(1);
     });
 
     describe('addCountryToCollectionIfMissing', () => {
       it('should add a Country to an empty array', () => {
         const country: ICountry = sampleWithRequiredData;
         expectedResult = service.addCountryToCollectionIfMissing([], country);
-        expect(expectedResult).toHaveLength(1);
-        expect(expectedResult).toContain(country);
+        expect(expectedResult).toEqual([country]);
       });
 
       it('should not add a Country to an array that contains it', () => {
@@ -135,16 +131,13 @@ describe('Country Service', () => {
         const country: ICountry = sampleWithRequiredData;
         const country2: ICountry = sampleWithPartialData;
         expectedResult = service.addCountryToCollectionIfMissing([], country, country2);
-        expect(expectedResult).toHaveLength(2);
-        expect(expectedResult).toContain(country);
-        expect(expectedResult).toContain(country2);
+        expect(expectedResult).toEqual([country, country2]);
       });
 
       it('should accept null and undefined values', () => {
         const country: ICountry = sampleWithRequiredData;
         expectedResult = service.addCountryToCollectionIfMissing([], null, country, undefined);
-        expect(expectedResult).toHaveLength(1);
-        expect(expectedResult).toContain(country);
+        expect(expectedResult).toEqual([country]);
       });
 
       it('should return initial array if no Country is added', () => {
@@ -155,7 +148,7 @@ describe('Country Service', () => {
     });
 
     describe('compareCountry', () => {
-      it('Should return true if both entities are null', () => {
+      it('should return true if both entities are null', () => {
         const entity1 = null;
         const entity2 = null;
 
@@ -164,7 +157,7 @@ describe('Country Service', () => {
         expect(compareResult).toEqual(true);
       });
 
-      it('Should return false if one entity is null', () => {
+      it('should return false if one entity is null', () => {
         const entity1 = { id: 21165 };
         const entity2 = null;
 
@@ -175,7 +168,7 @@ describe('Country Service', () => {
         expect(compareResult2).toEqual(false);
       });
 
-      it('Should return false if primaryKey differs', () => {
+      it('should return false if primaryKey differs', () => {
         const entity1 = { id: 21165 };
         const entity2 = { id: 2258 };
 
@@ -186,7 +179,7 @@ describe('Country Service', () => {
         expect(compareResult2).toEqual(false);
       });
 
-      it('Should return false if primaryKey matches', () => {
+      it('should return false if primaryKey matches', () => {
         const entity1 = { id: 21165 };
         const entity2 = { id: 21165 };
 

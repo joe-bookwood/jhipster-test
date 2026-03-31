@@ -7,7 +7,7 @@ import java.util.concurrent.atomic.AtomicLong;
 public class CountryTestSamples {
 
     private static final Random random = new Random();
-    private static final AtomicLong longCount = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
+    private static final AtomicLong longCount = new AtomicLong(random.nextInt() + (2L * Integer.MAX_VALUE));
 
     public static Country getCountrySample1() {
         return new Country().id(1L).countryName("countryName1");

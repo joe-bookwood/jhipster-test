@@ -28,7 +28,7 @@ public class TaskResource {
 
     private static final String ENTITY_NAME = "task";
 
-    @Value("${jhipster.clientApp.name}")
+    @Value("${jhipster.clientApp.name:jhipsterTest}")
     private String applicationName;
 
     private final TaskService taskService;
@@ -125,9 +125,9 @@ public class TaskResource {
     }
 
     /**
-     * {@code GET  /tasks} : get all the tasks.
+     * {@code GET  /tasks} : get all the Tasks.
      *
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of tasks in body.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of Tasks in body.
      */
     @GetMapping("")
     public List<Task> getAllTasks() {

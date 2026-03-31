@@ -5,6 +5,7 @@ import de.bitc.jhipster.repository.CountryRepository;
 import de.bitc.jhipster.service.CountryService;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.stream.StreamSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,9 +46,7 @@ public class CountryServiceImpl implements CountryService {
         return countryRepository
             .findById(country.getId())
             .map(existingCountry -> {
-                if (country.getCountryName() != null) {
-                    existingCountry.setCountryName(country.getCountryName());
-                }
+                updateIfPresent(existingCountry::setCountryName, country.getCountryName());
 
                 return existingCountry;
             })
@@ -84,5 +83,11 @@ public class CountryServiceImpl implements CountryService {
     public void delete(Long id) {
         LOG.debug("Request to delete Country : {}", id);
         countryRepository.deleteById(id);
+    }
+
+    private <T> void updateIfPresent(Consumer<T> setter, T value) {
+        if (value != null) {
+            setter.accept(value);
+        }
     }
 }

@@ -1,6 +1,6 @@
-import { TestBed } from '@angular/core/testing';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { provideHttpClient } from '@angular/common/http';
+import { TestBed } from '@angular/core/testing';
 
 import { ILocation } from '../location.model';
 import { sampleWithFullData, sampleWithNewData, sampleWithPartialData, sampleWithRequiredData } from '../location.test-samples';
@@ -18,7 +18,7 @@ describe('Location Service', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [provideHttpClient(), provideHttpClientTesting()],
+      providers: [provideHttpClientTesting()],
     });
     expectedResult = null;
     service = TestBed.inject(LocationService);
@@ -30,7 +30,7 @@ describe('Location Service', () => {
       const returnedFromService = { ...requireRestSample };
       const expected = { ...sampleWithRequiredData };
 
-      service.find(123).subscribe(resp => (expectedResult = resp.body));
+      service.find(123).subscribe(resp => (expectedResult = resp));
 
       const req = httpMock.expectOne({ method: 'GET' });
       req.flush(returnedFromService);
@@ -42,7 +42,7 @@ describe('Location Service', () => {
       const returnedFromService = { ...requireRestSample };
       const expected = { ...sampleWithRequiredData };
 
-      service.create(location).subscribe(resp => (expectedResult = resp.body));
+      service.create(location).subscribe(resp => (expectedResult = resp));
 
       const req = httpMock.expectOne({ method: 'POST' });
       req.flush(returnedFromService);
@@ -54,7 +54,7 @@ describe('Location Service', () => {
       const returnedFromService = { ...requireRestSample };
       const expected = { ...sampleWithRequiredData };
 
-      service.update(location).subscribe(resp => (expectedResult = resp.body));
+      service.update(location).subscribe(resp => (expectedResult = resp));
 
       const req = httpMock.expectOne({ method: 'PUT' });
       req.flush(returnedFromService);
@@ -66,7 +66,7 @@ describe('Location Service', () => {
       const returnedFromService = { ...requireRestSample };
       const expected = { ...sampleWithRequiredData };
 
-      service.partialUpdate(patchObject).subscribe(resp => (expectedResult = resp.body));
+      service.partialUpdate(patchObject).subscribe(resp => (expectedResult = resp));
 
       const req = httpMock.expectOne({ method: 'PATCH' });
       req.flush(returnedFromService);
@@ -87,21 +87,17 @@ describe('Location Service', () => {
     });
 
     it('should delete a Location', () => {
-      const expected = true;
+      service.delete(123).subscribe();
 
-      service.delete(123).subscribe(resp => (expectedResult = resp.ok));
-
-      const req = httpMock.expectOne({ method: 'DELETE' });
-      req.flush({ status: 200 });
-      expect(expectedResult).toBe(expected);
+      const requests = httpMock.match({ method: 'DELETE' });
+      expect(requests.length).toBe(1);
     });
 
     describe('addLocationToCollectionIfMissing', () => {
       it('should add a Location to an empty array', () => {
         const location: ILocation = sampleWithRequiredData;
         expectedResult = service.addLocationToCollectionIfMissing([], location);
-        expect(expectedResult).toHaveLength(1);
-        expect(expectedResult).toContain(location);
+        expect(expectedResult).toEqual([location]);
       });
 
       it('should not add a Location to an array that contains it', () => {
@@ -135,16 +131,13 @@ describe('Location Service', () => {
         const location: ILocation = sampleWithRequiredData;
         const location2: ILocation = sampleWithPartialData;
         expectedResult = service.addLocationToCollectionIfMissing([], location, location2);
-        expect(expectedResult).toHaveLength(2);
-        expect(expectedResult).toContain(location);
-        expect(expectedResult).toContain(location2);
+        expect(expectedResult).toEqual([location, location2]);
       });
 
       it('should accept null and undefined values', () => {
         const location: ILocation = sampleWithRequiredData;
         expectedResult = service.addLocationToCollectionIfMissing([], null, location, undefined);
-        expect(expectedResult).toHaveLength(1);
-        expect(expectedResult).toContain(location);
+        expect(expectedResult).toEqual([location]);
       });
 
       it('should return initial array if no Location is added', () => {
@@ -155,7 +148,7 @@ describe('Location Service', () => {
     });
 
     describe('compareLocation', () => {
-      it('Should return true if both entities are null', () => {
+      it('should return true if both entities are null', () => {
         const entity1 = null;
         const entity2 = null;
 
@@ -164,7 +157,7 @@ describe('Location Service', () => {
         expect(compareResult).toEqual(true);
       });
 
-      it('Should return false if one entity is null', () => {
+      it('should return false if one entity is null', () => {
         const entity1 = { id: 8454 };
         const entity2 = null;
 
@@ -175,7 +168,7 @@ describe('Location Service', () => {
         expect(compareResult2).toEqual(false);
       });
 
-      it('Should return false if primaryKey differs', () => {
+      it('should return false if primaryKey differs', () => {
         const entity1 = { id: 8454 };
         const entity2 = { id: 13013 };
 
@@ -186,7 +179,7 @@ describe('Location Service', () => {
         expect(compareResult2).toEqual(false);
       });
 
-      it('Should return false if primaryKey matches', () => {
+      it('should return false if primaryKey matches', () => {
         const entity1 = { id: 8454 };
         const entity2 = { id: 8454 };
 

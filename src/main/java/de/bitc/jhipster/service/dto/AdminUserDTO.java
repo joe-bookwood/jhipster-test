@@ -4,6 +4,7 @@ import de.bitc.jhipster.config.Constants;
 import de.bitc.jhipster.domain.Authority;
 import de.bitc.jhipster.domain.User;
 import jakarta.validation.constraints.*;
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Set;
@@ -14,6 +15,7 @@ import java.util.stream.Collectors;
  */
 public class AdminUserDTO implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private String id;

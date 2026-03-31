@@ -11,7 +11,7 @@
 # ===================================================================
 # Standard Spring Boot properties.
 # Full reference is available at:
-# http://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html
+# https://docs.spring.io/spring-boot/appendix/application-properties/index.html
 # ===================================================================
 
 ---
@@ -54,7 +54,7 @@ management:
         readiness:
           include: readinessState,db
     jhimetrics:
-      enabled: true
+      access: read-only
   info:
     git:
       mode: full
@@ -105,7 +105,7 @@ spring:
     active: '@spring.profiles.active@'
     group:
       dev:
-        - dev
+        - secret-samples
         - api-docs
         # Uncomment to activate TLS for the dev profile
         #- tls
@@ -136,7 +136,7 @@ spring:
       ddl-auto: none
       naming:
         physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
-        implicit-strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
+        implicit-strategy: org.springframework.boot.hibernate.SpringImplicitNamingStrategy
   messages:
     basename: i18n/messages
   main:
@@ -147,14 +147,9 @@ spring:
   security:
     oauth2:
       client:
-        provider:
-          oidc:
-            issuer-uri: http://localhost:9080/realms/jhipster
         registration:
           oidc:
-            client-id: web_app
-            client-secret: web_app
-            scope: openid, profile, email, offline_access # last one for refresh tokens
+            scope: openid, profile
   task:
     execution:
       thread-name-prefix: jhipster-test-task-
@@ -223,6 +218,10 @@ jhipster:
       audience:
         - account
         - api://default
+
+
+# jhipster-needle-add-application-yaml-document
+---
 # ===================================================================
 # Application specific properties
 # Add your own application properties here, see the ApplicationProperties class

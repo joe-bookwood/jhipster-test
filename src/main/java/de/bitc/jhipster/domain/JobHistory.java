@@ -3,6 +3,7 @@ package de.bitc.jhipster.domain;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import de.bitc.jhipster.domain.enumeration.Language;
 import jakarta.persistence.*;
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;
 import org.hibernate.annotations.Cache;
@@ -17,6 +18,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class JobHistory implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Id

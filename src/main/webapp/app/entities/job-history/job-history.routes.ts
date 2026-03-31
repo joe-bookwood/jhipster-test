@@ -1,13 +1,14 @@
 import { Routes } from '@angular/router';
 
-import { UserRouteAccessService } from 'app/core/auth/user-route-access.service';
 import { ASC } from 'app/config/navigation.constants';
+import { UserRouteAccessService } from 'app/core/auth/user-route-access.service';
+
 import JobHistoryResolve from './route/job-history-routing-resolve.service';
 
 const jobHistoryRoute: Routes = [
   {
     path: '',
-    loadComponent: () => import('./list/job-history.component').then(m => m.JobHistoryComponent),
+    loadComponent: () => import('./list/job-history').then(m => m.JobHistory),
     data: {
       defaultSort: `id,${ASC}`,
     },
@@ -15,7 +16,7 @@ const jobHistoryRoute: Routes = [
   },
   {
     path: ':id/view',
-    loadComponent: () => import('./detail/job-history-detail.component').then(m => m.JobHistoryDetailComponent),
+    loadComponent: () => import('./detail/job-history-detail').then(m => m.JobHistoryDetail),
     resolve: {
       jobHistory: JobHistoryResolve,
     },
@@ -23,7 +24,7 @@ const jobHistoryRoute: Routes = [
   },
   {
     path: 'new',
-    loadComponent: () => import('./update/job-history-update.component').then(m => m.JobHistoryUpdateComponent),
+    loadComponent: () => import('./update/job-history-update').then(m => m.JobHistoryUpdate),
     resolve: {
       jobHistory: JobHistoryResolve,
     },
@@ -31,7 +32,7 @@ const jobHistoryRoute: Routes = [
   },
   {
     path: ':id/edit',
-    loadComponent: () => import('./update/job-history-update.component').then(m => m.JobHistoryUpdateComponent),
+    loadComponent: () => import('./update/job-history-update').then(m => m.JobHistoryUpdate),
     resolve: {
       jobHistory: JobHistoryResolve,
     },

@@ -28,7 +28,7 @@ public class LocationResource {
 
     private static final String ENTITY_NAME = "location";
 
-    @Value("${jhipster.clientApp.name}")
+    @Value("${jhipster.clientApp.name:jhipsterTest}")
     private String applicationName;
 
     private final LocationService locationService;
@@ -129,10 +129,10 @@ public class LocationResource {
     }
 
     /**
-     * {@code GET  /locations} : get all the locations.
+     * {@code GET  /locations} : get all the Locations.
      *
      * @param filter the filter of the request.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of locations in body.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of Locations in body.
      */
     @GetMapping("")
     public List<Location> getAllLocations(@RequestParam(name = "filter", required = false) String filter) {

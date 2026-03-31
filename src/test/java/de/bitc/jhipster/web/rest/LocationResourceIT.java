@@ -19,7 +19,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -49,7 +49,7 @@ class LocationResourceIT {
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
 
     private static Random random = new Random();
-    private static AtomicLong longCount = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
+    private static AtomicLong longCount = new AtomicLong(random.nextInt() + (2L * Integer.MAX_VALUE));
 
     @Autowired
     private ObjectMapper om;
@@ -96,12 +96,12 @@ class LocationResourceIT {
     }
 
     @BeforeEach
-    public void initTest() {
+    void initTest() {
         location = createEntity();
     }
 
     @AfterEach
-    public void cleanup() {
+    void cleanup() {
         if (insertedLocation != null) {
             locationRepository.delete(insertedLocation);
             insertedLocation = null;
@@ -288,12 +288,6 @@ class LocationResourceIT {
         // Update the location using partial update
         Location partialUpdatedLocation = new Location();
         partialUpdatedLocation.setId(location.getId());
-
-        partialUpdatedLocation
-            .streetAddress(UPDATED_STREET_ADDRESS)
-            .postalCode(UPDATED_POSTAL_CODE)
-            .city(UPDATED_CITY)
-            .stateProvince(UPDATED_STATE_PROVINCE);
 
         restLocationMockMvc
             .perform(

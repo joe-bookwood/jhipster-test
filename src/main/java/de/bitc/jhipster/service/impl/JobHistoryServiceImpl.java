@@ -4,6 +4,7 @@ import de.bitc.jhipster.domain.JobHistory;
 import de.bitc.jhipster.repository.JobHistoryRepository;
 import de.bitc.jhipster.service.JobHistoryService;
 import java.util.Optional;
+import java.util.function.Consumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -45,15 +46,9 @@ public class JobHistoryServiceImpl implements JobHistoryService {
         return jobHistoryRepository
             .findById(jobHistory.getId())
             .map(existingJobHistory -> {
-                if (jobHistory.getStartDate() != null) {
-                    existingJobHistory.setStartDate(jobHistory.getStartDate());
-                }
-                if (jobHistory.getEndDate() != null) {
-                    existingJobHistory.setEndDate(jobHistory.getEndDate());
-                }
-                if (jobHistory.getLanguage() != null) {
-                    existingJobHistory.setLanguage(jobHistory.getLanguage());
-                }
+                updateIfPresent(existingJobHistory::setStartDate, jobHistory.getStartDate());
+                updateIfPresent(existingJobHistory::setEndDate, jobHistory.getEndDate());
+                updateIfPresent(existingJobHistory::setLanguage, jobHistory.getLanguage());
 
                 return existingJobHistory;
             })
@@ -78,5 +73,11 @@ public class JobHistoryServiceImpl implements JobHistoryService {
     public void delete(Long id) {
         LOG.debug("Request to delete JobHistory : {}", id);
         jobHistoryRepository.deleteById(id);
+    }
+
+    private <T> void updateIfPresent(Consumer<T> setter, T value) {
+        if (value != null) {
+            setter.accept(value);
+        }
     }
 }
